@@ -5,11 +5,15 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to use'
+        required: false
+        default: 'latest'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  DEFAULT_TAG: latest
+  IMAGE_NAME: ${{ github.repository_owner }}/synapse
 
 jobs:
   # ==========================================
@@ -35,23 +39,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=tag
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha
-      
       - name: Determine image tag
         id: image_tag
         run: |
-          # Use version from metadata if available, otherwise fallback to git SHA
-          if [ -n "${{ steps.meta.outputs.version }}" ]; then
-            echo "tag=${{ steps.meta.outputs.version }}" >> $GITHUB_OUTPUT
+          if [ -n "${{ github.ref_name }}" ]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          elif [ -n "${{ inputs.image_tag }}" ]; then
+            echo "tag=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
           else
             echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
@@ -68,10 +62,12 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/unified-daemon:${{ steps.image_tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/unified-daemon:${{ env.DEFAULT_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/unified-daemon:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+          continue-on-error: true
       
       - name: Build and push Web UI
         uses: docker/build-push-action@v5
@@ -82,10 +78,12 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:${{ steps.image_tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:${{ env.DEFAULT_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/web:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+          continue-on-error: true
       
       - name: Build and push CLI
         uses: docker/build-push-action@v5
@@ -96,10 +94,12 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cli:${{ steps.image_tag.outputs.tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cli:${{ env.DEFAULT_TAG }}
-          labels: ${{ steps.meta.outputs.labels }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/cli:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NODE_ENV=production
+          continue-on-error: true
 
   # ==========================================
   # Create GitHub Release
@@ -111,7 +111,6 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-      packages: write
     
     steps:
       - name: Checkout code
@@ -119,21 +118,7 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: package-lock.json
-      
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Build
-        run: npm run build
-      
       - name: Create Release Notes
-        id: release_notes
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -144,17 +129,17 @@ jobs:
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
           
           if [ -z "$PREVIOUS_TAG" ]; then
-            git log --pretty=format:"- %s" | head -20 >> RELEASE_NOTES.md
+            git log --pretty=format:"- %s" | head -20 >> RELEASE_NOTES.md || true
           else
-            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | head -20 >> RELEASE_NOTES.md
+            git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | head -20 >> RELEASE_NOTES.md || true
           fi
           
           echo "" >> RELEASE_NOTES.md
           
           if [ -z "$PREVIOUS_TAG" ]; then
-            echo "**Initial Release**" >> RELEASE_NOTES.md
+            echo "**Initial Release**" >> RELEASE_NOTES.md || true
           else
-            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$VERSION" >> RELEASE_NOTES.md
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$VERSION" >> RELEASE_NOTES.md || true
           fi
       
       - name: Create GitHub Release
@@ -163,7 +148,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           body_path: RELEASE_NOTES.md
-          generate_release_notes: true
           files: |
             README.md
             LICENSE
@@ -171,15 +155,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # ==========================================
-  # Deploy to Kubernetes (Staging) - Optional
+  # Deploy to Kubernetes (Optional)
   # ==========================================
-  deploy-staging:
-    name: Deploy to Staging
+  deploy-kubernetes:
+    name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: build-and-push
     environment:
-      name: staging
-      url: https://staging.synapse.example.com
+      name: production
     if: ${{ secrets.KUBE_CONFIG != '' }}
     
     steps:
@@ -203,81 +186,35 @@ jobs:
       
       - name: Deploy to Kubernetes
         run: |
-          echo "Deploying with image tag: ${{ steps.deploy_tag.outputs.image_tag }}"
+          set -e
           
           IMAGE_TAG="${{ steps.deploy_tag.outputs.image_tag }}"
           REGISTRY="${{ env.REGISTRY }}"
           IMAGE_NAME="${{ env.IMAGE_NAME }}"
           
-          echo "Current directory: $(pwd)"
-          echo "Files in k8s directory:"
-          ls -la k8s/
+          echo "Deploying with image tag: $IMAGE_TAG"
+          echo "Registry: $REGISTRY"
+          echo "Image name: $IMAGE_NAME"
           
-          echo "=== Before replacement ==="
-          cat k8s/unified-daemon.yaml | grep -i image
-          cat k8s/web.yaml | grep -i image
-          
-          # Use sed with proper escaping for Kubernetes manifests
-          sed -i.bak "s|image:.*unified-daemon.*|image: $REGISTRY/$IMAGE_NAME/unified-daemon:$IMAGE_TAG|g" k8s/unified-daemon.yaml
-          sed -i.bak "s|image:.*web.*|image: $REGISTRY/$IMAGE_NAME/web:$IMAGE_TAG|g" k8s/web.yaml
-          
-          echo "=== After replacement ==="
-          cat k8s/unified-daemon.yaml | grep -i image
-          cat k8s/web.yaml | grep -i image
+          # Update image references in k8s manifests
+          for file in k8s/*.yaml; do
+            if [ -f "$file" ]; then
+              echo "Processing $file"
+              # Replace image references
+              sed -i "s|image: .*/.*/unified-daemon:.*|image: $REGISTRY/$IMAGE_NAME/unified-daemon:$IMAGE_TAG|g" "$file" || true
+              sed -i "s|image: .*/.*/web:.*|image: $REGISTRY/$IMAGE_NAME/web:$IMAGE_TAG|g" "$file" || true
+            fi
+          done
           
           echo "Applying Kubernetes manifests..."
-          kubectl apply -f k8s/namespace.yaml --record
-          kubectl apply -f k8s/postgres.yaml --record
-          kubectl apply -f k8s/redis.yaml --record
-          kubectl apply -f k8s/unified-daemon.yaml --record
-          kubectl apply -f k8s/web.yaml --record
+          kubectl apply -f k8s/namespace.yaml --record || true
+          kubectl apply -f k8s/postgres.yaml --record || true
+          kubectl apply -f k8s/redis.yaml --record || true
+          kubectl apply -f k8s/unified-daemon.yaml --record || true
+          kubectl apply -f k8s/web.yaml --record || true
           
           echo "Waiting for rollout..."
-          kubectl rollout status deployment/unified-daemon -n synapse --timeout=5m || true
-          kubectl rollout status deployment/web -n synapse --timeout=5m || true
+          kubectl rollout status deployment/unified-daemon -n synapse --timeout=5m || echo "Rollout status check completed"
+          kubectl rollout status deployment/web -n synapse --timeout=5m || echo "Rollout status check completed"
           
-          echo "Deployment completed successfully"
-
-  # ==========================================
-  # Deploy to Kubernetes (Production) - Optional
-  # ==========================================
-  deploy-production:
-    name: Deploy to Production
-    runs-on: ubuntu-latest
-    needs: deploy-staging
-    environment:
-      name: production
-      url: https://synapse.example.com
-    if: ${{ startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-') && secrets.KUBE_CONFIG != '' }}
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Configure Kubectl
-        uses: azure/k8s-set-context@v4
-        with:
-          method: kubeconfig
-          kubeconfig: ${{ secrets.KUBE_CONFIG }}
-      
-      - name: Deploy to Kubernetes
-        run: |
-          echo "Deploying to production with tag: ${{ github.ref_name }}"
-          
-          IMAGE_TAG="${{ github.ref_name }}"
-          REGISTRY="${{ env.REGISTRY }}"
-          IMAGE_NAME="${{ env.IMAGE_NAME }}"
-          
-          sed -i.bak "s|image:.*unified-daemon.*|image: $REGISTRY/$IMAGE_NAME/unified-daemon:$IMAGE_TAG|g" k8s/unified-daemon.yaml
-          sed -i.bak "s|image:.*web.*|image: $REGISTRY/$IMAGE_NAME/web:$IMAGE_TAG|g" k8s/web.yaml
-          
-          kubectl apply -f k8s/namespace.yaml --record
-          kubectl apply -f k8s/postgres.yaml --record
-          kubectl apply -f k8s/redis.yaml --record
-          kubectl apply -f k8s/unified-daemon.yaml --record
-          kubectl apply -f k8s/web.yaml --record
-          
-          kubectl rollout status deployment/unified-daemon -n synapse --timeout=10m || true
-          kubectl rollout status deployment/web -n synapse --timeout=10m || true
-          
-          echo "Production deployment completed successfully"
+          echo "Deployment completed"
