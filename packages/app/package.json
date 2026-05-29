@@ -35,7 +35,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@floating-ui/react-native": "^0.10.7",
     "@synapse/client": "*",
-    "@getsynapse/expo-two-way-audio": "*",
+    "@synapse/expo-two-way-audio": "*",
     "@synapse/highlight": "*",
     "@synapse/protocol": "*",
     "@gorhom/bottom-sheet": "^5.2.14",
