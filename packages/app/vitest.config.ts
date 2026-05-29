@@ -1,5 +1,4 @@
 import { defineConfig, configDefaults } from "vitest/config";
-import { playwright } from "@vitest/browser-playwright";
 import path from "path";
 import fs from "fs";
 
@@ -15,40 +14,7 @@ const resolvePackageEntry = (packageName: string) => {
 export default defineConfig({
   test: {
     environment: "node",
-    exclude: [...configDefaults.exclude, "e2e/**"],
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: "unit",
-          environment: "node",
-          include: ["src/**/*.{test,spec}.{ts,tsx}"],
-          setupFiles: [path.resolve(__dirname, "vitest.setup.ts")],
-          exclude: [...configDefaults.exclude, "e2e/**", "src/**/*.browser.{test,spec}.{ts,tsx}"],
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: "browser",
-          include: ["src/**/*.browser.{test,spec}.{ts,tsx}"],
-          browser: {
-            enabled: true,
-            provider: playwright(),
-            headless: true,
-            connectTimeout: 180_000,
-            instances: [{ browser: "chromium" }],
-            screenshotDirectory: ".vitest-screenshots",
-          },
-        },
-      },
-    ],
-    /**
-     * Expo pulls in native tooling (xcode, etc.) that executes files relying on `process.send`.
-     * Vitest's default worker pool uses worker_threads, which intentionally stub that API and
-     * immediately throw `Unexpected call to process.send`. Running the suite in forked processes
-     * keeps `process.send` intact so the app tests can boot before hitting the intentional failures.
-     */
+    exclude: [...configDefaults.exclude, "e2e/**", "src/**/*.browser.{test,spec}.{ts,tsx}"],
     pool: "forks",
     maxWorkers: 2,
     server: {
@@ -76,17 +42,14 @@ export default defineConfig({
     ],
     alias: [
       {
-        find: /^@getpaseo\/relay\/e2ee$/,
+        find: /^@synapse\/relay\/e2ee$/,
         replacement: path.resolve(__dirname, "../relay/src/e2ee.ts"),
       },
       {
-        find: /^@getpaseo\/relay$/,
+        find: /^@synapse\/relay$/,
         replacement: path.resolve(__dirname, "../relay/src/index.ts"),
       },
       { find: "@", replacement: path.resolve(__dirname, "src") },
-      // Point to the ESM build so Vite can transform its imports and apply the
-      // react alias below (the CJS build uses require('react') which bypasses
-      // Vite alias resolution).
       {
         find: "react-native",
         replacement: path.resolve(rootNodeModules, "react-native-web/dist/index.js"),
