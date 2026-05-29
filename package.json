@@ -1,0 +1,62 @@
+{
+  "name": "synapse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "description": "Synapse: Paseo + Multica 融合 - AI 开发操作系统",
+  "keywords": [
+    "ai",
+    "agents",
+    "coding",
+    "multica",
+    "paseo",
+    "orchestration"
+  ],
+  "homepage": "https://github.com/synapse-ai/synapse",
+  "license": "Apache-2.0",
+  "author": "Synapse Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synapse-ai/synapse.git"
+  },
+  "workspaces": [
+    "packages/protocol",
+    "packages/client",
+    "packages/unified-daemon",
+    "packages/cli",
+    "packages/app",
+    "packages/desktop",
+    "packages/highlight",
+    "packages/web",
+    "packages/core",
+    "packages/ui",
+    "packages/views"
+  ],
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "dev:server": "npm run build:deps && concurrently --kill-others --names protocol,client,unified --prefix-colors yellow,blue,cyan \"npm run watch:protocol\" \"npm run watch:client\" \"npm run dev:unified:raw\"",
+    "dev:unified:raw": "npm run dev --workspace=@synapse/unified-daemon",
+    "dev:web": "npm run dev --workspace=@synapse/web",
+    "dev:app": "npm run start --workspace=@synapse/app",
+    "dev:desktop": "npm run dev --workspace=@synapse/desktop",
+    "build": "npm run build --workspaces --if-present",
+    "build:highlight": "npm run build --workspace=@synapse/highlight",
+    "build:protocol": "npm run build --workspace=@synapse/protocol",
+    "build:client": "npm run build:protocol && npm run build --workspace=@synapse/client",
+    "build:unified-deps": "npm run build:highlight && npm run build:client",
+    "build:unified": "npm run build:unified-deps && npm run build --workspace=@synapse/unified-daemon && npm run build --workspace=@synapse/cli",
+    "watch:protocol": "tsc -p packages/protocol/tsconfig.json --watch --preserveWatchOutput",
+    "watch:client": "tsc -p packages/client/tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf node_modules packages/*/node_modules",
+    "cli": "npx tsx packages/cli/src/index.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "react": "19.2.0",
+    "react-dom": "19.1.0"
+  }
+}

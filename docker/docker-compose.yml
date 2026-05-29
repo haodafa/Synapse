@@ -1,0 +1,127 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # PostgreSQL Database (with pgvector)
+  # ==========================================
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: synapse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-synapse_secret_password}
+      POSTGRES_DB: synapse
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse -d synapse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - synapse_network
+
+  # ==========================================
+  # Redis (for caching and session storage)
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    container_name: synapse-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redis_secret_password}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-redis_secret_password}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - synapse_network
+
+  # ==========================================
+  # Unified Daemon
+  # ==========================================
+  unified-daemon:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: unified-daemon
+    container_name: synapse-unified-daemon
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://synapse:${POSTGRES_PASSWORD:-synapse_secret_password}@postgres:5432/synapse
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_secret_password}@redis:6379
+      PORT: 8080
+      HOST: 0.0.0.0
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - synapse_network
+
+  # ==========================================
+  # Web UI
+  # ==========================================
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: web
+    container_name: synapse-web
+    restart: unless-stopped
+    depends_on:
+      - unified-daemon
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+      API_URL: http://unified-daemon:8080
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    networks:
+      - synapse_network
+
+  # ==========================================
+  # CLI (for running ad-hoc commands)
+  # ==========================================
+  cli:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: cli
+    container_name: synapse-cli
+    profiles: ["cli"]
+    environment:
+      SYNAPSE_DAEMON_URL: http://unified-daemon:8080
+    depends_on:
+      - unified-daemon
+    networks:
+      - synapse_network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres_data:
+  redis_data:
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  synapse_network:
+    driver: bridge

@@ -1,0 +1,47 @@
+{
+  "name": "@synapse/cli",
+  "version": "0.1.0",
+  "description": "Synapse CLI - Unified AI Agent Orchestration Platform",
+  "bin": {
+    "synapse": "bin/synapse"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "!dist/**/*.map"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{ recursive: true, force: true })\" && tsc -p tsconfig.json --incremental false",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run test:local",
+    "test:local": "tsx tests/run-all.ts",
+    "test:e2e": "npm run test:local"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.0.0",
+    "@synapse/client": "0.1.0",
+    "@synapse/highlight": "0.1.0",
+    "@synapse/protocol": "0.1.0",
+    "@synapse/unified-daemon": "0.1.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "mime-types": "^2.1.35",
+    "tree-kill": "^1.2.2",
+    "ws": "^8.14.2",
+    "yaml": "^2.8.4"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "^20.9.0",
+    "@types/ws": "^8.5.8",
+    "tsx": "^4.6.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.6",
+    "zx": "^8.8.5"
+  }
+}
