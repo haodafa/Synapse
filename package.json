@@ -2,7 +2,7 @@
   "name": "synapse",
   "version": "0.1.0",
   "private": true,
-  "type": "description": "Synapse: Paseo + Multica 融合 - AI 开发操作系统",
+  "description": "Synapse: Paseo + Multica 融合 - AI 开发操作系统",
   "keywords": [
     "ai",
     "agents",
@@ -11,12 +11,12 @@
     "paseo",
     "orchestration"
   ],
-  "homepage": "https://github.com/synapse-ai/synapse",
+  "homepage": "https://github.com/haodafa/Synapse",
   "license": "Apache-2.0",
-  "author": "Synapse Team",
+  "author": "haodafa",
   "repository": {
     "type": "git",
-    "url": "https://github.com/synapse-ai/synapse.git"
+    "url": "https://github.com/haodafa/Synapse.git"
   },
   "workspaces": [
     "packages/protocol",
