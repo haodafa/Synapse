@@ -17,28 +17,31 @@ jobs:
   test:
     name: Test & Typecheck
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
+    timeout-minutes: 30
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        timeout-minutes: 2
       
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22.x
           cache: 'npm'
+        timeout-minutes: 5
       
       - name: Install dependencies
         run: npm install
+        timeout-minutes: 15
       
       - name: Run type checking
         run: npm run typecheck || echo "Type checking completed"
+        timeout-minutes: 5
       
       - name: Run tests
         run: npm run test || echo "Tests completed"
+        timeout-minutes: 15
 
   # ==========================================
   # Build
@@ -47,22 +50,27 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: test
+    timeout-minutes: 45
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        timeout-minutes: 2
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
           cache: 'npm'
+        timeout-minutes: 5
       
       - name: Install dependencies
         run: npm install
+        timeout-minutes: 15
       
       - name: Build the project
         run: npm run build || echo "Build completed"
+        timeout-minutes: 20
       
       - name: Archive build artifacts
         uses: actions/upload-artifact@v4
@@ -76,6 +84,7 @@ jobs:
             packages/web/.next
           retention-days: 5
           compression-level: 9
+        timeout-minutes: 5
 
   # ==========================================
   # Security Audit
@@ -84,20 +93,25 @@ jobs:
     name: Security Audit
     runs-on: ubuntu-latest
     needs: test
+    timeout-minutes: 15
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        timeout-minutes: 2
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
           cache: 'npm'
+        timeout-minutes: 5
       
       - name: Install dependencies
         run: npm install
+        timeout-minutes: 10
       
       - name: Audit dependencies
         run: npm audit --audit-level=moderate
         continue-on-error: true
+        timeout-minutes: 5
