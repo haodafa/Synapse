@@ -8,10 +8,10 @@ interface ShowContextMenuInput {
 
 function withBrowserWindow(
   callback: (win: BrowserWindow) => void,
-): (_item: Electron.MenuItem, baseWin: Electron.BaseWindow | undefined) => void {
-  return (_item, baseWin) => {
-    const win = baseWin instanceof BrowserWindow ? baseWin : BrowserWindow.getFocusedWindow();
-    if (win) callback(win);
+): (_item: Electron.MenuItem, win: BrowserWindow | undefined) => void {
+  return (_item, win) => {
+    const targetWin = win ?? BrowserWindow.getFocusedWindow();
+    if (targetWin) callback(targetWin);
   };
 }
 

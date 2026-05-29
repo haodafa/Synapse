@@ -36,7 +36,7 @@ COPY packages/highlight/package.json ./packages/highlight/
 COPY packages/core/package.json ./packages/core/
 
 # Install dependencies
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # Copy source code
 COPY . .

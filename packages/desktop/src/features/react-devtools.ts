@@ -92,10 +92,10 @@ export async function loadReactDevTools(): Promise<void> {
 
   try {
     await patchReactDevToolsForElectron(extensionPath);
-    const ext = await session.defaultSession.extensions.loadExtension(extensionPath, {
+    const ext = await session.defaultSession.loadExtension(extensionPath, {
       allowFileAccess: true,
     });
-    console.log(`[DevTools] Loaded: ${ext.name}`);
+    console.log(`[DevTools] Loaded: ${ext?.name || "React DevTools"}`);
   } catch (err) {
     console.warn("[DevTools] Failed to load React DevTools:", err);
   }
