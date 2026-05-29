@@ -1,5 +1,5 @@
 # ==========================================
-# Synapse - Multi-stage Docker Build
+# Synapse - Multi-stage Docker Build (Simplified)
 # ==========================================
 
 # ------------------------------
@@ -24,25 +24,26 @@ RUN apt-get update && apt-get install -y \
 COPY package*.json ./
 COPY turbo.json ./
 
-# Copy workspace package files
+# Copy workspace package files (only essential ones)
 COPY packages/protocol/package.json ./packages/protocol/
 COPY packages/client/package.json ./packages/client/
 COPY packages/unified-daemon/package.json ./packages/unified-daemon/
 COPY packages/cli/package.json ./packages/cli/
-COPY packages/web/package.json ./packages/web/
-COPY packages/app/package.json ./packages/app/
-COPY packages/desktop/package.json ./packages/desktop/
-COPY packages/highlight/package.json ./packages/highlight/
-COPY packages/core/package.json ./packages/core/
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy source code
-COPY . .
+# Copy source code (only essential packages)
+COPY packages/protocol ./packages/protocol
+COPY packages/client ./packages/client
+COPY packages/unified-daemon ./packages/unified-daemon
+COPY packages/cli ./packages/cli
 
-# Build the entire project
-RUN npm run build
+# Build only essential packages
+RUN npm run build --workspace=@synapse/protocol
+RUN npm run build --workspace=@synapse/client
+RUN npm run build --workspace=@synapse/unified-daemon
+RUN npm run build --workspace=@synapse/cli
 
 # ------------------------------
 # Stage 2: Runtime (Unified Daemon)
@@ -93,93 +94,3 @@ ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Default command
 CMD ["node", "packages/unified-daemon/dist/index.js"]
-
-# ------------------------------
-# Stage 3: Runtime (CLI)
-# ------------------------------
-FROM node:22-slim AS cli
-
-# Set environment to production
-ENV NODE_ENV=production
-
-# Create non-root user
-RUN groupadd -r synapse && useradd -r -g synapse synapse
-
-# Set working directory
-WORKDIR /app
-
-# Install runtime system dependencies
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    git \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy necessary files from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-
-# Copy built packages
-COPY --from=builder /app/packages/protocol/dist ./packages/protocol/dist
-COPY --from=builder /app/packages/protocol/package.json ./packages/protocol/
-COPY --from=builder /app/packages/client/dist ./packages/client/dist
-COPY --from=builder /app/packages/client/package.json ./packages/client/
-COPY --from=builder /app/packages/cli/dist ./packages/cli/dist
-COPY --from=builder /app/packages/cli/package.json ./packages/cli/
-COPY --from=builder /app/packages/cli/bin ./packages/cli/bin
-
-# Make CLI executable
-RUN chmod +x packages/cli/bin/synapse
-
-# Switch to non-root user
-USER synapse
-
-# Add CLI to PATH
-ENV PATH="/app/packages/cli/bin:${PATH}"
-
-# Entry point
-ENTRYPOINT ["synapse"]
-
-# ------------------------------
-# Stage 4: Runtime (Web UI)
-# ------------------------------
-FROM node:22-slim AS web
-
-# Set environment to production
-ENV NODE_ENV=production
-
-# Create non-root user
-RUN groupadd -r synapse && useradd -r -g synapse synapse
-
-# Set working directory
-WORKDIR /app
-
-# Install runtime system dependencies
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy necessary files from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-
-# Copy built packages
-COPY --from=builder /app/packages/protocol/dist ./packages/protocol/dist
-COPY --from=builder /app/packages/protocol/package.json ./packages/protocol/
-COPY --from=builder /app/packages/web/.next ./packages/web/.next
-COPY --from=builder /app/packages/web/package.json ./packages/web/
-COPY --from=builder /app/packages/web/public ./packages/web/public
-
-# Switch to non-root user
-USER synapse
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
-
-# Expose ports
-EXPOSE 3000
-
-# Default command
-CMD ["npm", "start", "--workspace", "@synapse/web"]
