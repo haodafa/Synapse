@@ -114,8 +114,8 @@
     "react": "^19.2.0"
   },
   "devDependencies": {
-    "@multica/eslint-config": "workspace:*",
-    "@multica/tsconfig": "workspace:*",
+    "eslint": "^8.57.0",
+    "typescript": "^5.9.3",
     "@testing-library/react": "^14.2.1",
     "@types/react": "^18.2.48",
     "jsdom": "^24.0.0",
