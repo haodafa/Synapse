@@ -1,5 +1,5 @@
 /**
- * Test setup utilities for Paseo CLI E2E tests
+ * Test setup utilities for Synapse CLI E2E tests
  *
  * Critical rules from design doc:
  * 1. Port: Random port via 10000 + Math.floor(Math.random() * 50000) - NEVER 6767
@@ -56,7 +56,7 @@ export interface TestContext {
   workDir: string;
   /** Running daemon process */
   daemon: ProcessPromise | null;
-  /** Run a paseo CLI command against the test daemon */
+  /** Run a Synapse CLI command against the test daemon */
   paseo: (args: string[]) => ProcessPromise;
   /** Clean up all resources */
   cleanup: () => Promise<void>;

@@ -1,7 +1,7 @@
-import { createPaseoClient, type PaseoClient } from "@synapse/client";
+import { createSynapseClient, type SynapseClient } from "@synapse/client";
 
-export function createClient(url: string): PaseoClient {
-  return createPaseoClient({
+export function createClient(url: string): SynapseClient {
+  return createSynapseClient({
     url,
   });
 }

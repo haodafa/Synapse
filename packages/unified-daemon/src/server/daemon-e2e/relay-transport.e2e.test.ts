@@ -8,7 +8,7 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { Buffer } from "node:buffer";
 
 import { generateLocalPairingOffer } from "../pairing-offer.js";
-import { createTestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 import { createClientChannel, type Transport } from "@synapse/relay/e2ee";
 import {
   deriveSharedKey,
@@ -227,12 +227,12 @@ async function waitForRelayWebSocketReady(port: number, timeout = 60000): Promis
   };
 
   test("daemon connects to relay and client ping/pong works through relay", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const { logger, lines } = createCapturingLogger();
     await startRelay();
 
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       listen: "127.0.0.1",
       logger,
       relayEnabled: true,
@@ -363,12 +363,12 @@ async function waitForRelayWebSocketReady(port: number, timeout = 60000): Promis
   }, 90000);
 
   test("daemon keeps relay socket open while idle (no handshake timeout loop)", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const { logger, lines } = createCapturingLogger();
     await startRelay();
 
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       listen: "127.0.0.1",
       logger,
       relayEnabled: true,
@@ -504,12 +504,12 @@ async function waitForRelayWebSocketReady(port: number, timeout = 60000): Promis
   }, 90000);
 
   test("daemon accepts a relay client that pipelines app hello after E2EE hello", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const { logger, lines } = createCapturingLogger();
     await startRelay();
 
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       listen: "127.0.0.1",
       logger,
       relayEnabled: true,

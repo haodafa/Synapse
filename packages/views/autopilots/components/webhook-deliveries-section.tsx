@@ -18,24 +18,24 @@ import {
   autopilotDeliveriesOptions,
   autopilotDeliveryOptions,
   useReplayAutopilotDelivery,
-} from "@multica/core/autopilots";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Button } from "@multica/ui/components/ui/button";
-import { Badge } from "@multica/ui/components/ui/badge";
+} from "@synapse/core/autopilots";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Badge } from "@synapse/ui/components/ui/badge";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { cn } from "@multica/ui/lib/utils";
+} from "@synapse/ui/components/ui/dialog";
+import { cn } from "@synapse/ui/lib/utils";
 import { toast } from "sonner";
 import { useT } from "../../i18n";
 import type {
   WebhookDelivery,
   WebhookDeliveryStatus,
   WebhookSignatureStatus,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 
 // --- Status visuals -------------------------------------------------------
 

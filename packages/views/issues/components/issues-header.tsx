@@ -21,7 +21,7 @@ import {
   UserPen,
   Waves,
 } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
+import { Button } from "@synapse/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -36,23 +36,23 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@synapse/ui/components/ui/dropdown-menu";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import { Switch } from "@multica/ui/components/ui/switch";
+} from "@synapse/ui/components/ui/popover";
+import { Switch } from "@synapse/ui/components/ui/switch";
 import {
   ALL_STATUSES,
   PRIORITY_ORDER,
-} from "@multica/core/issues/config";
+} from "@synapse/core/issues/config";
 import { StatusIcon, PriorityIcon } from ".";
 import { useQuery } from "@tanstack/react-query";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { memberListOptions, agentListOptions, squadListOptions } from "@multica/core/workspace/queries";
-import { projectListOptions } from "@multica/core/projects/queries";
-import { labelListOptions } from "@multica/core/labels/queries";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { memberListOptions, agentListOptions, squadListOptions } from "@synapse/core/workspace/queries";
+import { projectListOptions } from "@synapse/core/projects/queries";
+import { labelListOptions } from "@synapse/core/labels/queries";
 import { ProjectIcon } from "../../projects/components/project-icon";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { LabelChip } from "../../labels/label-chip";
@@ -62,18 +62,18 @@ import {
   SWIMLANE_GROUPINGS,
   CARD_PROPERTY_OPTIONS,
   type ActorFilterValue,
-} from "@multica/core/issues/stores/view-store";
-import { useViewStore, useViewStoreApi } from "@multica/core/issues/stores/view-store-context";
-import type { SortField, IssueGrouping, SwimlaneGrouping, ViewMode } from "@multica/core/issues/stores/view-store";
+} from "@synapse/core/issues/stores/view-store";
+import { useViewStore, useViewStoreApi } from "@synapse/core/issues/stores/view-store-context";
+import type { SortField, IssueGrouping, SwimlaneGrouping, ViewMode } from "@synapse/core/issues/stores/view-store";
 import {
   useIssuesScopeStore,
   type IssuesScope,
-} from "@multica/core/issues/stores/issues-scope-store";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import type { Issue } from "@multica/core/types";
+} from "@synapse/core/issues/stores/issues-scope-store";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@synapse/ui/components/ui/tooltip";
+import type { Issue } from "@synapse/core/types";
 import { useT } from "../../i18n";
 import { matchesPinyin } from "../../editor/extensions/pinyin-match";
-import { useIssueViewStore } from "@multica/core/issues/stores/view-store";
+import { useIssueViewStore } from "@synapse/core/issues/stores/view-store";
 import { WorkspaceAgentWorkingChip } from "./workspace-agent-working-chip";
 
 // ---------------------------------------------------------------------------

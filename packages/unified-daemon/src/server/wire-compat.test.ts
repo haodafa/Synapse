@@ -13,7 +13,7 @@ import {
 import { Session, type SessionOptions } from "./session.js";
 import { createProviderSnapshotManagerStub } from "./test-utils/session-stubs.js";
 import type { AgentTimelineRow } from "./agent/agent-manager.js";
-import { handleCreatePaseoWorktreeRequest } from "./worktree-session.js";
+import { handleCreateSynapseWorktreeRequest } from "./worktree-session.js";
 
 const LegacyTimelineEntryPayloadSchema = z.object({
   provider: z.enum(["claude", "codex", "opencode"]),
@@ -241,7 +241,7 @@ function createSessionForWireCompatTest(options?: {
     logger: pino({ level: "silent" }),
     downloadTokenStore: {} as SessionOptions["downloadTokenStore"],
     pushTokenStore: {} as SessionOptions["pushTokenStore"],
-    paseoHome: "/tmp/paseo-home",
+    paseoHome: "/tmp/synapse-home",
     agentManager: new InMemoryAgentManager(rows) as unknown as SessionOptions["agentManager"],
     agentStorage: new EmptyAgentStorage() as unknown as SessionOptions["agentStorage"],
     projectRegistry: new EmptyProjectRegistry() as unknown as SessionOptions["projectRegistry"],
@@ -465,7 +465,7 @@ describe("wire compatibility", () => {
     const workflow = new InMemoryWorktreeWorkflow();
 
     const dependencies = {
-      paseoHome: "/tmp/paseo-home",
+      paseoHome: "/tmp/synapse-home",
       describeWorkspaceRecord: async () =>
         ({
           id: "ws-1",
@@ -482,7 +482,7 @@ describe("wire compatibility", () => {
         }) as never,
       emit() {},
       sessionLogger: pino({ level: "silent" }),
-      createPaseoWorktreeWorkflow: workflow.create.bind(workflow),
+      createSynapseWorktreeWorkflow: workflow.create.bind(workflow),
     };
 
     const legacyRequest = SessionInboundMessageSchema.parse({
@@ -528,8 +528,8 @@ describe("wire compatibility", () => {
       throw new Error("Expected new worktree request");
     }
 
-    await handleCreatePaseoWorktreeRequest(dependencies, legacyRequest);
-    await handleCreatePaseoWorktreeRequest(dependencies, newRequest);
+    await handleCreateSynapseWorktreeRequest(dependencies, legacyRequest);
+    await handleCreateSynapseWorktreeRequest(dependencies, newRequest);
 
     expect(workflow.capturedInputs).toHaveLength(2);
     expect(workflow.capturedInputs[0]).toEqual(workflow.capturedInputs[1]);
@@ -552,7 +552,7 @@ describe("wire compatibility", () => {
       action: undefined,
       githubPrNumber: undefined,
       runSetup: false,
-      paseoHome: "/tmp/paseo-home",
+      paseoHome: "/tmp/synapse-home",
     });
   });
 });

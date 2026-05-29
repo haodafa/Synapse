@@ -6,7 +6,7 @@ import path from "node:path";
 import { afterEach, expect, test } from "vitest";
 
 import { DaemonClient } from "../test-utils/daemon-client.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon, type TestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 import {
   createPersistedProjectRecord,
   createPersistedWorkspaceRecord,
@@ -15,7 +15,7 @@ import {
 } from "../workspace-registry.js";
 
 const cleanupPaths = new Set<string>();
-const cleanupDaemons = new Set<TestPaseoDaemon>();
+const cleanupDaemons = new Set<TestSynapseDaemon>();
 const cleanupClients = new Set<DaemonClient>();
 
 afterEach(async () => {
@@ -30,8 +30,8 @@ afterEach(async () => {
 });
 
 test("openProject reclassifies an existing directory workspace into its parent git project", async () => {
-  const previousSupervised = process.env.PASEO_SUPERVISED;
-  process.env.PASEO_SUPERVISED = "0";
+  const previousSupervised = process.env.SYNAPSE_SUPERVISED;
+  process.env.SYNAPSE_SUPERVISED = "0";
   try {
     const repoRoot = realpathSync(mkdtempSync(path.join(os.tmpdir(), "paseo-open-project-repo-")));
     const worktreeRoot = realpathSync(
@@ -45,7 +45,7 @@ test("openProject reclassifies an existing directory workspace into its parent g
     cleanupPaths.add(paseoHomeRoot);
 
     execSync("git init -b main", { cwd: repoRoot, stdio: "pipe" });
-    execSync("git config user.email 'test@getpaseo.dev'", { cwd: repoRoot, stdio: "pipe" });
+    execSync("git config user.email 'test@synapse.dev'", { cwd: repoRoot, stdio: "pipe" });
     execSync("git config user.name 'Paseo Test'", { cwd: repoRoot, stdio: "pipe" });
     writeFileSync(path.join(repoRoot, "README.md"), "# repo\n", "utf8");
     execSync("git add README.md", { cwd: repoRoot, stdio: "pipe" });
@@ -101,7 +101,7 @@ test("openProject reclassifies an existing directory workspace into its parent g
       }),
     ]);
 
-    const daemon = await createTestPaseoDaemon({ paseoHomeRoot, cleanup: false });
+    const daemon = await createTestSynapseDaemon({ paseoHomeRoot, cleanup: false });
     cleanupDaemons.add(daemon);
     const client = new DaemonClient({ url: `ws://127.0.0.1:${daemon.port}/ws` });
     cleanupClients.add(client);
@@ -125,7 +125,7 @@ test("openProject reclassifies an existing directory workspace into its parent g
       persistedWorkspaces.find((workspace) => workspace.workspaceId === worktreeRoot)?.kind,
     ).toBe("worktree");
   } finally {
-    process.env.PASEO_SUPERVISED = previousSupervised;
+    process.env.SYNAPSE_SUPERVISED = previousSupervised;
   }
 }, 30_000);
 

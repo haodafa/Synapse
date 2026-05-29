@@ -2,22 +2,22 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Focus } from "lucide-react";
-import type { ContextAnchor } from "@multica/core/chat";
-import { useChatStore } from "@multica/core/chat";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { issueDetailOptions } from "@multica/core/issues/queries";
-import { projectDetailOptions } from "@multica/core/projects/queries";
-import { inboxListOptions } from "@multica/core/inbox/queries";
-import { Button } from "@multica/ui/components/ui/button";
+import type { ContextAnchor } from "@synapse/core/chat";
+import { useChatStore } from "@synapse/core/chat";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { issueDetailOptions } from "@synapse/core/issues/queries";
+import { projectDetailOptions } from "@synapse/core/projects/queries";
+import { inboxListOptions } from "@synapse/core/inbox/queries";
+import { Button } from "@synapse/ui/components/ui/button";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+} from "@synapse/ui/components/ui/tooltip";
 import { IssueChip } from "../../issues/components/issue-chip";
 import { ProjectChip } from "../../projects/components/project-chip";
 import { AppLink, useNavigation } from "../../navigation";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { useWorkspacePaths } from "@synapse/core/paths";
 import { useT } from "../../i18n";
 
 /**

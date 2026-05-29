@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 export interface UnifiedMessage {
   id: string;
   type: string;
-  namespace: "paseo" | "multica" | "synapse";
+  namespace: "paseo" | "synapse" | "synapse";
   payload: any;
   timestamp: number;
 }
@@ -152,8 +152,8 @@ export class SynapseWebSocketServer extends EventEmitter {
       case "paseo":
         this.handlePaseoMessage(clientId, message);
         break;
-      case "multica":
-        this.handleMulticaMessage(clientId, message);
+      case "synapse":
+        this.handleSynapseMessage(clientId, message);
         break;
       case "synapse":
         this.handleSynapseMessage(clientId, message);
@@ -182,25 +182,25 @@ export class SynapseWebSocketServer extends EventEmitter {
     }
   }
 
-  private handleMulticaMessage(clientId: string, message: UnifiedMessage): void {
+  private handleSynapseMessage(clientId: string, message: UnifiedMessage): void {
     switch (message.type) {
       case "issue:create":
-        this.emit("multica:issue:create", { clientId, payload: message.payload });
+        this.emit("synapse:issue:create", { clientId, payload: message.payload });
         break;
       case "issue:update":
-        this.emit("multica:issue:update", { clientId, payload: message.payload });
+        this.emit("synapse:issue:update", { clientId, payload: message.payload });
         break;
       case "issue:assign":
-        this.emit("multica:issue:assign", { clientId, payload: message.payload });
+        this.emit("synapse:issue:assign", { clientId, payload: message.payload });
         break;
       case "run:start":
-        this.emit("multica:run:start", { clientId, payload: message.payload });
+        this.emit("synapse:run:start", { clientId, payload: message.payload });
         break;
       case "autopilot:trigger":
-        this.emit("multica:autopilot:trigger", { clientId, payload: message.payload });
+        this.emit("synapse:autopilot:trigger", { clientId, payload: message.payload });
         break;
       default:
-        this.emit("multica:message", { clientId, message });
+        this.emit("synapse:message", { clientId, message });
     }
   }
 

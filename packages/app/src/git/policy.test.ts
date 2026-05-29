@@ -39,7 +39,7 @@ function createInput(overrides: Partial<BuildGitActionsInput> = {}): BuildGitAct
     pullRequestMergeable: "UNKNOWN",
     pullRequestGithub: null,
     hasRemote: false,
-    isPaseoOwnedWorktree: false,
+    isSynapseOwnedWorktree: false,
     isOnBaseBranch: true,
     hasUncommittedChanges: false,
     baseRefAvailable: true,
@@ -277,9 +277,9 @@ describe("git-actions-policy", () => {
     );
   });
 
-  it("only shows archive worktree for paseo worktrees", () => {
+  it("only shows archive worktree for synapse worktrees", () => {
     const hidden = buildGitActions(createInput());
-    const shown = buildGitActions(createInput({ isPaseoOwnedWorktree: true }));
+    const shown = buildGitActions(createInput({ isSynapseOwnedWorktree: true }));
 
     expect(hidden.secondary.some((action) => action.id === "archive-worktree")).toBe(false);
     expect(shown.secondary.some((action) => action.id === "archive-worktree")).toBe(true);
@@ -767,7 +767,7 @@ describe("git-actions-policy", () => {
         pullRequestState: "open",
         pullRequestMergeable: "MERGEABLE",
         pullRequestGithub: githubStatus(),
-        isPaseoOwnedWorktree: true,
+        isSynapseOwnedWorktree: true,
       }),
     );
 

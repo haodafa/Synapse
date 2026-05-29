@@ -51,7 +51,7 @@ export function useCliInstall(): DesktopInstallHookResult {
     onError: (error) => {
       reportError({
         error,
-        message: "Unable to install the Paseo CLI.",
+        message: "Unable to install the Synapse CLI.",
         logLabel: "[Integrations] Failed to install CLI",
       });
     },

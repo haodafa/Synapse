@@ -28,10 +28,10 @@ import type {
 import type { ScheduleService } from "../schedule/service.js";
 import type { WorkspaceGitService } from "../workspace-git-service.js";
 import {
-  createPaseoWorktree as createPaseoWorktreeService,
-  type CreatePaseoWorktreeInput,
-} from "../paseo-worktree-service.js";
-import type { CreatePaseoWorktreeWorkflowFn } from "../worktree-session.js";
+  createSynapseWorktree as createSynapseWorktreeService,
+  type CreateSynapseWorktreeInput,
+} from "../synapse-worktree-service.js";
+import type { CreateSynapseWorktreeWorkflowFn } from "../worktree-session.js";
 import { WorkspaceGitServiceImpl } from "../workspace-git-service.js";
 import type { GitHubService } from "../../services/github-service.js";
 import type { TerminalManager } from "../../terminal/terminal-manager.js";
@@ -513,13 +513,13 @@ function createStoredSchedule(input: CreateScheduleInput): StoredSchedule {
   };
 }
 
-function createPaseoWorktreeForMcpTest(options: {
+function createSynapseWorktreeForMcpTest(options: {
   paseoHome: string;
   broadcasts: string[];
   createdWorkspaceIds?: string[];
   setupContinuations?: Array<"workspace" | "agent" | undefined>;
   startedAgentSetupIds?: string[];
-}): CreatePaseoWorktreeWorkflowFn {
+}): CreateSynapseWorktreeWorkflowFn {
   const projects = new Map<string, PersistedProjectRecord>();
   const workspaces = new Map<string, PersistedWorkspaceRecord>();
   const github = createGitHubServiceStub();
@@ -531,7 +531,7 @@ function createPaseoWorktreeForMcpTest(options: {
 
   return async (input, serviceOptions) => {
     options.setupContinuations?.push(serviceOptions?.setupContinuation?.kind);
-    const result = await createPaseoWorktreeService(input, {
+    const result = await createSynapseWorktreeService(input, {
       github,
       ...(serviceOptions?.resolveDefaultBranch
         ? { resolveDefaultBranch: serviceOptions.resolveDefaultBranch }
@@ -1056,7 +1056,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({
           paseoHome,
           broadcasts,
           createdWorkspaceIds,
@@ -1135,7 +1135,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({ paseoHome, broadcasts }),
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({ paseoHome, broadcasts }),
         workspaceGitService: workspaceGitService as unknown as Pick<
           WorkspaceGitService,
           "getSnapshot" | "listWorktrees"
@@ -1220,7 +1220,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({ paseoHome, broadcasts }),
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({ paseoHome, broadcasts }),
         workspaceGitService: workspaceGitService as unknown as Pick<
           WorkspaceGitService,
           "getSnapshot" | "listWorktrees"
@@ -1255,10 +1255,10 @@ describe("create_agent MCP tool", () => {
   it("passes create_agent GitHub PR worktrees through workspace creation without metadata branch rename", async () => {
     const { agentManager, agentStorage, spies } = createTestDeps();
     const startedAgentSetupIds: string[] = [];
-    const createPaseoWorktree = vi.fn(
+    const createSynapseWorktree = vi.fn(
       async (
-        input: CreatePaseoWorktreeInput,
-        options?: Parameters<CreatePaseoWorktreeWorkflowFn>[1],
+        input: CreateSynapseWorktreeInput,
+        options?: Parameters<CreateSynapseWorktreeWorkflowFn>[1],
       ) => ({
         worktree: {
           branchName: "pr-123",
@@ -1312,7 +1312,7 @@ describe("create_agent MCP tool", () => {
       agentManager,
       agentStorage,
       providerSnapshotManager: createOpenCodeManager().manager,
-      createPaseoWorktree,
+      createSynapseWorktree,
       workspaceGitService: workspaceGitService as unknown as Pick<
         WorkspaceGitService,
         "getSnapshot" | "listWorktrees"
@@ -1329,7 +1329,7 @@ describe("create_agent MCP tool", () => {
       background: true,
     });
 
-    expect(createPaseoWorktree).toHaveBeenCalledWith(
+    expect(createSynapseWorktree).toHaveBeenCalledWith(
       expect.objectContaining({
         githubPrNumber: 123,
         firstAgentContext: { prompt: "Rename this PR branch from prompt" },
@@ -1382,7 +1382,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({
           paseoHome,
           broadcasts,
           setupContinuations,
@@ -1453,7 +1453,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({ paseoHome, broadcasts: [] }),
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({ paseoHome, broadcasts: [] }),
         workspaceGitService: workspaceGitService as unknown as Pick<
           WorkspaceGitService,
           "getSnapshot" | "listWorktrees" | "resolveRepoRoot"
@@ -1538,7 +1538,7 @@ describe("create_agent MCP tool", () => {
         agentStorage,
         providerSnapshotManager: createOpenCodeManager().manager,
         paseoHome,
-        createPaseoWorktree: createPaseoWorktreeForMcpTest({ paseoHome, broadcasts: [] }),
+        createSynapseWorktree: createSynapseWorktreeForMcpTest({ paseoHome, broadcasts: [] }),
         workspaceGitService: workspaceGitService as unknown as Pick<
           WorkspaceGitService,
           "getSnapshot" | "listWorktrees" | "resolveRepoRoot"

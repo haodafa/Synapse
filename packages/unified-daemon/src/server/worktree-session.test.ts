@@ -14,15 +14,15 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import pino, { type Logger } from "pino";
 
 import type { SessionOutboundMessage, WorkspaceDescriptorPayload } from "./messages.js";
-import { archivePaseoWorktree } from "./paseo-worktree-archive-service.js";
+import { archiveSynapseWorktree } from "./synapse-worktree-archive-service.js";
 import {
   buildAgentSessionConfig,
-  createPaseoWorktreeWorkflow,
-  handlePaseoWorktreeArchiveRequest,
-  handlePaseoWorktreeListRequest,
+  createSynapseWorktreeWorkflow,
+  handleSynapseWorktreeArchiveRequest,
+  handleSynapseWorktreeListRequest,
   resolveGitCreateBaseBranch,
   runWorktreeSetupInBackground,
-  handleCreatePaseoWorktreeRequest,
+  handleCreateSynapseWorktreeRequest,
   handleWorkspaceSetupStatusRequest,
 } from "./worktree-session.js";
 import {
@@ -37,9 +37,9 @@ import type { AgentStorage, StoredAgentRecord } from "./agent/agent-storage.js";
 import type { PersistedProjectRecord, PersistedWorkspaceRecord } from "./workspace-registry.js";
 import type { GitHubService } from "../services/github-service.js";
 import {
-  createPaseoWorktree as createPaseoWorktreeService,
-  type CreatePaseoWorktreeFn,
-} from "./paseo-worktree-service.js";
+  createSynapseWorktree as createSynapseWorktreeService,
+  type CreateSynapseWorktreeFn,
+} from "./synapse-worktree-service.js";
 import { WorkspaceGitServiceImpl } from "./workspace-git-service.js";
 import type { WorkspaceGitService } from "./workspace-git-service.js";
 import { isPlatform } from "../test-utils/platform.js";
@@ -83,7 +83,7 @@ function createLogger(): Logger {
 
 function createWorkflowForRequestTest(options: {
   paseoHome: string;
-  createPaseoWorktree?: CreatePaseoWorktreeFn;
+  createSynapseWorktree?: CreateSynapseWorktreeFn;
   warmWorkspaceGitData?: (workspace: PersistedWorkspaceRecord) => Promise<void>;
   onSetupStarted?: (input: {
     requestCwd: string;
@@ -93,13 +93,13 @@ function createWorkflowForRequestTest(options: {
     shouldBootstrap: boolean;
   }) => void;
 }) {
-  return async (input: Parameters<CreatePaseoWorktreeFn>[0]) => {
-    const createPaseoWorktree =
-      options.createPaseoWorktree ?? createPaseoWorktreeForTest({ paseoHome: options.paseoHome });
-    return createPaseoWorktreeWorkflow(
+  return async (input: Parameters<CreateSynapseWorktreeFn>[0]) => {
+    const createSynapseWorktree =
+      options.createSynapseWorktree ?? createSynapseWorktreeForTest({ paseoHome: options.paseoHome });
+    return createSynapseWorktreeWorkflow(
       {
         paseoHome: options.paseoHome,
-        createPaseoWorktree,
+        createSynapseWorktree,
         warmWorkspaceGitData: options.warmWorkspaceGitData ?? (async () => {}),
         emitWorkspaceUpdateForCwd: async () => {},
         cacheWorkspaceSetupSnapshot: () => {},
@@ -249,10 +249,10 @@ function createWorkspaceDescriptor(input: {
   };
 }
 
-function createPaseoWorktreeForTest(options: {
+function createSynapseWorktreeForTest(options: {
   paseoHome: string;
   events?: string[];
-}): CreatePaseoWorktreeFn {
+}): CreateSynapseWorktreeFn {
   const projects = new Map<string, PersistedProjectRecord>();
   const workspaces = new Map<string, PersistedWorkspaceRecord>();
   const workspaceGitService = new WorkspaceGitServiceImpl({
@@ -264,7 +264,7 @@ function createPaseoWorktreeForTest(options: {
   });
 
   return (input, serviceOptions) => {
-    return createPaseoWorktreeService(input, {
+    return createSynapseWorktreeService(input, {
       github: createGitHubServiceStub(),
       ...(serviceOptions?.resolveDefaultBranch
         ? { resolveDefaultBranch: serviceOptions.resolveDefaultBranch }
@@ -325,13 +325,13 @@ function createManagedAgentForArchive(input: { id: string; cwd: string }): Manag
   };
 }
 
-describe("handlePaseoWorktreeListRequest", () => {
+describe("handleSynapseWorktreeListRequest", () => {
   test("lists worktrees through the workspace git service", async () => {
     const emitted: SessionOutboundMessage[] = [];
     const workspaceGitService = {
       listWorktrees: vi.fn().mockResolvedValue([
         {
-          path: "/tmp/paseo-home/worktrees/repo/feature",
+          path: "/tmp/synapse-home/worktrees/repo/feature",
           createdAt: "2026-04-12T00:00:00.000Z",
           branchName: "feature",
           head: "abc123",
@@ -339,10 +339,10 @@ describe("handlePaseoWorktreeListRequest", () => {
       ]),
     };
 
-    await handlePaseoWorktreeListRequest(
+    await handleSynapseWorktreeListRequest(
       {
         emit: (message) => emitted.push(message),
-        paseoHome: "/tmp/paseo-home",
+        paseoHome: "/tmp/synapse-home",
         workspaceGitService: workspaceGitService as unknown as WorkspaceGitService,
       },
       {
@@ -359,7 +359,7 @@ describe("handlePaseoWorktreeListRequest", () => {
       payload: {
         worktrees: [
           {
-            worktreePath: "/tmp/paseo-home/worktrees/repo/feature",
+            worktreePath: "/tmp/synapse-home/worktrees/repo/feature",
             createdAt: "2026-04-12T00:00:00.000Z",
             branchName: "feature",
             head: "abc123",
@@ -405,10 +405,10 @@ describe("create-agent worktree setup boundary", () => {
     const workspaceSetupEvents: SessionOutboundMessage[] = [];
 
     try {
-      const result = await createPaseoWorktreeWorkflow(
+      const result = await createSynapseWorktreeWorkflow(
         {
           paseoHome,
-          createPaseoWorktree: createPaseoWorktreeForTest({ paseoHome }),
+          createSynapseWorktree: createSynapseWorktreeForTest({ paseoHome }),
           warmWorkspaceGitData: async () => {},
           emitWorkspaceUpdateForCwd: async () => {},
           cacheWorkspaceSetupSnapshot: () => {},
@@ -1157,7 +1157,7 @@ describe("runWorktreeSetupInBackground", () => {
   });
 });
 
-describe("handleCreatePaseoWorktreeRequest", () => {
+describe("handleCreateSynapseWorktreeRequest", () => {
   const cleanupPaths: string[] = [];
 
   afterEach(() => {
@@ -1174,14 +1174,14 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     const logger = createLogger();
     const paseoHome = path.join(tempDir, ".paseo");
 
-    await handleCreatePaseoWorktreeRequest(
+    await handleCreateSynapseWorktreeRequest(
       {
         paseoHome,
         describeWorkspaceRecord: async (result) =>
           createWorkspaceDescriptor({ workspace: result.workspace, repoDir }),
         emit: (message) => emitted.push(message),
         sessionLogger: logger,
-        createPaseoWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
+        createSynapseWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
       },
       {
         type: "create_paseo_worktree_request",
@@ -1235,7 +1235,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
           resolveRepoRoot: vi.fn(async () => repoDir),
           resolveDefaultBranch: vi.fn(async () => "main"),
         } as unknown as WorkspaceGitService,
-        createPaseoWorktree: createPaseoWorktreeForTest({
+        createSynapseWorktree: createSynapseWorktreeForTest({
           paseoHome: path.join(tempDir, ".paseo"),
           events,
         }),
@@ -1284,7 +1284,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
           resolveRepoRoot: vi.fn(async () => repoDir),
           resolveDefaultBranch: vi.fn(async () => "main"),
         } as unknown as WorkspaceGitService,
-        createPaseoWorktree: createPaseoWorktreeForTest({ paseoHome }),
+        createSynapseWorktree: createSynapseWorktreeForTest({ paseoHome }),
         checkoutExistingBranch: async () => {
           throw new Error("should not checkout existing branch");
         },
@@ -1307,7 +1307,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
   });
 
   test("buildAgentSessionConfig passes prompt and attachment context into worktree creation", async () => {
-    const createPaseoWorktree = vi.fn(async () => ({
+    const createSynapseWorktree = vi.fn(async () => ({
       worktree: {
         branchName: "fix-attached-pr-context",
         worktreePath: "/tmp/worktrees/fix-attached-pr-context",
@@ -1351,7 +1351,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
         workspaceGitService: {
           resolveDefaultBranch: vi.fn(async () => "main"),
         } as unknown as WorkspaceGitService,
-        createPaseoWorktree,
+        createSynapseWorktree,
         checkoutExistingBranch: async () => {
           throw new Error("should not checkout existing branch");
         },
@@ -1371,7 +1371,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
       firstAgentContext,
     );
 
-    expect(createPaseoWorktree).toHaveBeenCalledWith(
+    expect(createSynapseWorktree).toHaveBeenCalledWith(
       expect.objectContaining({
         firstAgentContext,
       }),
@@ -1384,14 +1384,14 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     const invalidate = vi.fn();
     const createBranchFromBase = vi.fn(async () => {});
     const checkoutExistingBranch = vi.fn(async () => ({ source: "local" as const }));
-    const createPaseoWorktree = vi.fn(async () => {
+    const createSynapseWorktree = vi.fn(async () => {
       throw new Error("should not create worktree");
     });
 
     await buildAgentSessionConfig(
       {
         sessionLogger: createLogger(),
-        createPaseoWorktree,
+        createSynapseWorktree,
         checkoutExistingBranch,
         createBranchFromBase,
         github: { invalidate },
@@ -1419,7 +1419,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     await buildAgentSessionConfig(
       {
         sessionLogger: createLogger(),
-        createPaseoWorktree,
+        createSynapseWorktree,
         checkoutExistingBranch,
         createBranchFromBase,
         github: { invalidate },
@@ -1437,13 +1437,13 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     expect(invalidate).toHaveBeenCalledWith({ cwd: "/tmp/repo" });
   });
 
-  test("createPaseoWorktreeForTest forwards the default branch resolver for branch-off intents", async () => {
+  test("createSynapseWorktreeForTest forwards the default branch resolver for branch-off intents", async () => {
     const { tempDir, repoDir } = createGitRepo();
     cleanupPaths.push(tempDir);
     const paseoHome = path.join(tempDir, ".paseo");
     const resolveDefaultBranch = vi.fn(async () => "main");
 
-    const result = await createPaseoWorktreeForTest({ paseoHome })(
+    const result = await createSynapseWorktreeForTest({ paseoHome })(
       {
         cwd: repoDir,
         worktreeSlug: "resolver-feature",
@@ -1465,7 +1465,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
   });
 });
 
-describe("handleCreatePaseoWorktreeRequest", () => {
+describe("handleCreateSynapseWorktreeRequest", () => {
   test("registers a pending workspace and emits a successful create response", async () => {
     const { tempDir, repoDir } = createGitRepo();
     const paseoHome = path.join(tempDir, ".paseo");
@@ -1473,14 +1473,14 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     const events: string[] = [];
 
     try {
-      await handleCreatePaseoWorktreeRequest(
+      await handleCreateSynapseWorktreeRequest(
         {
           paseoHome,
           sessionLogger: createLogger(),
           emit: (message) => emitted.push(message),
-          createPaseoWorktreeWorkflow: createWorkflowForRequestTest({
+          createSynapseWorktreeWorkflow: createWorkflowForRequestTest({
             paseoHome,
-            createPaseoWorktree: createPaseoWorktreeForTest({ paseoHome, events }),
+            createSynapseWorktree: createSynapseWorktreeForTest({ paseoHome, events }),
           }),
           describeWorkspaceRecord: vi.fn(async (result) => ({
             id: result.workspace.workspaceId,
@@ -1536,15 +1536,15 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     let registeredWorktreePath: string | null = null;
 
     try {
-      await handleCreatePaseoWorktreeRequest(
+      await handleCreateSynapseWorktreeRequest(
         {
           paseoHome,
           sessionLogger: createLogger(),
           emit: (message) => emitted.push(message),
-          createPaseoWorktreeWorkflow: createWorkflowForRequestTest({
+          createSynapseWorktreeWorkflow: createWorkflowForRequestTest({
             paseoHome,
-            createPaseoWorktree: async (input) => {
-              const result = await createPaseoWorktreeForTest({ paseoHome })(input);
+            createSynapseWorktree: async (input) => {
+              const result = await createSynapseWorktreeForTest({ paseoHome })(input);
               expect(existsSync(result.worktree.worktreePath)).toBe(true);
               registeredWorktreePath = result.worktree.worktreePath;
               return result;
@@ -1618,12 +1618,12 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     const emitted: SessionOutboundMessage[] = [];
 
     try {
-      await handleCreatePaseoWorktreeRequest(
+      await handleCreateSynapseWorktreeRequest(
         {
           paseoHome,
           sessionLogger: createLogger(),
           emit: (message) => emitted.push(message),
-          createPaseoWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
+          createSynapseWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
           describeWorkspaceRecord: vi.fn(async (result) =>
             createWorkspaceDescriptor({ workspace: result.workspace, repoDir }),
           ),
@@ -1656,12 +1656,12 @@ describe("handleCreatePaseoWorktreeRequest", () => {
     const emitted: SessionOutboundMessage[] = [];
 
     try {
-      await handleCreatePaseoWorktreeRequest(
+      await handleCreateSynapseWorktreeRequest(
         {
           paseoHome,
           sessionLogger: createLogger(),
           emit: (message) => emitted.push(message),
-          createPaseoWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
+          createSynapseWorktreeWorkflow: createWorkflowForRequestTest({ paseoHome }),
           describeWorkspaceRecord: vi.fn(async (result) =>
             createWorkspaceDescriptor({ workspace: result.workspace, repoDir }),
           ),
@@ -1690,7 +1690,7 @@ describe("handleCreatePaseoWorktreeRequest", () => {
   });
 });
 
-describe("archivePaseoWorktree", () => {
+describe("archiveSynapseWorktree", () => {
   const cleanupPaths: string[] = [];
 
   afterEach(() => {
@@ -1738,7 +1738,7 @@ describe("archivePaseoWorktree", () => {
     });
 
     const emitted: SessionOutboundMessage[] = [];
-    const removedAgents = await archivePaseoWorktree(
+    const removedAgents = await archiveSynapseWorktree(
       {
         paseoHome,
         github: createGitHubServiceStub(),
@@ -1840,7 +1840,7 @@ describe("archivePaseoWorktree", () => {
       events.push("close:end");
     });
 
-    await handlePaseoWorktreeArchiveRequest(
+    await handleSynapseWorktreeArchiveRequest(
       {
         paseoHome,
         github: createGitHubServiceStub(),
@@ -1949,7 +1949,7 @@ describe("archivePaseoWorktree", () => {
     const archiveWorkspaceRecord = vi.fn(async () => {});
 
     await expect(
-      archivePaseoWorktree(
+      archiveSynapseWorktree(
         {
           paseoHome,
           github: createGitHubServiceStub(),
@@ -2024,7 +2024,7 @@ describe("archivePaseoWorktree", () => {
       throw new Error("simulated terminal teardown failure");
     });
 
-    await archivePaseoWorktree(
+    await archiveSynapseWorktree(
       {
         paseoHome,
         github: createGitHubServiceStub(),
@@ -2068,7 +2068,7 @@ describe("archivePaseoWorktree", () => {
       getSnapshot: vi.fn(async () => null),
     };
 
-    await archivePaseoWorktree(
+    await archiveSynapseWorktree(
       {
         paseoHome,
         github: createGitHubServiceStub(),
@@ -2120,7 +2120,7 @@ describe("archivePaseoWorktree", () => {
     expect(existsSync(created.worktreePath)).toBe(true);
 
     const emitted: SessionOutboundMessage[] = [];
-    await handlePaseoWorktreeArchiveRequest(
+    await handleSynapseWorktreeArchiveRequest(
       {
         paseoHome,
         github: createGitHubServiceStub(),

@@ -9,19 +9,19 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@multica/ui/components/ui/card";
-import { Input } from "@multica/ui/components/ui/input";
-import { Button } from "@multica/ui/components/ui/button";
-import { Label } from "@multica/ui/components/ui/label";
+} from "@synapse/ui/components/ui/card";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Label } from "@synapse/ui/components/ui/label";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@multica/ui/components/ui/input-otp";
-import { useAuthStore } from "@multica/core/auth";
-import { workspaceKeys } from "@multica/core/workspace/queries";
-import { api } from "@multica/core/api";
-import type { User } from "@multica/core/types";
+} from "@synapse/ui/components/ui/input-otp";
+import { useAuthStore } from "@synapse/core/auth";
+import { workspaceKeys } from "@synapse/core/workspace/queries";
+import { api } from "@synapse/core/api";
+import type { User } from "@synapse/core/types";
 import { useT } from "../i18n";
 
 // ---------------------------------------------------------------------------
@@ -137,7 +137,7 @@ export function LoginPage({
       })
       .catch(() => {
         // Cookie auth failed — fall back to localStorage token
-        const token = localStorage.getItem("multica_token");
+        const token = localStorage.getItem("synapse_token");
         if (!token) return;
 
         api.setToken(token);
@@ -150,7 +150,7 @@ export function LoginPage({
           })
           .catch(() => {
             api.setToken(null);
-            localStorage.removeItem("multica_token");
+            localStorage.removeItem("synapse_token");
           });
       });
   }, [cliCallback]);
@@ -198,7 +198,7 @@ export function LoginPage({
         if (cliCallback) {
           // CLI path: get token directly for the redirect URL
           const { token } = await api.verifyCode(email, value);
-          localStorage.setItem("multica_token", token);
+          localStorage.setItem("synapse_token", token);
           api.setToken(token);
           onTokenObtained?.();
           redirectToCliCallback(cliCallback.url, token, cliCallback.state);
@@ -249,7 +249,7 @@ export function LoginPage({
 
       if (authSourceRef.current === "localStorage") {
         // Session was detected via localStorage — reuse that token directly.
-        const stored = localStorage.getItem("multica_token");
+        const stored = localStorage.getItem("synapse_token");
         if (!stored) throw new Error("token missing");
         token = stored;
       } else {

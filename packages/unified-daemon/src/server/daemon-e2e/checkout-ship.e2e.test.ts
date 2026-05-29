@@ -237,7 +237,7 @@ describe("daemon checkout ship loop", () => {
         });
         expect(baseDiffAfterMerge.files.length).toBe(0);
 
-        const worktreeList = await ctx.client.getPaseoWorktreeList({
+        const worktreeList = await ctx.client.getSynapseWorktreeList({
           cwd: repoDir,
         });
         expect(worktreeList.error).toBeNull();
@@ -249,13 +249,13 @@ describe("daemon checkout ship loop", () => {
           ),
         ).toBe(true);
 
-        const archiveResult = await ctx.client.archivePaseoWorktree({
+        const archiveResult = await ctx.client.archiveSynapseWorktree({
           worktreePath: worktree.worktreePath,
         });
         expect(archiveResult.error).toBeNull();
         expect(archiveResult.success).toBe(true);
 
-        const worktreeListAfter = await ctx.client.getPaseoWorktreeList({
+        const worktreeListAfter = await ctx.client.getSynapseWorktreeList({
           cwd: repoDir,
         });
         expect(

@@ -14,7 +14,7 @@ function main() {
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
   const schema = zodToJsonSchema(PersistedConfigSchema, {
-    name: "PaseoConfigV1",
+    name: "SynapseConfigV1",
   });
 
   fs.writeFileSync(outPath, JSON.stringify(schema, null, 2) + "\n", "utf8");

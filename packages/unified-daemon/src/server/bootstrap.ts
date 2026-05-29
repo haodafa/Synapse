@@ -88,8 +88,8 @@ function formatListenTarget(listenTarget: ListenTarget | null): string | null {
 
 import { VoiceAssistantWebSocketServer } from "./websocket-server.js";
 import { createGitHubService } from "../services/github-service.js";
-import { createPaseoWorktree as createRegisteredPaseoWorktree } from "./paseo-worktree-service.js";
-import { createPaseoWorktreeWorkflow } from "./worktree-session.js";
+import { createSynapseWorktree as createRegisteredSynapseWorktree } from "./synapse-worktree-service.js";
+import { createSynapseWorktreeWorkflow } from "./worktree-session.js";
 import { DownloadTokenStore } from "./file-download/token-store.js";
 import type { OpenAiSpeechProviderConfig } from "./speech/providers/openai/config.js";
 import type { LocalSpeechProviderConfig } from "./speech/providers/local/config.js";
@@ -228,7 +228,7 @@ export type DaemonLifecycleIntent =
       reason?: string;
     };
 
-export interface PaseoDaemonConfig {
+export interface SynapseDaemonConfig {
   listen: string;
   paseoHome: string;
   corsAllowedOrigins: string[];
@@ -264,8 +264,8 @@ export interface PaseoDaemonConfig {
   pushNotificationSender?: PushNotificationSender;
 }
 
-export interface PaseoDaemon {
-  config: PaseoDaemonConfig;
+export interface SynapseDaemon {
+  config: SynapseDaemonConfig;
   agentManager: AgentManager;
   agentStorage: AgentStorage;
   terminalManager: TerminalManager;
@@ -276,10 +276,10 @@ export interface PaseoDaemon {
   getListenTarget(): ListenTarget | null;
 }
 
-export async function createPaseoDaemon(
-  config: PaseoDaemonConfig,
+export async function createSynapseDaemon(
+  config: SynapseDaemonConfig,
   rootLogger: Logger,
-): Promise<PaseoDaemon> {
+): Promise<SynapseDaemon> {
   const logger = rootLogger.child({ module: "bootstrap" });
   const bootstrapStart = performance.now();
   const elapsed = () => `${(performance.now() - bootstrapStart).toFixed(0)}ms`;
@@ -675,12 +675,12 @@ export async function createPaseoDaemon(
         markWorkspaceArchiving: markWorkspaceArchivingExternal,
         clearWorkspaceArchiving: clearWorkspaceArchivingExternal,
         emitSessionMessage: emitExternalSessionMessage,
-        createPaseoWorktree: async (input, serviceOptions) => {
-          return createPaseoWorktreeWorkflow(
+        createSynapseWorktree: async (input, serviceOptions) => {
+          return createSynapseWorktreeWorkflow(
             {
               paseoHome: config.paseoHome,
-              createPaseoWorktree: async (workflowInput, workflowOptions) => {
-                return createRegisteredPaseoWorktree(workflowInput, {
+              createSynapseWorktree: async (workflowInput, workflowOptions) => {
+                return createRegisteredSynapseWorktree(workflowInput, {
                   github,
                   ...(workflowOptions?.resolveDefaultBranch
                     ? {

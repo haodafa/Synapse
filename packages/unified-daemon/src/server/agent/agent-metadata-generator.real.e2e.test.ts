@@ -83,7 +83,7 @@ describe("agent metadata generation (real agents)", () => {
 
   beforeEach(() => {
     cwd = tmpCwd("metadata-cwd-");
-    paseoHome = tmpCwd("metadata-paseo-home-");
+    paseoHome = tmpCwd("metadata-synapse-home-");
     storage = new AgentStorage(path.join(paseoHome, "agents"), logger);
     manager = new AgentManager({
       clients: createAllClients(logger),

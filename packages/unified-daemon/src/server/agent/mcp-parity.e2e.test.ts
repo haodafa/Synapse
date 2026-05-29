@@ -8,7 +8,7 @@ import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/
 import { z } from "zod";
 
 import { AGENT_WAIT_TIMEOUT_MS } from "./mcp-shared.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon, type TestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 import { PARENT_AGENT_ID_LABEL } from "@synapse/protocol/agent-labels";
 
 interface StructuredContent {
@@ -136,7 +136,7 @@ async function waitFor<T>(options: {
 }
 
 let tempRoot: string;
-let daemonHandle: TestPaseoDaemon;
+let daemonHandle: TestSynapseDaemon;
 let topLevelClient: McpClient;
 let agentScopedClient: McpClient;
 let parentAgentId: string;
@@ -232,7 +232,7 @@ beforeAll(async () => {
   parentAgentCwd = await makeCwd("parent-agent-cwd");
   worktreeRepoCwd = await makeCwd("worktree-repo");
 
-  daemonHandle = await createTestPaseoDaemon();
+  daemonHandle = await createTestSynapseDaemon();
   topLevelClient = await createMcpClient(`http://127.0.0.1:${daemonHandle.port}/mcp/agents`);
 
   const parentPayload = await callToolStructured(topLevelClient, "create_agent", {

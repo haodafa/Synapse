@@ -4,7 +4,7 @@ import type { AgentManager } from "../agent/agent-manager.js";
 import type { AgentStorage } from "../agent/agent-storage.js";
 import type { DaemonConfigStore } from "../daemon-config-store.js";
 import type { SessionOutboundMessage } from "../messages.js";
-import { archivePaseoWorktree, killTerminalsUnderPath } from "../paseo-worktree-archive-service.js";
+import { archiveSynapseWorktree, killTerminalsUnderPath } from "../synapse-worktree-archive-service.js";
 import { isSameOrDescendantPath } from "../path-utils.js";
 import type {
   WorkspaceGitRuntimeSnapshot,
@@ -30,14 +30,14 @@ export interface AutoArchiveArchiveOptions {
 }
 
 export interface ArchiveIfSafeDependencies {
-  archivePaseoWorktree: typeof archivePaseoWorktree;
+  archiveSynapseWorktree: typeof archiveSynapseWorktree;
   isPaseoOwnedWorktreeCwd: typeof isPaseoOwnedWorktreeCwd;
   killTerminalsUnderPath: typeof killTerminalsUnderPath;
   isPathWithinRoot: typeof isSameOrDescendantPath;
 }
 
 const defaultDependencies: ArchiveIfSafeDependencies = {
-  archivePaseoWorktree,
+  archiveSynapseWorktree,
   isPaseoOwnedWorktreeCwd,
   killTerminalsUnderPath,
   isPathWithinRoot: isSameOrDescendantPath,
@@ -89,7 +89,7 @@ export async function archiveIfSafe(input: {
     }
 
     try {
-      await deps.archivePaseoWorktree(
+      await deps.archiveSynapseWorktree(
         {
           paseoHome: options.paseoHome,
           github: options.github,

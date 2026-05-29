@@ -2,9 +2,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { DesktopSettings } from "@/desktop/settings/desktop-settings";
 import { THEME_TO_UNISTYLES, type ThemeName } from "@/styles/theme";
 
-export const APP_SETTINGS_KEY = "@paseo:app-settings";
+export const APP_SETTINGS_KEY = "@synapse:app-settings";
 export const APP_SETTINGS_QUERY_KEY = ["app-settings"];
-const LEGACY_SETTINGS_KEY = "@paseo:settings";
+const LEGACY_SETTINGS_KEY = "@synapse:settings";
 
 export type SendBehavior = "interrupt" | "queue";
 export type ReleaseChannel = "stable" | "beta";

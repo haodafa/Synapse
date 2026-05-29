@@ -169,7 +169,7 @@ export async function createTempDirs(): Promise<{ paseoHome: string; workDir: st
  */
 async function probeDaemonReady(port: number): Promise<boolean> {
   try {
-    const { exitCode } = await runPaseoCli(
+    const { exitCode } = await runSynapse CLI(
       {
         port,
         wsUrl: `ws://${TEST_DAEMON_HOST}:${port}`,
@@ -324,12 +324,12 @@ export async function startTestDaemon(options?: {
 }
 
 /**
- * Run a paseo CLI command against a test daemon
+ * Run a Synapse CLI command against a test daemon
  *
  * This is a helper that sets the correct environment variables
  * to point at the test daemon.
  */
-export async function runPaseoCli(
+export async function runSynapse CLI(
   ctx: TestDaemonContext,
   args: string[],
   options?: {
@@ -403,7 +403,7 @@ export async function createE2ETestContext(options?: {
   env?: NodeJS.ProcessEnv;
 }): Promise<
   TestDaemonContext & {
-    /** Run a paseo CLI command against this daemon */
+    /** Run a Synapse CLI command against this daemon */
     paseo: (
       args: string[],
       opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
@@ -419,7 +419,7 @@ export async function createE2ETestContext(options?: {
   const paseo = (
     args: string[],
     opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
-  ) => runPaseoCli(ctx, args, opts);
+  ) => runSynapse CLI(ctx, args, opts);
 
   return {
     ...ctx,

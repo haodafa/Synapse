@@ -1,4 +1,4 @@
-# @getpaseo/client
+# @synapse/client
 
 Paseo's JavaScript/TypeScript client package.
 

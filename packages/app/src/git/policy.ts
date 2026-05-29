@@ -63,7 +63,7 @@ export interface BuildGitActionsInput {
   pullRequestMergeable: PullRequestMergeable;
   pullRequestGithub: PullRequestGithubStatus | null;
   hasRemote: boolean;
-  isPaseoOwnedWorktree: boolean;
+  isSynapseOwnedWorktree: boolean;
   isOnBaseBranch: boolean;
   hasUncommittedChanges: boolean;
   baseRefAvailable: boolean;
@@ -297,9 +297,9 @@ export function buildGitActions(input: BuildGitActionsInput): GitActions {
     disabled: input.runtime["archive-worktree"].disabled,
     status: input.runtime["archive-worktree"].status,
     unavailableMessage:
-      input.runtime["archive-worktree"].disabled || input.isPaseoOwnedWorktree
+      input.runtime["archive-worktree"].disabled || input.isSynapseOwnedWorktree
         ? undefined
-        : "Archive isn't available here because this workspace was not created as a Paseo worktree",
+        : "Archive isn't available here because this workspace was not created as a Synapse worktree",
     icon: input.runtime["archive-worktree"].icon,
     startsGroup: true,
     handler: input.runtime["archive-worktree"].handler,
@@ -312,7 +312,7 @@ export function buildGitActions(input: BuildGitActionsInput): GitActions {
   if (!input.isOnBaseBranch) {
     secondaryIds.push(...getFeatureActionIds(input));
   }
-  if (input.isPaseoOwnedWorktree) {
+  if (input.isSynapseOwnedWorktree) {
     secondaryIds.push("archive-worktree");
   }
 
@@ -324,7 +324,7 @@ export function buildGitActions(input: BuildGitActionsInput): GitActions {
 }
 
 function getPrimaryActionId(input: BuildGitActionsInput): GitActionId | null {
-  if (input.shouldPromoteArchive && input.isPaseoOwnedWorktree) {
+  if (input.shouldPromoteArchive && input.isSynapseOwnedWorktree) {
     return "archive-worktree";
   }
   if (input.hasUncommittedChanges) {

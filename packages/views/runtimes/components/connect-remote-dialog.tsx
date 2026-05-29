@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, ChevronRight, Copy, Terminal } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { runtimeKeys } from "@multica/core/runtimes/queries";
-import { useWSEvent } from "@multica/core/realtime";
-import { paths, useWorkspaceSlug } from "@multica/core/paths";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { runtimeKeys } from "@synapse/core/runtimes/queries";
+import { useWSEvent } from "@synapse/core/realtime";
+import { paths, useWorkspaceSlug } from "@synapse/core/paths";
 import {
   Dialog,
   DialogContent,
@@ -14,22 +14,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { Button } from "@multica/ui/components/ui/button";
-import { CODE_LIGATURE_CLASS } from "@multica/ui/lib/code-style";
-import { cn } from "@multica/ui/lib/utils";
+} from "@synapse/ui/components/ui/dialog";
+import { Button } from "@synapse/ui/components/ui/button";
+import { CODE_LIGATURE_CLASS } from "@synapse/ui/lib/code-style";
+import { cn } from "@synapse/ui/lib/utils";
 import { useNavigation } from "../../navigation";
 import { useT } from "../../i18n";
 
 type Step = "instructions" | "success";
 
 const INSTALL_CMD =
-  "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
-const SETUP_CMD = "multica setup";
-const TOKEN_CMD = `multica config set server_url https://api.multica.ai
-multica config set app_url https://multica.ai
-multica login --token <YOUR_TOKEN>
-multica daemon start`;
+  "curl -fsSL https://raw.githubusercontent.com/synapse-ai/synapse/main/scripts/install.sh | bash";
+const SETUP_CMD = "synapse setup";
+const TOKEN_CMD = `synapse config set server_url https://api.synapse.ai
+synapse config set app_url https://synapse.ai
+synapse login --token <YOUR_TOKEN>
+synapse daemon start`;
 
 export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<Step>("instructions");
@@ -39,7 +39,7 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
   const navigation = useNavigation();
   const newRuntimeIdRef = useRef<string | null>(null);
 
-  // `multica setup` is one blocking command that handles config + login
+  // `synapse setup` is one blocking command that handles config + login
   // + daemon start; the dialog passively listens for the resulting
   // `daemon:register` WS event and auto-advances to success.
   const handleDaemonRegister = useCallback(
@@ -248,7 +248,7 @@ function TroubleshootingDetails() {
                 CODE_LIGATURE_CLASS,
               )}
             >
-              {"multica daemon status"}
+              {"synapse daemon status"}
             </code>
           </li>
           <li className="flex items-center gap-1.5">
@@ -261,7 +261,7 @@ function TroubleshootingDetails() {
                 CODE_LIGATURE_CLASS,
               )}
             >
-              {"multica daemon logs -f"}
+              {"synapse daemon logs -f"}
             </code>
           </li>
         </ul>

@@ -1,8 +1,8 @@
 import path from "node:path";
-import { resolvePaseoNodeEnv } from "./paseo-env.js";
+import { resolveSynapseNodeEnv } from "./synapse-env.js";
 import { z } from "zod";
 
-import type { PaseoDaemonConfig } from "./bootstrap.js";
+import type { SynapseDaemonConfig } from "./bootstrap.js";
 import {
   loadPersistedConfig,
   LogFormatSchema,
@@ -61,8 +61,8 @@ function resolveLogConfigFromEnv(
   env: NodeJS.ProcessEnv,
   persisted: ReturnType<typeof loadPersistedConfig>,
 ): PersistedConfig["log"] {
-  const envLogLevel = LogLevelSchema.safeParse(normalizeLogEnv(env.PASEO_LOG_LEVEL));
-  const envLogFormat = LogFormatSchema.safeParse(normalizeLogEnv(env.PASEO_LOG_FORMAT));
+  const envLogLevel = LogLevelSchema.safeParse(normalizeLogEnv(env.SYNAPSE_LOG_LEVEL));
+  const envLogFormat = LogFormatSchema.safeParse(normalizeLogEnv(env.SYNAPSE_LOG_FORMAT));
 
   if (!envLogLevel.success && !envLogFormat.success) {
     return persisted.log;
@@ -165,26 +165,26 @@ function resolveTlsFromEnv(
 function resolveRelayConfig(input: ResolveRelayInput): ResolvedRelay {
   const enabled =
     input.cliRelayEnabled ??
-    parseBooleanEnv(input.env.PASEO_RELAY_ENABLED) ??
+    parseBooleanEnv(input.env.SYNAPSE_RELAY_ENABLED) ??
     input.persisted.daemon?.relay?.enabled ??
     true;
   const endpoint =
-    input.env.PASEO_RELAY_ENDPOINT ??
+    input.env.SYNAPSE_RELAY_ENDPOINT ??
     input.persisted.daemon?.relay?.endpoint ??
     DEFAULT_RELAY_ENDPOINT;
   const publicEndpoint =
-    input.env.PASEO_RELAY_PUBLIC_ENDPOINT ??
+    input.env.SYNAPSE_RELAY_PUBLIC_ENDPOINT ??
     input.persisted.daemon?.relay?.publicEndpoint ??
     endpoint;
   const useTls =
     input.cliRelayUseTls ??
     resolveTlsFromEnv(
-      input.env.PASEO_RELAY_USE_TLS,
+      input.env.SYNAPSE_RELAY_USE_TLS,
       input.persisted.daemon?.relay?.useTls,
       endpoint === DEFAULT_RELAY_ENDPOINT,
     );
   const publicUseTls = resolveTlsFromEnv(
-    input.env.PASEO_RELAY_PUBLIC_USE_TLS,
+    input.env.SYNAPSE_RELAY_PUBLIC_USE_TLS,
     input.persisted.daemon?.relay?.publicUseTls,
     useTls,
   );
@@ -201,7 +201,7 @@ function resolveVoiceLlmConfig(
   env: NodeJS.ProcessEnv,
   persisted: ReturnType<typeof loadPersistedConfig>,
 ): ResolvedVoiceLlm {
-  const envVoiceLlmProvider = parseOptionalVoiceLlmProvider(env.PASEO_VOICE_LLM_PROVIDER);
+  const envVoiceLlmProvider = parseOptionalVoiceLlmProvider(env.SYNAPSE_VOICE_LLM_PROVIDER);
   const persistedVoiceLlmProvider = parseOptionalVoiceLlmProvider(
     persisted.features?.voiceMode?.llm?.provider,
   );
@@ -216,8 +216,8 @@ function resolveCorsAllowedOrigins(
   env: NodeJS.ProcessEnv,
   persisted: ReturnType<typeof loadPersistedConfig>,
 ): string[] {
-  const envCorsOrigins = env.PASEO_CORS_ORIGINS
-    ? env.PASEO_CORS_ORIGINS.split(",").map((s) => s.trim())
+  const envCorsOrigins = env.SYNAPSE_CORS_ORIGINS
+    ? env.SYNAPSE_CORS_ORIGINS.split(",").map((s) => s.trim())
     : [];
   const persistedCorsOrigins = persisted.daemon?.cors?.allowedOrigins ?? [];
   return Array.from(
@@ -225,7 +225,7 @@ function resolveCorsAllowedOrigins(
   );
 }
 
-// PASEO_LISTEN can be:
+// SYNAPSE_LISTEN can be:
 // - host:port (TCP)
 // - /path/to/socket (Unix socket)
 // - unix:///path/to/socket (Unix socket)
@@ -237,7 +237,7 @@ function resolveListenAddress(
 ): string {
   return (
     cli?.listen ??
-    env.PASEO_LISTEN ??
+    env.SYNAPSE_LISTEN ??
     persisted.daemon?.listen ??
     `127.0.0.1:${env.PORT ?? DEFAULT_PORT}`
   );
@@ -246,8 +246,8 @@ function resolveListenAddress(
 function resolveAuthConfig(
   env: NodeJS.ProcessEnv,
   persisted: ReturnType<typeof loadPersistedConfig>,
-): PaseoDaemonConfig["auth"] {
-  const envPassword = env.PASEO_PASSWORD?.trim();
+): SynapseDaemonConfig["auth"] {
+  const envPassword = env.SYNAPSE_PASSWORD?.trim();
   if (envPassword) {
     return { password: hashDaemonPassword(envPassword) };
   }
@@ -273,10 +273,10 @@ function resolveStaticLoadConfigSettings(
     appendSystemPrompt: resolveAppendSystemPrompt(persisted),
     hostnames: mergeHostnames([
       persisted.daemon?.hostnames,
-      parseHostnamesEnv(env.PASEO_HOSTNAMES ?? env.PASEO_ALLOWED_HOSTS),
+      parseHostnamesEnv(env.SYNAPSE_HOSTNAMES ?? env.SYNAPSE_ALLOWED_HOSTS),
       cli?.hostnames,
     ]),
-    appBaseUrl: env.PASEO_APP_BASE_URL ?? persisted.app?.baseUrl ?? DEFAULT_APP_BASE_URL,
+    appBaseUrl: env.SYNAPSE_APP_BASE_URL ?? persisted.app?.baseUrl ?? DEFAULT_APP_BASE_URL,
   };
 }
 
@@ -286,7 +286,7 @@ export function loadConfig(
     env?: NodeJS.ProcessEnv;
     cli?: CliConfigOverrides;
   },
-): PaseoDaemonConfig {
+): SynapseDaemonConfig {
   const env = options?.env ?? process.env;
   const persisted = loadPersistedConfig(paseoHome);
 
@@ -328,7 +328,7 @@ export function loadConfig(
     autoArchiveAfterMerge,
     appendSystemPrompt,
     mcpDebug: env.MCP_DEBUG === "1",
-    isDev: resolvePaseoNodeEnv(env) === "development",
+    isDev: resolveSynapseNodeEnv(env) === "development",
     agentStoragePath: path.join(paseoHome, "agents"),
     staticDir: "public",
     agentClients: {},

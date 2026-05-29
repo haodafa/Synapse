@@ -36,7 +36,7 @@ import {
   resolveRepositoryDefaultBranch,
   parseWorktreeList,
   renameCurrentBranch,
-  isPaseoWorktreePath,
+  isSynapseWorktreePath,
   isDescendantPath,
   warmCheckoutShortstatInBackground,
 } from "./checkout-git.js";
@@ -81,7 +81,7 @@ function createLegacyWorktreeForTest(
     paseoHome: options.paseoHome,
   });
 }
-import { getPaseoWorktreeMetadataPath } from "./worktree-metadata.js";
+import { getSynapseWorktreeMetadataPath } from "./worktree-metadata.js";
 
 function initRepo(): { tempDir: string; repoDir: string } {
   const tempDir = realpathSync.native(mkdtempSync(join(tmpdir(), "checkout-git-test-")));
@@ -178,7 +178,7 @@ describe("checkout git utilities", () => {
     const setup = initRepo();
     tempDir = setup.tempDir;
     repoDir = setup.repoDir;
-    paseoHome = join(tempDir, "paseo-home");
+    paseoHome = join(tempDir, "synapse-home");
     __resetCheckoutShortstatCacheForTests();
     __resetPullRequestStatusCacheForTests();
   });
@@ -2266,7 +2266,7 @@ const x = 1;
       cwd: worktree.worktreePath,
     });
 
-    const metadataPath = getPaseoWorktreeMetadataPath(worktree.worktreePath);
+    const metadataPath = getSynapseWorktreeMetadataPath(worktree.worktreePath);
     rmSync(metadataPath, { force: true });
 
     const baseDiff = await getCheckoutDiff(worktree.worktreePath, { mode: "base" }, { paseoHome });
@@ -2285,7 +2285,7 @@ const x = 1;
       paseoHome,
     });
 
-    const metadataPath = getPaseoWorktreeMetadataPath(worktree.worktreePath);
+    const metadataPath = getSynapseWorktreeMetadataPath(worktree.worktreePath);
     rmSync(metadataPath, { force: true });
 
     const status = await getCheckoutStatus(worktree.worktreePath, { paseoHome });
@@ -2325,18 +2325,18 @@ const x = 1;
     });
   });
 
-  describe("isPaseoWorktreePath", () => {
+  describe("isSynapseWorktreePath", () => {
     it("matches Unix .paseo/worktrees/ paths", () => {
-      expect(isPaseoWorktreePath("/home/user/.paseo/worktrees/feature")).toBe(true);
+      expect(isSynapseWorktreePath("/home/user/.paseo/worktrees/feature")).toBe(true);
     });
 
     it("matches Windows .paseo\\worktrees\\ paths", () => {
-      expect(isPaseoWorktreePath("C:\\Users\\dev\\.paseo\\worktrees\\feature")).toBe(true);
+      expect(isSynapseWorktreePath("C:\\Users\\dev\\.paseo\\worktrees\\feature")).toBe(true);
     });
 
     it("rejects paths without .paseo/worktrees segment", () => {
-      expect(isPaseoWorktreePath("/home/user/repo")).toBe(false);
-      expect(isPaseoWorktreePath("C:\\Users\\dev\\repo")).toBe(false);
+      expect(isSynapseWorktreePath("/home/user/repo")).toBe(false);
+      expect(isSynapseWorktreePath("C:\\Users\\dev\\repo")).toBe(false);
     });
   });
 

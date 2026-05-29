@@ -20,7 +20,7 @@ import {
 import { parseGitRevParsePath, resolveGitRevParsePath } from "./git-rev-parse-path.js";
 import { runGitCommand } from "./run-git-command.js";
 import { isPaseoOwnedWorktreeCwd } from "./worktree.js";
-import { readPaseoWorktreeMetadata } from "./worktree-metadata.js";
+import { readSynapseWorktreeMetadata } from "./worktree-metadata.js";
 const READ_ONLY_GIT_ENV = {
   GIT_OPTIONAL_LOCKS: "0",
 } as const;
@@ -737,7 +737,7 @@ export type CheckoutSnapshotFacts =
       remoteUrl: string | null;
       absoluteGitDir: string | null;
       gitCommonDir: string | null;
-      paseoWorktree: PaseoWorktreeForCwd;
+      paseoWorktree: SynapseWorktreeForCwd;
       storedBaseRef: string | null;
       resolvedBaseRef: string | null;
       mainRepoRoot: string | null;
@@ -840,7 +840,7 @@ async function getMainRepoRootFromCommonDir(
     envOverlay: READ_ONLY_GIT_ENV,
   });
   const worktrees = parseWorktreeList(worktreeOut);
-  const nonBareNonPaseo = worktrees.filter((wt) => !wt.isBare && !isPaseoWorktreePath(wt.path));
+  const nonBareNonPaseo = worktrees.filter((wt) => !wt.isBare && !isSynapseWorktreePath(wt.path));
   const childrenOfBareRepo = nonBareNonPaseo.filter((wt) => isDescendantPath(wt.path, normalized));
   const mainChild = childrenOfBareRepo.find((wt) => basename(wt.path) === "main");
   return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonPaseo[0]?.path ?? normalized;
@@ -853,7 +853,7 @@ export interface GitWorktreeEntry {
 }
 
 /** Check whether a path contains a `.paseo/worktrees/` segment (both `/` and `\`). */
-export function isPaseoWorktreePath(p: string): boolean {
+export function isSynapseWorktreePath(p: string): boolean {
   return /[/\\]\.paseo[/\\]worktrees[/\\]/.test(p);
 }
 
@@ -937,15 +937,15 @@ export async function renameCurrentBranch(
   return { previousBranch, currentBranch };
 }
 
-type PaseoWorktreeForCwd =
+type SynapseWorktreeForCwd =
   | { isPaseoOwnedWorktree: false }
   | { isPaseoOwnedWorktree: true; worktreeRoot: string };
 
-async function getPaseoWorktreeForCwd(
+async function getSynapseWorktreeForCwd(
   cwd: string,
   context?: CheckoutContext,
   knownWorktreeRoot?: string | null,
-): Promise<PaseoWorktreeForCwd> {
+): Promise<SynapseWorktreeForCwd> {
   // Fast-path reject: non-worktree paths do not need expensive ownership checks.
   if (!/[\\/]worktrees[\\/]/.test(cwd)) {
     return { isPaseoOwnedWorktree: false };
@@ -962,8 +962,8 @@ async function getPaseoWorktreeForCwd(
   };
 }
 
-function readPaseoWorktreeBaseRef(worktreeRoot: string): string | null {
-  return readPaseoWorktreeMetadata(worktreeRoot)?.baseRefName ?? null;
+function readSynapseWorktreeBaseRef(worktreeRoot: string): string | null {
+  return readSynapseWorktreeMetadata(worktreeRoot)?.baseRefName ?? null;
 }
 
 async function getStoredBaseRefForCwd(
@@ -973,12 +973,12 @@ async function getStoredBaseRefForCwd(
   if (context?.facts?.isGit) {
     return context.facts.storedBaseRef;
   }
-  const paseoWorktree = await getPaseoWorktreeForCwd(cwd, context);
+  const paseoWorktree = await getSynapseWorktreeForCwd(cwd, context);
   if (!paseoWorktree.isPaseoOwnedWorktree) {
     return null;
   }
 
-  return readPaseoWorktreeBaseRef(paseoWorktree.worktreeRoot);
+  return readSynapseWorktreeBaseRef(paseoWorktree.worktreeRoot);
 }
 
 async function getResolvedBaseRefForCwd(
@@ -1411,7 +1411,7 @@ interface CheckoutInspectionContext {
   remoteUrl: string | null;
   absoluteGitDir: string | null;
   gitCommonDir: string | null;
-  paseoWorktree: PaseoWorktreeForCwd;
+  paseoWorktree: SynapseWorktreeForCwd;
 }
 
 async function inspectCheckoutContext(
@@ -1430,7 +1430,7 @@ async function inspectCheckoutContext(
         getOriginRemoteUrl(cwd),
         resolveAbsoluteGitDir(cwd),
         resolveGitCommonDir(cwd),
-        getPaseoWorktreeForCwd(cwd, context, root),
+        getSynapseWorktreeForCwd(cwd, context, root),
       ]);
 
     return {
@@ -1488,7 +1488,7 @@ export async function getCheckoutSnapshotFacts(
   }
 
   const storedBaseRef = inspected.paseoWorktree.isPaseoOwnedWorktree
-    ? readPaseoWorktreeBaseRef(inspected.paseoWorktree.worktreeRoot)
+    ? readSynapseWorktreeBaseRef(inspected.paseoWorktree.worktreeRoot)
     : null;
   const resolvedBaseRef = storedBaseRef ?? (await resolveBaseRef(cwd));
   const mainRepoRoot = await getMainRepoRootFromCommonDir(cwd, inspected.gitCommonDir).catch(

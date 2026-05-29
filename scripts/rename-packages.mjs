@@ -9,9 +9,9 @@ const __dirname = path.dirname(__filename);
 const packagesDir = path.resolve(__dirname, '..', 'packages');
 
 const renameMap = {
-  '@getpaseo/': '@synapse/',
+  '@getsynapse/': '@synapse/',
   '@multica/': '@synapse/',
-  getpaseo: 'synapse',
+  getsynapse: 'synapse',
   multica: 'synapse'
 };
 

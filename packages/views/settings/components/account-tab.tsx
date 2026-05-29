@@ -2,16 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Camera, Loader2, Save } from "lucide-react";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
-import { Textarea } from "@multica/ui/components/ui/textarea";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Label } from "@synapse/ui/components/ui/label";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Card, CardContent } from "@synapse/ui/components/ui/card";
+import { Textarea } from "@synapse/ui/components/ui/textarea";
 import { toast } from "sonner";
-import { useAuthStore } from "@multica/core/auth";
-import { api } from "@multica/core/api";
-import { resolvePublicFileUrl } from "@multica/core/workspace/avatar-url";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
+import { useAuthStore } from "@synapse/core/auth";
+import { api } from "@synapse/core/api";
+import { resolvePublicFileUrl } from "@synapse/core/workspace/avatar-url";
+import { useFileUpload } from "@synapse/core/hooks/use-file-upload";
 import { useT } from "../../i18n";
 
 // Mirror server/internal/handler/auth.go:MaxProfileDescriptionLen. Counted in

@@ -1,18 +1,18 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { I18nProvider } from "@multica/core/i18n/react";
+import { I18nProvider } from "@synapse/core/i18n/react";
 import enCommon from "../../locales/en/common.json";
 import enRuntimes from "../../locales/en/runtimes.json";
 import { ConnectRemoteDialog } from "./connect-remote-dialog";
 
 const TEST_RESOURCES = { en: { common: enCommon, runtimes: enRuntimes } };
 
-vi.mock("@multica/core/hooks", () => ({
+vi.mock("@synapse/core/hooks", () => ({
   useWorkspaceId: () => "ws-test",
 }));
 
-vi.mock("@multica/core/paths", () => ({
+vi.mock("@synapse/core/paths", () => ({
   paths: {
     workspace: () => ({
       agents: () => "/agents",
@@ -22,7 +22,7 @@ vi.mock("@multica/core/paths", () => ({
   useWorkspaceSlug: () => "workspace-test",
 }));
 
-vi.mock("@multica/core/realtime", () => ({
+vi.mock("@synapse/core/realtime", () => ({
   useWSEvent: vi.fn(),
 }));
 
@@ -51,7 +51,7 @@ describe("ConnectRemoteDialog", () => {
     const { baseElement } = renderDialog();
 
     const setupCode = Array.from(baseElement.querySelectorAll("code")).find((node) =>
-      node.textContent?.includes("multica setup"),
+      node.textContent?.includes("synapse setup"),
     );
 
     expect(setupCode).toHaveClass(...ligatureClasses);
@@ -61,7 +61,7 @@ describe("ConnectRemoteDialog", () => {
     const { baseElement } = renderDialog();
 
     const tokenCode = Array.from(baseElement.querySelectorAll("code")).find((node) =>
-      node.textContent?.includes("multica login --token <YOUR_TOKEN>"),
+      node.textContent?.includes("synapse login --token <YOUR_TOKEN>"),
     );
 
     expect(tokenCode).toHaveClass(...ligatureClasses);

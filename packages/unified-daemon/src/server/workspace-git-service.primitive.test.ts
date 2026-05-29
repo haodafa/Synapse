@@ -235,7 +235,7 @@ interface CreateServiceOptions {
   resolveBranchCheckout?: ReturnType<typeof vi.fn>;
   resolveRepositoryDefaultBranch?: ReturnType<typeof vi.fn>;
   listBranchSuggestions?: ReturnType<typeof vi.fn>;
-  listPaseoWorktrees?: ReturnType<typeof vi.fn>;
+  listSynapseWorktrees?: ReturnType<typeof vi.fn>;
   github?: GitHubService;
   resolveAbsoluteGitDir?: ReturnType<typeof vi.fn>;
   hasOriginRemote?: ReturnType<typeof vi.fn>;
@@ -261,7 +261,7 @@ function buildDefaultServiceDeps() {
     resolveBranchCheckout: vi.fn(async () => ({ kind: "not-found" })),
     resolveRepositoryDefaultBranch: vi.fn(async () => "main"),
     listBranchSuggestions: vi.fn(async () => []),
-    listPaseoWorktrees: vi.fn(async () => []),
+    listSynapseWorktrees: vi.fn(async () => []),
     github: createGitHubServiceStub(),
     resolveAbsoluteGitDir: vi.fn(async () => join(REPO_CWD, ".git")),
     hasOriginRemote: vi.fn(async () => false),
@@ -1303,28 +1303,28 @@ describe("WorkspaceGitServiceImpl D2 read methods", () => {
     let nowMs = 0;
     const worktrees = [
       {
-        path: "/tmp/paseo-home/worktrees/repo/feature",
+        path: "/tmp/synapse-home/worktrees/repo/feature",
         createdAt: "2026-04-12T00:00:00.000Z",
         branchName: "feature",
       },
     ];
-    const listPaseoWorktrees = vi.fn().mockResolvedValue(worktrees);
+    const listSynapseWorktrees = vi.fn().mockResolvedValue(worktrees);
     const service = createService({
-      listPaseoWorktrees,
+      listSynapseWorktrees,
       now: () => new Date(nowMs),
     });
 
     const first = service.listWorktrees(REPO_CWD);
     const second = service.listWorktrees(join(REPO_CWD, "."));
     await expect(Promise.all([first, second])).resolves.toEqual([worktrees, worktrees]);
-    expect(listPaseoWorktrees).toHaveBeenCalledTimes(1);
+    expect(listSynapseWorktrees).toHaveBeenCalledTimes(1);
 
     nowMs = 1_000;
     await service.listWorktrees(REPO_CWD);
-    expect(listPaseoWorktrees).toHaveBeenCalledTimes(1);
+    expect(listSynapseWorktrees).toHaveBeenCalledTimes(1);
 
     await service.listWorktrees(REPO_CWD, { force: true, reason: "test" });
-    expect(listPaseoWorktrees).toHaveBeenCalledTimes(2);
+    expect(listSynapseWorktrees).toHaveBeenCalledTimes(2);
 
     service.dispose();
   });
@@ -1338,16 +1338,16 @@ describe("WorkspaceGitServiceImpl D2 read methods", () => {
 
     const worktrees = [
       {
-        path: join(tempDir, "paseo-home", "worktrees", "repo", "feature"),
+        path: join(tempDir, "synapse-home", "worktrees", "repo", "feature"),
         createdAt: "2026-04-12T00:00:00.000Z",
         branchName: "feature",
       },
     ];
-    const listPaseoWorktrees = vi.fn(async () => worktrees);
+    const listSynapseWorktrees = vi.fn(async () => worktrees);
     const service = createService({
       getCheckoutSnapshotFacts: getCheckoutSnapshotFactsUncached as never,
       getCheckoutStatus: getCheckoutStatusUncached as never,
-      listPaseoWorktrees,
+      listSynapseWorktrees,
     });
 
     try {
@@ -1356,8 +1356,8 @@ describe("WorkspaceGitServiceImpl D2 read methods", () => {
       ).resolves.toEqual([worktrees, worktrees]);
       await expect(service.listWorktrees(nestedWorkspaceDir)).resolves.toEqual(worktrees);
 
-      expect(listPaseoWorktrees).toHaveBeenCalledTimes(1);
-      expect(listPaseoWorktrees).toHaveBeenCalledWith({
+      expect(listSynapseWorktrees).toHaveBeenCalledTimes(1);
+      expect(listSynapseWorktrees).toHaveBeenCalledWith({
         cwd: realpathSync.native(repoDir).replace(/\\/g, "/"),
         paseoHome: "/tmp/paseo-test",
       });

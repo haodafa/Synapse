@@ -5,19 +5,19 @@ import userEvent from "@testing-library/user-event";
 import { renderWithI18n } from "../test/i18n";
 
 const longRepoUrl =
-  "https://github.com/multica-ai/a-very-long-repository-name-that-needs-a-tooltip";
-const apiRepoUrl = "https://github.com/multica-ai/api";
-const webRepoUrl = "https://github.com/multica-ai/web";
+  "https://github.com/synapse-ai/a-very-long-repository-name-that-needs-a-tooltip";
+const apiRepoUrl = "https://github.com/synapse-ai/api";
+const webRepoUrl = "https://github.com/synapse-ai/web";
 
 vi.mock("@tanstack/react-query", () => ({
   useQuery: () => ({ data: [] }),
 }));
 
-vi.mock("@multica/core/projects/mutations", () => ({
+vi.mock("@synapse/core/projects/mutations", () => ({
   useCreateProject: () => ({ mutateAsync: vi.fn() }),
 }));
 
-vi.mock("@multica/core/projects", () => ({
+vi.mock("@synapse/core/projects", () => ({
   useProjectDraftStore: (selector: (state: unknown) => unknown) =>
     selector({
       draft: {
@@ -34,11 +34,11 @@ vi.mock("@multica/core/projects", () => ({
     }),
 }));
 
-vi.mock("@multica/core/hooks", () => ({
+vi.mock("@synapse/core/hooks", () => ({
   useWorkspaceId: () => "workspace-1",
 }));
 
-vi.mock("@multica/core/paths", () => ({
+vi.mock("@synapse/core/paths", () => ({
   useCurrentWorkspace: () => ({
     id: "workspace-1",
     name: "Test Workspace",
@@ -50,12 +50,12 @@ vi.mock("@multica/core/paths", () => ({
   }),
 }));
 
-vi.mock("@multica/core/workspace/queries", () => ({
+vi.mock("@synapse/core/workspace/queries", () => ({
   memberListOptions: () => ({ queryKey: ["members"], queryFn: vi.fn() }),
   agentListOptions: () => ({ queryKey: ["agents"], queryFn: vi.fn() }),
 }));
 
-vi.mock("@multica/core/workspace/hooks", () => ({
+vi.mock("@synapse/core/workspace/hooks", () => ({
   useActorName: () => ({ getActorName: vi.fn() }),
 }));
 
@@ -89,13 +89,13 @@ vi.mock("../common/actor-avatar", () => ({
   ActorAvatar: () => <span data-testid="actor-avatar" />,
 }));
 
-vi.mock("@multica/ui/components/ui/dialog", () => ({
+vi.mock("@synapse/ui/components/ui/dialog", () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock("@multica/ui/components/ui/dropdown-menu", () => ({
+vi.mock("@synapse/ui/components/ui/dropdown-menu", () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DropdownMenuTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -112,13 +112,13 @@ vi.mock("@multica/ui/components/ui/dropdown-menu", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/components/ui/popover", () => ({
+vi.mock("@synapse/ui/components/ui/popover", () => ({
   Popover: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   PopoverTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   PopoverContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock("@multica/ui/components/ui/tooltip", () => ({
+vi.mock("@synapse/ui/components/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   TooltipTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   TooltipContent: ({ children }: { children: React.ReactNode }) => (
@@ -126,7 +126,7 @@ vi.mock("@multica/ui/components/ui/tooltip", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/components/ui/button", () => ({
+vi.mock("@synapse/ui/components/ui/button", () => ({
   Button: ({
     children,
     disabled,
@@ -144,11 +144,11 @@ vi.mock("@multica/ui/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@multica/ui/components/common/emoji-picker", () => ({
+vi.mock("@synapse/ui/components/common/emoji-picker", () => ({
   EmojiPicker: () => null,
 }));
 
-vi.mock("@multica/ui/lib/utils", () => ({
+vi.mock("@synapse/ui/lib/utils", () => ({
   cn: (...values: Array<string | false | null | undefined>) =>
     values.filter(Boolean).join(" "),
 }));

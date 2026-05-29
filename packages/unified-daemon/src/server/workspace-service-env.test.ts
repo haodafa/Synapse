@@ -64,10 +64,10 @@ describe("buildWorkspaceServiceEnv", () => {
       }),
     ).toEqual({
       HOST: "127.0.0.1",
-      PASEO_PORT: "5173",
-      PASEO_URL: "http://daemon.paseo.localhost:6767",
-      PASEO_SERVICE_DAEMON_PORT: "5173",
-      PASEO_SERVICE_DAEMON_URL: "http://daemon.paseo.localhost:6767",
+      SYNAPSE_PORT: "5173",
+      SYNAPSE_URL: "http://daemon.paseo.localhost:6767",
+      SYNAPSE_SERVICE_DAEMON_PORT: "5173",
+      SYNAPSE_SERVICE_DAEMON_URL: "http://daemon.paseo.localhost:6767",
     });
   });
 
@@ -83,14 +83,14 @@ describe("buildWorkspaceServiceEnv", () => {
       }),
     ).toEqual({
       HOST: "127.0.0.1",
-      PASEO_PORT: "5173",
-      PASEO_URL: "http://daemon.feature-x.paseo.localhost:6767",
-      PASEO_SERVICE_DAEMON_PORT: "5173",
-      PASEO_SERVICE_DAEMON_URL: "http://daemon.feature-x.paseo.localhost:6767",
+      SYNAPSE_PORT: "5173",
+      SYNAPSE_URL: "http://daemon.feature-x.paseo.localhost:6767",
+      SYNAPSE_SERVICE_DAEMON_PORT: "5173",
+      SYNAPSE_SERVICE_DAEMON_URL: "http://daemon.feature-x.paseo.localhost:6767",
     });
   });
 
-  it("omits PORT while keeping PASEO_PORT", () => {
+  it("omits PORT while keeping SYNAPSE_PORT", () => {
     const env = buildWorkspaceServiceEnv({
       scriptName: "daemon",
       projectSlug: "paseo",
@@ -100,7 +100,7 @@ describe("buildWorkspaceServiceEnv", () => {
       peers: [{ scriptName: "daemon", port: 5173 }],
     });
 
-    expect(env.PASEO_PORT).toBe("5173");
+    expect(env.SYNAPSE_PORT).toBe("5173");
     expect(env).not.toHaveProperty("PORT");
   });
 
@@ -116,8 +116,8 @@ describe("buildWorkspaceServiceEnv", () => {
       }),
     ).toEqual({
       HOST: "127.0.0.1",
-      PASEO_PORT: "5173",
-      PASEO_SERVICE_DAEMON_PORT: "5173",
+      SYNAPSE_PORT: "5173",
+      SYNAPSE_SERVICE_DAEMON_PORT: "5173",
     });
   });
 
@@ -136,12 +136,12 @@ describe("buildWorkspaceServiceEnv", () => {
       }),
     ).toEqual({
       HOST: "127.0.0.1",
-      PASEO_PORT: "5173",
-      PASEO_URL: "http://web.feature-x.paseo.localhost:6767",
-      PASEO_SERVICE_API_PORT: "4000",
-      PASEO_SERVICE_API_URL: "http://api.feature-x.paseo.localhost:6767",
-      PASEO_SERVICE_WEB_PORT: "5173",
-      PASEO_SERVICE_WEB_URL: "http://web.feature-x.paseo.localhost:6767",
+      SYNAPSE_PORT: "5173",
+      SYNAPSE_URL: "http://web.feature-x.paseo.localhost:6767",
+      SYNAPSE_SERVICE_API_PORT: "4000",
+      SYNAPSE_SERVICE_API_URL: "http://api.feature-x.paseo.localhost:6767",
+      SYNAPSE_SERVICE_WEB_PORT: "5173",
+      SYNAPSE_SERVICE_WEB_URL: "http://web.feature-x.paseo.localhost:6767",
     });
   });
 

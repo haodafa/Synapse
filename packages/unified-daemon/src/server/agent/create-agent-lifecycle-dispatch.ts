@@ -3,10 +3,10 @@ import type pino from "pino";
 
 import type { GitHubService } from "../../services/github-service.js";
 import { isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
-import { archivePaseoWorktree } from "../paseo-worktree-archive-service.js";
+import { archiveSynapseWorktree } from "../synapse-worktree-archive-service.js";
 import type {
-  CreatePaseoWorktreeWorkflowFn,
-  CreatePaseoWorktreeWorkflowResult,
+  CreateSynapseWorktreeWorkflowFn,
+  CreateSynapseWorktreeWorkflowResult,
 } from "../worktree-session.js";
 import type { WorkspaceGitService } from "../workspace-git-service.js";
 import type {
@@ -23,7 +23,7 @@ interface CreateAgentLifecycleDispatchDependencies {
   agentStorage: AgentStorage;
   github: GitHubService;
   workspaceGitService: WorkspaceGitService;
-  createPaseoWorktreeWorkflow: CreatePaseoWorktreeWorkflowFn;
+  createSynapseWorktreeWorkflow: CreateSynapseWorktreeWorkflowFn;
   archiveAgentForClose: (agentId: string) => Promise<unknown>;
   archiveWorkspaceRecord: (workspaceId: string) => Promise<void>;
   emit: (message: SessionOutboundMessage) => void;
@@ -46,7 +46,7 @@ export class CreateAgentLifecycleDispatch {
     target: CreateAgentWorktreeTarget | undefined;
     firstAgentContext: FirstAgentContext;
     hasLegacyGitOptions: boolean;
-  }): Promise<CreatePaseoWorktreeWorkflowResult | null> {
+  }): Promise<CreateSynapseWorktreeWorkflowResult | null> {
     if (input.target && input.hasLegacyGitOptions) {
       throw new Error("create_agent_request worktree cannot be combined with git options");
     }
@@ -60,7 +60,7 @@ export class CreateAgentLifecycleDispatch {
   registerAutoArchiveIfRequested(input: {
     autoArchive: boolean | undefined;
     agentId: string;
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateSynapseWorktreeWorkflowResult | null;
   }): void {
     if (input.autoArchive !== true) {
       return;
@@ -73,7 +73,7 @@ export class CreateAgentLifecycleDispatch {
   }
 
   async cleanupCreatedWorktreeAfterFailedAgentCreate(input: {
-    createdWorktree: CreatePaseoWorktreeWorkflowResult | null;
+    createdWorktree: CreateSynapseWorktreeWorkflowResult | null;
     createdAgentId: string | null;
   }): Promise<void> {
     const { createdWorktree, createdAgentId } = input;
@@ -100,7 +100,7 @@ export class CreateAgentLifecycleDispatch {
     cwd: string,
     target: CreateAgentWorktreeTarget,
     firstAgentContext: FirstAgentContext,
-  ): Promise<CreatePaseoWorktreeWorkflowResult> {
+  ): Promise<CreateSynapseWorktreeWorkflowResult> {
     const baseInput = {
       cwd,
       firstAgentContext,
@@ -110,7 +110,7 @@ export class CreateAgentLifecycleDispatch {
 
     switch (target.mode) {
       case "branch-off":
-        return this.dependencies.createPaseoWorktreeWorkflow(
+        return this.dependencies.createSynapseWorktreeWorkflow(
           {
             ...baseInput,
             worktreeSlug: target.newBranch,
@@ -120,13 +120,13 @@ export class CreateAgentLifecycleDispatch {
           target.base ? { resolveDefaultBranch: async () => target.base! } : undefined,
         );
       case "checkout-branch":
-        return this.dependencies.createPaseoWorktreeWorkflow({
+        return this.dependencies.createSynapseWorktreeWorkflow({
           ...baseInput,
           action: "checkout",
           refName: target.branch,
         });
       case "checkout-pr":
-        return this.dependencies.createPaseoWorktreeWorkflow({
+        return this.dependencies.createSynapseWorktreeWorkflow({
           ...baseInput,
           action: "checkout",
           githubPrNumber: target.prNumber,
@@ -196,7 +196,7 @@ export class CreateAgentLifecycleDispatch {
       throw new Error("Auto-created worktree is not a Paseo-owned worktree");
     }
 
-    await archivePaseoWorktree(
+    await archiveSynapseWorktree(
       {
         paseoHome: this.dependencies.paseoHome,
         github: this.dependencies.github,

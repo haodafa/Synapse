@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/actor-avatar";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { runtimeListOptions } from "@multica/core/runtimes/queries";
-import { agentListOptions } from "@multica/core/workspace/queries";
-import { deriveAgentAvailability } from "@multica/core/agents";
-import type { AgentTask } from "@multica/core/types";
+import { ActorAvatar as ActorAvatarBase } from "@synapse/ui/components/common/actor-avatar";
+import { useActorName } from "@synapse/core/workspace/hooks";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { runtimeListOptions } from "@synapse/core/runtimes/queries";
+import { agentListOptions } from "@synapse/core/workspace/queries";
+import { deriveAgentAvailability } from "@synapse/core/agents";
+import type { AgentTask } from "@synapse/core/types";
 import { workloadConfig } from "../presence";
 import { useT } from "../../i18n";
 

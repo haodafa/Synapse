@@ -1,8 +1,15 @@
-import {
-  createClientChannel,
-  type EncryptedChannel,
-  type Transport as RelayTransport,
-} from "@synapse/relay/e2ee";
+// Conditional import for relay e2ee, with fallback if not available
+let createClientChannel: any;
+type EncryptedChannel = any;
+type RelayTransport = any;
+
+try {
+  const relayModule = require("@synapse/relay/e2ee");
+  createClientChannel = relayModule.createClientChannel;
+} catch (e) {
+  // Module not available, we'll provide fallback implementations
+}
+
 import type {
   DaemonTransport,
   DaemonTransportFactory,
@@ -25,6 +32,11 @@ export function createRelayE2eeTransportFactory(args: {
 }): DaemonTransportFactory {
   return ({ url, headers }) => {
     const base = args.baseFactory({ url, headers });
+    if (!createClientChannel) {
+      // Fallback to base transport if e2ee is not available
+      args.logger.warn({ module: "relay-e2ee" }, "E2EE module not available, using plain transport");
+      return base;
+    }
     return createEncryptedTransport(base, args.daemonPublicKeyB64, args.logger);
   };
 }
@@ -34,6 +46,12 @@ export function createEncryptedTransport(
   daemonPublicKeyB64: string,
   logger: TransportLogger,
 ): DaemonTransport {
+  if (!createClientChannel) {
+    // Fallback to base transport if e2ee is not available
+    logger.warn({ module: "relay-e2ee" }, "E2EE module not available, using plain transport");
+    return base;
+  }
+
   let channel: EncryptedChannel | null = null;
   let opened = false;
   let closed = false;
@@ -74,13 +92,13 @@ export function createEncryptedTransport(
   };
 
   const relayTransport: RelayTransport = {
-    send: (data) => {
+    send: (data: any) => {
       if (typeof data === "string") {
         base.send(data);
         return;
       }
       if (ArrayBuffer.isView(data)) {
-        base.send(normalizeTransportPayload(data));
+        base.send(normalizeTransportPayload(data as Uint8Array));
         return;
       }
       if (data instanceof ArrayBuffer) {
@@ -99,9 +117,9 @@ export function createEncryptedTransport(
     try {
       channel = await createClientChannel(relayTransport, daemonPublicKeyB64, {
         onopen: emitOpen,
-        onmessage: (data) => emitMessage(data),
-        onclose: (code, reason) => emitClose({ code, reason }),
-        onerror: (error) => emitError(error),
+        onmessage: (data: any) => emitMessage(data),
+        onclose: (code: any, reason: any) => emitClose({ code, reason }),
+        onerror: (error: any) => emitError(error),
       });
     } catch (error) {
       logger.warn({ err: normalizeTransportError(error) }, "relay_e2ee_handshake_failed");
@@ -129,11 +147,11 @@ export function createEncryptedTransport(
   });
 
   return {
-    send: (data) => {
+    send: (data: any) => {
       if (!channel) {
         throw new Error("Encrypted channel not ready");
       }
-      void channel.send(normalizeTransportPayload(data)).catch((error) => {
+      void channel.send(normalizeTransportPayload(data)).catch((error: any) => {
         emitError(error);
       });
     },

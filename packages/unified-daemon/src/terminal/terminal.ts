@@ -6,7 +6,7 @@ import { tmpdir, userInfo } from "node:os";
 import { basename, dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
-import { createExternalProcessEnv } from "../server/paseo-env.js";
+import { createExternalProcessEnv } from "../server/synapse-env.js";
 import { writePrivateFileAtomicSync } from "../server/private-files.js";
 import type { TerminalCell, TerminalState } from "@synapse/protocol/messages";
 import { TerminalInputModeTracker } from "@synapse/protocol/terminal-input-mode";
@@ -225,8 +225,8 @@ function prepareZshShellIntegrationRuntimeDir(sourceDir = resolveZshShellIntegra
     readFileSync(join(readableSourceDir, ".zshenv")),
   );
   writePrivateFileAtomicSync(
-    join(runtimeDir, "paseo-integration.zsh"),
-    readFileSync(join(readableSourceDir, "paseo-integration.zsh")),
+    join(runtimeDir, "synapse-integration.zsh"),
+    readFileSync(join(readableSourceDir, "synapse-integration.zsh")),
   );
   return runtimeDir;
 }
@@ -246,7 +246,7 @@ export function buildTerminalEnvironment(
   const originalZdotdir = baseEnv.ZDOTDIR ?? "";
   return {
     ...baseEnv,
-    PASEO_ZSH_ZDOTDIR: originalZdotdir,
+    SYNAPSE_ZSH_ZDOTDIR: originalZdotdir,
     ZDOTDIR: prepareZshShellIntegrationRuntimeDir(input.zshShellIntegrationDir),
   };
 }

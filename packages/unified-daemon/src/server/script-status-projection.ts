@@ -4,9 +4,9 @@ import type {
   SessionOutboundMessage,
   WorkspaceScriptPayload,
 } from "@synapse/protocol/messages";
-import type { PaseoConfig } from "@synapse/protocol/paseo-config-schema";
+import type { SynapseConfig } from "@synapse/protocol/synapse-config-schema";
 import { buildScriptHostname } from "../utils/script-hostname.js";
-import { getScriptConfigs, isServiceScript, readPaseoConfig } from "../utils/worktree.js";
+import { getScriptConfigs, isServiceScript, readSynapseConfig } from "../utils/worktree.js";
 import { deriveProjectSlug } from "./workspace-git-metadata.js";
 import type { ScriptHealthEntry, ScriptHealthState } from "./script-health-monitor.js";
 import type { ScriptRouteStore } from "./script-proxy.js";
@@ -19,7 +19,7 @@ interface SessionEmitter {
 interface BuildWorkspaceScriptPayloadsOptions {
   workspaceId: string;
   workspaceDirectory: string;
-  paseoConfig: PaseoConfig | null;
+  paseoConfig: SynapseConfig | null;
   routeStore: ScriptRouteStore;
   runtimeStore: WorkspaceScriptRuntimeStore;
   daemonPort: number | null;
@@ -30,11 +30,11 @@ interface BuildWorkspaceScriptPayloadsOptions {
   resolveHealth?: (hostname: string) => ScriptHealthState | null;
 }
 
-export function readPaseoConfigForProjection(
+export function readSynapseConfigForProjection(
   workspaceDirectory: string,
   logger: Logger,
-): PaseoConfig | null {
-  const result = readPaseoConfig(workspaceDirectory);
+): SynapseConfig | null {
+  const result = readSynapseConfig(workspaceDirectory);
   if (result.ok) {
     return result.config;
   }
@@ -235,7 +235,7 @@ export function createScriptStatusEmitter({
       const projected = buildWorkspaceScriptPayloads({
         workspaceId,
         workspaceDirectory,
-        paseoConfig: readPaseoConfigForProjection(workspaceDirectory, logger),
+        paseoConfig: readSynapseConfigForProjection(workspaceDirectory, logger),
         routeStore,
         runtimeStore,
         daemonPort: resolvedDaemonPort,

@@ -2,35 +2,35 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
-import { useAuthStore } from "@multica/core/auth";
-import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { resolvePublicFileUrl } from "@multica/core/workspace/avatar-url";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
-import { isImeComposing } from "@multica/core/utils";
+import { api } from "@synapse/core/api";
+import { useAuthStore } from "@synapse/core/auth";
+import { useCurrentWorkspace, useWorkspacePaths } from "@synapse/core/paths";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { resolvePublicFileUrl } from "@synapse/core/workspace/avatar-url";
+import { useFileUpload } from "@synapse/core/hooks/use-file-upload";
+import { isImeComposing } from "@synapse/core/utils";
 import { useTimeAgo } from "../../i18n";
-import { agentListOptions, memberListOptions, squadMemberStatusOptions, workspaceKeys } from "@multica/core/workspace/queries";
-import { runtimeListOptions } from "@multica/core/runtimes";
+import { agentListOptions, memberListOptions, squadMemberStatusOptions, workspaceKeys } from "@synapse/core/workspace/queries";
+import { runtimeListOptions } from "@synapse/core/runtimes";
 import { CreateAgentDialog } from "../../agents/components/create-agent-dialog";
 import { useNavigation } from "../../navigation";
 import { AppLink } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
 import { Users, Plus, Trash2, ArrowLeft, ArrowUpRight, Crown, Camera, Loader2, Pencil, FileText, Save } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Label } from "@synapse/ui/components/ui/label";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@multica/ui/components/ui/popover";
+} from "@synapse/ui/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+} from "@synapse/ui/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +38,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@multica/ui/components/ui/dialog";
+} from "@synapse/ui/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,8 +48,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@multica/ui/components/ui/alert-dialog";
-import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/actor-avatar";
+} from "@synapse/ui/components/ui/alert-dialog";
+import { ActorAvatar as ActorAvatarBase } from "@synapse/ui/components/common/actor-avatar";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { ContentEditor } from "../../editor/content-editor";
 import {
@@ -59,7 +59,7 @@ import {
 } from "../../issues/components/pickers/property-picker";
 import { ChevronDown, UserPlus } from "lucide-react";
 import { toast } from "sonner";
-import type { Squad, SquadMember, SquadMemberStatus, Agent, CreateAgentRequest, MemberWithUser } from "@multica/core/types";
+import type { Squad, SquadMember, SquadMemberStatus, Agent, CreateAgentRequest, MemberWithUser } from "@synapse/core/types";
 import { useT } from "../../i18n";
 import { matchesPinyin } from "../../editor/extensions/pinyin-match";
 

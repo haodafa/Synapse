@@ -88,7 +88,7 @@ export const AgentLogSchema = z.object({
 
 export type AgentLog = z.infer<typeof AgentLogSchema>;
 
-// ============ ISSUE TYPES (from Multica) ============
+// ============ ISSUE TYPES (from Synapse) ============
 
 export const MemberSchema = z.object({
   id: z.string(),
@@ -166,7 +166,7 @@ export const CommentSchema = z.object({
 
 export type Comment = z.infer<typeof CommentSchema>;
 
-// ============ RUN TYPES (from Multica) ============
+// ============ RUN TYPES (from Synapse) ============
 
 export const RunStatusSchema = z.enum([
   "pending",
@@ -193,7 +193,7 @@ export const RunSchema = z.object({
 
 export type Run = z.infer<typeof RunSchema>;
 
-// ============ AUTOPILOT TYPES (from Multica) ============
+// ============ AUTOPILOT TYPES (from Synapse) ============
 
 export const TriggerTypeSchema = z.enum(["schedule", "webhook", "event"]);
 
@@ -236,7 +236,7 @@ export const AutopilotSchema = z.object({
 
 export type Autopilot = z.infer<typeof AutopilotSchema>;
 
-// ============ SKILL TYPES (from Multica) ============
+// ============ SKILL TYPES (from Synapse) ============
 
 export const SkillSchema = z.object({
   id: z.string(),
@@ -260,7 +260,7 @@ export const SkillSchema = z.object({
 
 export type Skill = z.infer<typeof SkillSchema>;
 
-// ============ SQUAD TYPES (from Multica) ============
+// ============ SQUAD TYPES (from Synapse) ============
 
 export const SquadRoleSchema = z.enum(["lead", "member", "advisor"]);
 
@@ -293,7 +293,7 @@ export type Squad = z.infer<typeof SquadSchema>;
 export const CommandSchema = z.object({
   id: z.string(),
   type: z.enum([
-    // Paseo commands
+    // Synapse commands
     "paseo.agent.start",
     "paseo.agent.stop",
     "paseo.agent.send",
@@ -302,15 +302,15 @@ export const CommandSchema = z.object({
     "paseo.agent.import",
     "paseo.worktree.create",
     "paseo.worktree.delete",
-    // Multica commands
-    "multica.issue.create",
-    "multica.issue.update",
-    "multica.issue.assign",
-    "multica.issue.status",
-    "multica.issue.comment",
-    "multica.run.start",
-    "multica.autopilot.trigger",
-    "multica.autopilot.create",
+    // Synapse commands
+    "synapse.issue.create",
+    "synapse.issue.update",
+    "synapse.issue.assign",
+    "synapse.issue.status",
+    "synapse.issue.comment",
+    "synapse.run.start",
+    "synapse.autopilot.trigger",
+    "synapse.autopilot.create",
     // Synapse unified commands
     "synapse.cross.handoff",
     "synapse.skills.invoke",

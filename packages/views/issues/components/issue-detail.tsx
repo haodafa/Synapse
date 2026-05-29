@@ -23,28 +23,28 @@ import {
   Users,
 } from "lucide-react";
 import { PageHeader } from "../../layout/page-header";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Button } from "@multica/ui/components/ui/button";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
-import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
-import { useIsMobile } from "@multica/ui/hooks/use-mobile";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
+import { Button } from "@synapse/ui/components/ui/button";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@synapse/ui/components/ui/resizable";
+import { Sheet, SheetContent } from "@synapse/ui/components/ui/sheet";
+import { useIsMobile } from "@synapse/ui/hooks/use-mobile";
 import { ContentEditor, type ContentEditorRef, TitleEditor, useFileDropZone, FileDropOverlay } from "../../editor";
-import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { FileUploadButton } from "@synapse/ui/components/common/file-upload-button";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
-import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@multica/ui/components/ui/dialog";
-import { Checkbox } from "@multica/ui/components/ui/checkbox";
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@multica/ui/components/ui/command";
-import { AvatarGroup, AvatarGroupCount } from "@multica/ui/components/ui/avatar";
+} from "@synapse/ui/components/ui/tooltip";
+import { Popover, PopoverTrigger, PopoverContent } from "@synapse/ui/components/ui/popover";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@synapse/ui/components/ui/dialog";
+import { Checkbox } from "@synapse/ui/components/ui/checkbox";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@synapse/ui/components/ui/command";
+import { AvatarGroup, AvatarGroupCount } from "@synapse/ui/components/ui/avatar";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { PropRow } from "../../common/prop-row";
-import type { Attachment, Issue, IssueStatus, IssuePriority, TimelineEntry, UpdateIssueRequest } from "@multica/core/types";
-import { STATUS_CONFIG, PRIORITY_CONFIG } from "@multica/core/issues/config";
-import { useUpdateIssue } from "@multica/core/issues/mutations";
+import type { Attachment, Issue, IssueStatus, IssuePriority, TimelineEntry, UpdateIssueRequest } from "@synapse/core/types";
+import { STATUS_CONFIG, PRIORITY_CONFIG } from "@synapse/core/issues/config";
+import { useUpdateIssue } from "@synapse/core/issues/mutations";
 import { toast } from "sonner";
 import { StatusIcon, PriorityIcon, StatusPicker, PriorityPicker, StartDatePicker, DueDatePicker, AssigneePicker, LabelPicker } from ".";
 import { IssueActionsDropdown, useIssueActions } from "../actions";
@@ -57,28 +57,28 @@ import { collectThreadReplies } from "./thread-utils";
 import { AgentLiveCard } from "./agent-live-card";
 import { ExecutionLogSection } from "./execution-log-section";
 import { PullRequestList } from "./pull-request-list";
-import { useGitHubSettings } from "@multica/core/github";
+import { useGitHubSettings } from "@synapse/core/github";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { issueListOptions, issueDetailOptions, childIssuesOptions, issueUsageOptions, issueAttachmentsOptions } from "@multica/core/issues/queries";
-import { projectDetailOptions } from "@multica/core/projects/queries";
+import { useAuthStore } from "@synapse/core/auth";
+import { useCurrentWorkspace, useWorkspacePaths } from "@synapse/core/paths";
+import { useActorName } from "@synapse/core/workspace/hooks";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { issueListOptions, issueDetailOptions, childIssuesOptions, issueUsageOptions, issueAttachmentsOptions } from "@synapse/core/issues/queries";
+import { projectDetailOptions } from "@synapse/core/projects/queries";
 import { ProjectIcon } from "../../projects/components/project-icon";
-import { issueLabelsOptions } from "@multica/core/labels";
-import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
-import { useRecentIssuesStore } from "@multica/core/issues/stores";
-import { useIssueSelectionStore } from "@multica/core/issues/stores/selection-store";
+import { issueLabelsOptions } from "@synapse/core/labels";
+import { memberListOptions, agentListOptions } from "@synapse/core/workspace/queries";
+import { useRecentIssuesStore } from "@synapse/core/issues/stores";
+import { useIssueSelectionStore } from "@synapse/core/issues/stores/selection-store";
 import { BatchActionToolbar } from "./batch-action-toolbar";
 import { useIssueTimeline } from "../hooks/use-issue-timeline";
 import { useIssueReactions } from "../hooks/use-issue-reactions";
 import { useIssueSubscribers } from "../hooks/use-issue-subscribers";
-import { ReactionBar } from "@multica/ui/components/common/reaction-bar";
-import { useFileUpload } from "@multica/core/hooks/use-file-upload";
-import { api } from "@multica/core/api";
+import { ReactionBar } from "@synapse/ui/components/common/reaction-bar";
+import { useFileUpload } from "@synapse/core/hooks/use-file-upload";
+import { api } from "@synapse/core/api";
 import { useTimeAgo } from "../../i18n";
-import { cn } from "@multica/ui/lib/utils";
+import { cn } from "@synapse/ui/lib/utils";
 
 import { ProgressRing } from "./progress-ring";
 import { matchesPinyin } from "../../editor/extensions/pinyin-match";
@@ -655,7 +655,7 @@ interface IssueDetailProps {
 // IssueDetail
 // ---------------------------------------------------------------------------
 
-export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = true, layoutId = "multica_issue_detail_layout", highlightCommentId }: IssueDetailProps) {
+export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = true, layoutId = "synapse_issue_detail_layout", highlightCommentId }: IssueDetailProps) {
   const { t } = useT("issues");
   const timeAgo = useTimeAgo();
   const id = issueId;
@@ -1107,7 +1107,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // Real fix is in-app search (separate PR); this is the toast stopgap.
   useEffect(() => {
     if (items.length <= 30) return;
-    const flagKey = `multica_cmdF_warned:${id}`;
+    const flagKey = `synapse_cmdF_warned:${id}`;
     const handler = (e: KeyboardEvent) => {
       if (e.key !== "f" || !(e.metaKey || e.ctrlKey)) return;
       if (sessionStorage.getItem(flagKey)) return;

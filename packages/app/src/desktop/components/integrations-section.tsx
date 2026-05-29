@@ -15,11 +15,11 @@ import {
 } from "@/desktop/daemon/desktop-daemon";
 import { useCliInstall, useSkillsStatus } from "@/desktop/hooks/use-install-status";
 
-const CLI_DOCS_URL = "https://paseo.sh/docs/cli";
-const SKILLS_DOCS_URL = "https://paseo.sh/docs/skills";
+const CLI_DOCS_URL = "https://synapse.sh/docs/cli";
+const SKILLS_DOCS_URL = "https://synapse.sh/docs/skills";
 const ROW_WITH_BORDER_STYLE = [settingsStyles.row, settingsStyles.rowBorder];
 const UNINSTALL_MESSAGE =
-  "Removes all Paseo orchestration skills from ~/.agents, ~/.claude, ~/.codex.";
+  "Removes all Synapse orchestration skills from ~/.agents, ~/.claude, ~/.codex.";
 
 const OP_KIND_ORDER: Record<SkillOp["kind"], number> = { add: 0, update: 1, delete: 2 };
 const OP_KIND_LABEL: Record<SkillOp["kind"], string> = {
@@ -77,7 +77,7 @@ export function IntegrationsSection() {
     if (isSkillsWorking) return;
     const ops = skillsStatus?.ops ?? [];
     const confirmed = await confirmDialog({
-      title: "Update Paseo skills?",
+      title: "Update Synapse skills?",
       message: ops.length > 0 ? formatUpdateMessage(ops) : "Sync bundled skills to your machine.",
       confirmLabel: "Update",
     });
@@ -88,7 +88,7 @@ export function IntegrationsSection() {
   const handleUninstallSkills = useCallback(async () => {
     if (isSkillsWorking) return;
     const confirmed = await confirmDialog({
-      title: "Uninstall Paseo skills?",
+      title: "Uninstall Synapse skills?",
       message: UNINSTALL_MESSAGE,
       confirmLabel: "Uninstall",
       destructive: true,

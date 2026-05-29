@@ -5,23 +5,23 @@ import {
   BranchAlreadyCheckedOutError,
   createWorktree as createWorktreePrimitive,
   deriveWorktreeProjectHash,
-  deletePaseoWorktree,
+  deleteSynapseWorktree,
   getScriptConfigs,
   getWorktreeSetupCommands,
   getWorktreeTerminalSpecs,
   getWorktreeTeardownCommands,
   isServiceScript,
   isPaseoOwnedWorktreeCwd,
-  listPaseoWorktrees,
-  readPaseoConfig,
+  listSynapseWorktrees,
+  readSynapseConfig,
   resolveWorktreeRuntimeEnv,
   type WorktreeSetupCommandProgressEvent,
   runWorktreeSetupCommands,
   type CreateWorktreeOptions,
   type WorktreeConfig,
 } from "./worktree";
-import type { PaseoConfig } from "@synapse/protocol/paseo-config-schema";
-import { getPaseoWorktreeMetadataPath } from "./worktree-metadata.js";
+import type { SynapseConfig } from "@synapse/protocol/synapse-config-schema";
+import { getSynapseWorktreeMetadataPath } from "./worktree-metadata.js";
 import { execFileSync } from "child_process";
 import { isPlatform } from "../test-utils/platform.js";
 import {
@@ -37,8 +37,8 @@ import { dirname, join } from "path";
 import { tmpdir } from "os";
 import net from "node:net";
 
-function loadConfigForTest(repoRoot: string): PaseoConfig | null {
-  const result = readPaseoConfig(repoRoot);
+function loadConfigForTest(repoRoot: string): SynapseConfig | null {
+  const result = readSynapseConfig(repoRoot);
   return result.ok ? result.config : null;
 }
 
@@ -81,7 +81,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       // Use realpathSync to resolve symlinks (e.g., /var -> /private/var on macOS)
       tempDir = realpathSync(mkdtempSync(join(tmpdir(), "worktree-test-")));
       repoDir = join(tempDir, "test-repo");
-      paseoHome = join(tempDir, "paseo-home");
+      paseoHome = join(tempDir, "synapse-home");
 
       // Create a git repo with an initial commit
       mkdirSync(repoDir, { recursive: true });
@@ -112,7 +112,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       expect(result.worktreePath).toBe(join(paseoHome, "worktrees", projectHash, "hello-world"));
       expect(existsSync(result.worktreePath)).toBe(true);
       expect(existsSync(join(result.worktreePath, "file.txt"))).toBe(true);
-      const metadataPath = getPaseoWorktreeMetadataPath(result.worktreePath);
+      const metadataPath = getSynapseWorktreeMetadataPath(result.worktreePath);
       expect(existsSync(metadataPath)).toBe(true);
       const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
       expect(metadata).toMatchObject({ version: 1, baseRefName: "main" });
@@ -123,7 +123,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       const varTempDir = mkdtempSync(join(tmpdir(), "worktree-realpath-test-"));
       const privateTempDir = realpathSync(varTempDir);
       const varRepoDir = join(varTempDir, "test-repo");
-      const varPaseoHome = join(varTempDir, "paseo-home");
+      const varSynapseHome = join(varTempDir, "synapse-home");
       mkdirSync(varRepoDir, { recursive: true });
       execFileSync("git", ["init", "-b", "main"], { cwd: varRepoDir });
       execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: varRepoDir });
@@ -139,13 +139,13 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         cwd: varRepoDir,
         baseBranch: "main",
         worktreeSlug: "realpath-test",
-        paseoHome: varPaseoHome,
+        paseoHome: varSynapseHome,
       });
 
       const projectHash = await deriveWorktreeProjectHash(varRepoDir);
       const privateWorktreePath = join(
         privateTempDir,
-        "paseo-home",
+        "synapse-home",
         "worktrees",
         projectHash,
         "realpath-test",
@@ -153,7 +153,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       expect(existsSync(privateWorktreePath)).toBe(true);
 
       const ownership = await isPaseoOwnedWorktreeCwd(privateWorktreePath, {
-        paseoHome: varPaseoHome,
+        paseoHome: varSynapseHome,
       });
       expect(ownership.allowed).toBe(true);
 
@@ -207,7 +207,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         cwd: result.worktreePath,
       });
 
-      const metadataPath = getPaseoWorktreeMetadataPath(result.worktreePath);
+      const metadataPath = getSynapseWorktreeMetadataPath(result.worktreePath);
       const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
       expect(metadata).toMatchObject({ version: 1, baseRefName: "main" });
     });
@@ -231,7 +231,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         .trim();
       expect(currentBranch).toBe("dev");
 
-      const metadataPath = getPaseoWorktreeMetadataPath(result.worktreePath);
+      const metadataPath = getSynapseWorktreeMetadataPath(result.worktreePath);
       const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
       expect(metadata).toMatchObject({ version: 1, baseRefName: "dev" });
     });
@@ -301,7 +301,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         .trim();
       expect(currentBranch).toBe("user/feature");
 
-      const metadataPath = getPaseoWorktreeMetadataPath(result.worktreePath);
+      const metadataPath = getSynapseWorktreeMetadataPath(result.worktreePath);
       const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
       expect(metadata).toMatchObject({ baseRefName: "main" });
     });
@@ -436,11 +436,11 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       const paseoConfig = {
         worktree: {
           setup: [
-            'echo "source=$PASEO_SOURCE_CHECKOUT_PATH" > setup.log',
-            'echo "root_alias=$PASEO_ROOT_PATH" >> setup.log',
-            'echo "worktree=$PASEO_WORKTREE_PATH" >> setup.log',
-            'echo "branch=$PASEO_BRANCH_NAME" >> setup.log',
-            'echo "port=$PASEO_WORKTREE_PORT" >> setup.log',
+            'echo "source=$SYNAPSE_SOURCE_CHECKOUT_PATH" > setup.log',
+            'echo "root_alias=$SYNAPSE_ROOT_PATH" >> setup.log',
+            'echo "worktree=$SYNAPSE_WORKTREE_PATH" >> setup.log',
+            'echo "branch=$SYNAPSE_BRANCH_NAME" >> setup.log',
+            'echo "port=$SYNAPSE_WORKTREE_PORT" >> setup.log',
           ],
         },
       };
@@ -528,10 +528,10 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
               'echo "second" >> setup-array.log',
             ],
             teardown: [
-              'echo "first" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown-array.log"',
+              'echo "first" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-array.log"',
               null,
               "",
-              'echo "second" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown-array.log"',
+              'echo "second" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-array.log"',
             ],
           },
         }),
@@ -542,8 +542,8 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         'echo "second" >> setup-array.log',
       ]);
       expect(getWorktreeTeardownCommands(repoDir)).toEqual([
-        'echo "first" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown-array.log"',
-        'echo "second" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown-array.log"',
+        'echo "first" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-array.log"',
+        'echo "second" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-array.log"',
       ]);
     });
 
@@ -619,7 +619,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         branchName: result.branchName,
       });
 
-      expect(second.PASEO_WORKTREE_PORT).toBe(first.PASEO_WORKTREE_PORT);
+      expect(second.SYNAPSE_WORKTREE_PORT).toBe(first.SYNAPSE_WORKTREE_PORT);
     });
 
     it("fails runtime env resolution when persisted port is in use", async () => {
@@ -636,7 +636,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         worktreePath: result.worktreePath,
         branchName: result.branchName,
       });
-      const port = Number(env.PASEO_WORKTREE_PORT);
+      const port = Number(env.SYNAPSE_WORKTREE_PORT);
 
       const server = net.createServer();
       await new Promise<void>((resolve, reject) => {
@@ -884,7 +884,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
     beforeEach(() => {
       tempDir = realpathSync(mkdtempSync(join(tmpdir(), "worktree-manager-test-")));
       repoDir = join(tempDir, "test-repo");
-      paseoHome = join(tempDir, "paseo-home");
+      paseoHome = join(tempDir, "synapse-home");
 
       mkdirSync(repoDir, { recursive: true });
       execFileSync("git", ["init", "-b", "main"], { cwd: repoDir });
@@ -936,8 +936,8 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       expect(fromRepoA.worktreePath.endsWith("alpha-1")).toBe(false);
       expect(fromRepoB.worktreePath.endsWith("alpha-1")).toBe(false);
 
-      const repoAWorktrees = await listPaseoWorktrees({ cwd: repoA, paseoHome });
-      const repoBWorktrees = await listPaseoWorktrees({ cwd: repoB, paseoHome });
+      const repoAWorktrees = await listSynapseWorktrees({ cwd: repoA, paseoHome });
+      const repoBWorktrees = await listSynapseWorktrees({ cwd: repoB, paseoHome });
 
       expect(repoAWorktrees.map((entry) => entry.path)).toEqual([fromRepoA.worktreePath]);
       expect(repoBWorktrees.map((entry) => entry.path)).toEqual([fromRepoB.worktreePath]);
@@ -959,14 +959,14 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         paseoHome,
       });
 
-      const worktrees = await listPaseoWorktrees({ cwd: repoDir, paseoHome });
+      const worktrees = await listSynapseWorktrees({ cwd: repoDir, paseoHome });
       const paths = worktrees.map((worktree) => worktree.path).sort();
       expect(paths).toEqual([first.worktreePath, second.worktreePath].sort());
 
-      await deletePaseoWorktree({ cwd: repoDir, worktreePath: first.worktreePath, paseoHome });
+      await deleteSynapseWorktree({ cwd: repoDir, worktreePath: first.worktreePath, paseoHome });
       expect(existsSync(first.worktreePath)).toBe(false);
 
-      const remaining = await listPaseoWorktrees({ cwd: repoDir, paseoHome });
+      const remaining = await listSynapseWorktrees({ cwd: repoDir, paseoHome });
       expect(remaining.map((worktree) => worktree.path)).toEqual([second.worktreePath]);
     });
 
@@ -982,10 +982,10 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       const nestedDir = join(created.worktreePath, "nested", "dir");
       mkdirSync(nestedDir, { recursive: true });
 
-      await deletePaseoWorktree({ cwd: repoDir, worktreePath: nestedDir, paseoHome });
+      await deleteSynapseWorktree({ cwd: repoDir, worktreePath: nestedDir, paseoHome });
       expect(existsSync(created.worktreePath)).toBe(false);
 
-      const remaining = await listPaseoWorktrees({ cwd: repoDir, paseoHome });
+      const remaining = await listSynapseWorktrees({ cwd: repoDir, paseoHome });
       expect(remaining.some((worktree) => worktree.path === created.worktreePath)).toBe(false);
     });
 
@@ -993,11 +993,11 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       const paseoConfig = {
         worktree: {
           teardown: [
-            'echo "source=$PASEO_SOURCE_CHECKOUT_PATH" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
-            'echo "root_alias=$PASEO_ROOT_PATH" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
-            'echo "worktree=$PASEO_WORKTREE_PATH" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
-            'echo "branch=$PASEO_BRANCH_NAME" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
-            'echo "port=$PASEO_WORKTREE_PORT" >> "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'echo "source=$SYNAPSE_SOURCE_CHECKOUT_PATH" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'echo "root_alias=$SYNAPSE_ROOT_PATH" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'echo "worktree=$SYNAPSE_WORKTREE_PATH" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'echo "branch=$SYNAPSE_BRANCH_NAME" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'echo "port=$SYNAPSE_WORKTREE_PORT" >> "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
           ],
         },
       };
@@ -1019,7 +1019,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         branchName: created.branchName,
       });
 
-      await deletePaseoWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
+      await deleteSynapseWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
       expect(existsSync(created.worktreePath)).toBe(false);
 
       const teardownLog = readFileSync(join(repoDir, "teardown.log"), "utf8");
@@ -1027,14 +1027,14 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       expect(teardownLog).toContain(`root_alias=${repoDir}`);
       expect(teardownLog).toContain(`worktree=${created.worktreePath}`);
       expect(teardownLog).toContain("branch=teardown-branch");
-      expect(teardownLog).toContain(`port=${runtimeEnv.PASEO_WORKTREE_PORT}`);
+      expect(teardownLog).toContain(`port=${runtimeEnv.SYNAPSE_WORKTREE_PORT}`);
     });
 
     it("runs string teardown scripts from paseo.json as a single shell command", async () => {
       const paseoConfig = {
         worktree: {
           teardown:
-            'cleanup_message="teardown string"\necho "$cleanup_message" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
+            'cleanup_message="teardown string"\necho "$cleanup_message" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
         },
       };
       writeFileSync(join(repoDir, "paseo.json"), JSON.stringify(paseoConfig));
@@ -1051,19 +1051,19 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         paseoHome,
       });
 
-      await deletePaseoWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
+      await deleteSynapseWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
 
       expect(getWorktreeTeardownCommands(repoDir)).toEqual([
-        'cleanup_message="teardown string"\necho "$cleanup_message" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown.log"',
+        'cleanup_message="teardown string"\necho "$cleanup_message" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown.log"',
       ]);
       expect(readFileSync(join(repoDir, "teardown.log"), "utf8").trim()).toBe("teardown string");
     });
 
-    it("omits PASEO_WORKTREE_PORT from teardown env when runtime metadata is missing", async () => {
+    it("omits SYNAPSE_WORKTREE_PORT from teardown env when runtime metadata is missing", async () => {
       const paseoConfig = {
         worktree: {
           teardown: [
-            'echo "port=${PASEO_WORKTREE_PORT-unset}" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown-port.log"',
+            'echo "port=${SYNAPSE_WORKTREE_PORT-unset}" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-port.log"',
           ],
         },
       };
@@ -1083,7 +1083,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
         paseoHome,
       });
 
-      await deletePaseoWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
+      await deleteSynapseWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome });
 
       expect(readFileSync(join(repoDir, "teardown-port.log"), "utf8").trim()).toBe("port=unset");
       expect(existsSync(created.worktreePath)).toBe(false);
@@ -1093,7 +1093,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       const paseoConfig = {
         worktree: {
           teardown: [
-            'echo "started" > "$PASEO_SOURCE_CHECKOUT_PATH/teardown-start.log"',
+            'echo "started" > "$SYNAPSE_SOURCE_CHECKOUT_PATH/teardown-start.log"',
             "echo boom 1>&2; exit 9",
           ],
         },
@@ -1115,7 +1115,7 @@ describe.skipIf(isPlatform("win32"))("worktree POSIX-only", () => {
       });
 
       await expect(
-        deletePaseoWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome }),
+        deleteSynapseWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome }),
       ).rejects.toThrow("Worktree teardown command failed");
 
       expect(existsSync(created.worktreePath)).toBe(true);

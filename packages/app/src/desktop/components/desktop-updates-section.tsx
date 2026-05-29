@@ -233,7 +233,7 @@ function DaemonInfoCard(props: DaemonInfoCardProps) {
       <View style={ROW_WITH_BORDER_STYLE}>
         <View style={settingsStyles.rowContent}>
           <Text style={settingsStyles.rowTitle}>Manage built-in daemon</Text>
-          <Text style={settingsStyles.rowHint}>Let Paseo start and stop the built-in daemon</Text>
+          <Text style={settingsStyles.rowHint}>Let Synapse start and stop the built-in daemon</Text>
         </View>
         <Switch
           value={!isDaemonManagementPaused}
@@ -245,7 +245,7 @@ function DaemonInfoCard(props: DaemonInfoCardProps) {
       <View style={ROW_WITH_BORDER_STYLE}>
         <View style={settingsStyles.rowContent}>
           <Text style={settingsStyles.rowTitle}>Keep daemon running after quit</Text>
-          <Text style={settingsStyles.rowHint}>Daemon keeps running when you quit Paseo</Text>
+          <Text style={settingsStyles.rowHint}>Daemon keeps running when you quit Synapse</Text>
         </View>
         <Switch
           value={keepRunningAfterQuit}
@@ -282,7 +282,7 @@ function DaemonInfoCard(props: DaemonInfoCardProps) {
         <View style={settingsStyles.rowContent}>
           <Text style={settingsStyles.rowTitle}>Full status</Text>
           <Text style={settingsStyles.rowHint}>
-            Runs `paseo daemon status` and shows the output
+            Runs `synapse daemon status` and shows the output
           </Text>
         </View>
         <Button
@@ -452,7 +452,7 @@ export function LocalDaemonSection() {
   );
 }
 
-const ADVANCED_DAEMON_SETTINGS_URL = "https://paseo.sh/docs/configuration";
+const ADVANCED_DAEMON_SETTINGS_URL = "https://synapse.sh/docs/configuration";
 
 const styles = StyleSheet.create((theme) => ({
   actionGroup: {

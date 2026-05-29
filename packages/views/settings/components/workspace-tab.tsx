@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { Save, LogOut } from "lucide-react";
-import { Input } from "@multica/ui/components/ui/input";
-import { Textarea } from "@multica/ui/components/ui/textarea";
-import { Label } from "@multica/ui/components/ui/label";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Textarea } from "@synapse/ui/components/ui/textarea";
+import { Label } from "@synapse/ui/components/ui/label";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Card, CardContent } from "@synapse/ui/components/ui/card";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -16,26 +16,26 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction,
-} from "@multica/ui/components/ui/alert-dialog";
+} from "@synapse/ui/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { useLeaveWorkspace, useDeleteWorkspace } from "@multica/core/workspace/mutations";
-import { useWorkspaceId } from "@multica/core/hooks";
+import { useAuthStore } from "@synapse/core/auth";
+import { useLeaveWorkspace, useDeleteWorkspace } from "@synapse/core/workspace/mutations";
+import { useWorkspaceId } from "@synapse/core/hooks";
 import {
   memberListOptions,
   workspaceKeys,
   workspaceListOptions,
-} from "@multica/core/workspace/queries";
-import { issueKeys } from "@multica/core/issues/queries";
-import { api } from "@multica/core/api";
+} from "@synapse/core/workspace/queries";
+import { issueKeys } from "@synapse/core/issues/queries";
+import { api } from "@synapse/core/api";
 import {
   resolvePostAuthDestination,
   useCurrentWorkspace,
   useHasOnboarded,
-} from "@multica/core/paths";
-import { setCurrentWorkspace } from "@multica/core/platform";
-import type { Workspace } from "@multica/core/types";
+} from "@synapse/core/paths";
+import { setCurrentWorkspace } from "@synapse/core/platform";
+import type { Workspace } from "@synapse/core/types";
 import { useNavigation } from "../../navigation";
 import { DeleteWorkspaceDialog } from "./delete-workspace-dialog";
 import { useT } from "../../i18n";

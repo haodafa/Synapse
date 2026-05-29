@@ -2,12 +2,12 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { isAbsolute, join, resolve } from "path";
 import { z } from "zod";
 
-const PaseoWorktreeMetadataV1Schema = z.object({
+const SynapseWorktreeMetadataV1Schema = z.object({
   version: z.literal(1),
   baseRefName: z.string().min(1),
 });
 
-const PaseoWorktreeMetadataV2Schema = z.object({
+const SynapseWorktreeMetadataV2Schema = z.object({
   version: z.literal(2),
   baseRefName: z.string().min(1),
   firstAgentBranchAutoName: z
@@ -30,12 +30,12 @@ const PaseoWorktreeMetadataV2Schema = z.object({
     .optional(),
 });
 
-const PaseoWorktreeMetadataSchema = z.union([
-  PaseoWorktreeMetadataV1Schema,
-  PaseoWorktreeMetadataV2Schema,
+const SynapseWorktreeMetadataSchema = z.union([
+  SynapseWorktreeMetadataV1Schema,
+  SynapseWorktreeMetadataV2Schema,
 ]);
 
-export type PaseoWorktreeMetadata = z.infer<typeof PaseoWorktreeMetadataSchema>;
+export type SynapseWorktreeMetadata = z.infer<typeof SynapseWorktreeMetadataSchema>;
 
 function getGitDirForWorktreeRoot(worktreeRoot: string): string {
   const gitPath = join(worktreeRoot, ".git");
@@ -59,7 +59,7 @@ function getGitDirForWorktreeRoot(worktreeRoot: string): string {
   return gitPath;
 }
 
-export function getPaseoWorktreeMetadataPath(worktreeRoot: string): string {
+export function getSynapseWorktreeMetadataPath(worktreeRoot: string): string {
   const gitDir = getGitDirForWorktreeRoot(worktreeRoot);
   return join(gitDir, "paseo", "worktree.json");
 }
@@ -75,7 +75,7 @@ export function normalizeBaseRefName(input: string): string {
   return trimmed;
 }
 
-export function writePaseoWorktreeMetadata(
+export function writeSynapseWorktreeMetadata(
   worktreeRoot: string,
   options: { baseRefName: string },
 ): void {
@@ -90,13 +90,13 @@ export function writePaseoWorktreeMetadata(
     throw new Error(`Invalid base branch: ${baseRefName}`);
   }
 
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
+  const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
   mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
-  const metadata: PaseoWorktreeMetadata = { version: 1, baseRefName };
+  const metadata: SynapseWorktreeMetadata = { version: 1, baseRefName };
   writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
 }
 
-export function writePaseoWorktreeRuntimeMetadata(
+export function writeSynapseWorktreeRuntimeMetadata(
   worktreeRoot: string,
   options: { worktreePort: number },
 ): void {
@@ -104,14 +104,14 @@ export function writePaseoWorktreeRuntimeMetadata(
     throw new Error(`Invalid worktree runtime port: ${options.worktreePort}`);
   }
 
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+  const current = readSynapseWorktreeMetadata(worktreeRoot);
   if (!current) {
     throw new Error("Cannot persist worktree runtime metadata: missing base metadata");
   }
 
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
+  const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
   mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
-  const next: PaseoWorktreeMetadata = {
+  const next: SynapseWorktreeMetadata = {
     version: 2,
     baseRefName: current.baseRefName,
     ...(current.version === 2 && current.firstAgentBranchAutoName
@@ -124,7 +124,7 @@ export function writePaseoWorktreeRuntimeMetadata(
   writeFileSync(metadataPath, `${JSON.stringify(next, null, 2)}\n`, "utf8");
 }
 
-export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
+export function writeSynapseWorktreeFirstAgentBranchAutoNameMetadata(
   worktreeRoot: string,
   options: { placeholderBranchName: string },
 ): void {
@@ -133,12 +133,12 @@ export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
     throw new Error("Placeholder branch name is required");
   }
 
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+  const current = readSynapseWorktreeMetadata(worktreeRoot);
   if (!current) {
     throw new Error("Cannot persist first-agent branch auto-name metadata: missing base metadata");
   }
 
-  writePaseoWorktreeMetadataFile(worktreeRoot, {
+  writeSynapseWorktreeMetadataFile(worktreeRoot, {
     version: 2,
     baseRefName: current.baseRefName,
     firstAgentBranchAutoName: {
@@ -149,16 +149,16 @@ export function writePaseoWorktreeFirstAgentBranchAutoNameMetadata(
   });
 }
 
-export function markPaseoWorktreeFirstAgentBranchAutoNameAttempted(
+export function markSynapseWorktreeFirstAgentBranchAutoNameAttempted(
   worktreeRoot: string,
   options: { attemptedAt?: string } = {},
-): PaseoWorktreeMetadata | null {
-  const current = readPaseoWorktreeMetadata(worktreeRoot);
+): SynapseWorktreeMetadata | null {
+  const current = readSynapseWorktreeMetadata(worktreeRoot);
   if (!current || current.version !== 2 || current.firstAgentBranchAutoName?.status !== "pending") {
     return current;
   }
 
-  const next: PaseoWorktreeMetadata = {
+  const next: SynapseWorktreeMetadata = {
     version: 2,
     baseRefName: current.baseRefName,
     firstAgentBranchAutoName: {
@@ -168,30 +168,30 @@ export function markPaseoWorktreeFirstAgentBranchAutoNameAttempted(
     },
     ...(current.runtime ? { runtime: current.runtime } : {}),
   };
-  writePaseoWorktreeMetadataFile(worktreeRoot, next);
+  writeSynapseWorktreeMetadataFile(worktreeRoot, next);
   return next;
 }
 
-export function readPaseoWorktreeMetadata(worktreeRoot: string): PaseoWorktreeMetadata | null {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
+export function readSynapseWorktreeMetadata(worktreeRoot: string): SynapseWorktreeMetadata | null {
+  const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
   if (!existsSync(metadataPath)) {
     return null;
   }
   const parsed = JSON.parse(readFileSync(metadataPath, "utf8"));
-  return PaseoWorktreeMetadataSchema.parse(parsed);
+  return SynapseWorktreeMetadataSchema.parse(parsed);
 }
 
-export function requirePaseoWorktreeBaseRefName(worktreeRoot: string): string {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
-  const metadata = readPaseoWorktreeMetadata(worktreeRoot);
+export function requireSynapseWorktreeBaseRefName(worktreeRoot: string): string {
+  const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
+  const metadata = readSynapseWorktreeMetadata(worktreeRoot);
   if (!metadata) {
     throw new Error(`Missing Paseo worktree base metadata: ${metadataPath}`);
   }
   return metadata.baseRefName;
 }
 
-export function readPaseoWorktreeRuntimePort(worktreeRoot: string): number | null {
-  const metadata = readPaseoWorktreeMetadata(worktreeRoot);
+export function readSynapseWorktreeRuntimePort(worktreeRoot: string): number | null {
+  const metadata = readSynapseWorktreeMetadata(worktreeRoot);
   if (!metadata) {
     return null;
   }
@@ -201,11 +201,11 @@ export function readPaseoWorktreeRuntimePort(worktreeRoot: string): number | nul
   return null;
 }
 
-function writePaseoWorktreeMetadataFile(
+function writeSynapseWorktreeMetadataFile(
   worktreeRoot: string,
-  metadata: PaseoWorktreeMetadata,
+  metadata: SynapseWorktreeMetadata,
 ): void {
-  const metadataPath = getPaseoWorktreeMetadataPath(worktreeRoot);
+  const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
   mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
   writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
 }

@@ -20,13 +20,13 @@ import {
   shouldShowPullRequestStats,
   type PullRequestStatusKind,
   type PullRequestProgressSegment,
-} from "@multica/core/github";
+} from "@synapse/core/github";
 import type {
   GitHubPullRequest,
   GitHubPullRequestChecksConclusion,
   GitHubPullRequestState,
-} from "@multica/core/types";
-import { cn } from "@multica/ui/lib/utils";
+} from "@synapse/core/types";
+import { cn } from "@synapse/ui/lib/utils";
 import { useT } from "../../i18n";
 
 type IssuesT = ReturnType<typeof useT<"issues">>["t"];

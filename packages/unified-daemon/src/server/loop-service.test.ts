@@ -230,7 +230,7 @@ describe("LoopService", () => {
 
   beforeEach(() => {
     tmpDir = realpathSync.native(mkdtempSync(path.join(os.tmpdir(), "loop-service-")));
-    paseoHome = path.join(tmpDir, "paseo-home");
+    paseoHome = path.join(tmpDir, "synapse-home");
     workspaceDir = path.join(tmpDir, "workspace");
     storage = new AgentStorage(path.join(tmpDir, "agents"), logger);
     mkdirSync(workspaceDir, { recursive: true });

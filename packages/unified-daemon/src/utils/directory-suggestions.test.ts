@@ -272,7 +272,7 @@ describe("searchWorkspaceEntries", () => {
     mkdirSync(path.join(workspaceDir, "packages", "app", "src"), { recursive: true });
     writeFileSync(path.join(workspaceDir, "src", "file.ts"), "");
     writeFileSync(path.join(workspaceDir, "packages", "app", "src", "file.ts"), "");
-    writeFileSync(path.join(workspaceDir, "src", "paseo-config-file.ts"), "");
+    writeFileSync(path.join(workspaceDir, "src", "synapse-config-file.ts"), "");
 
     const basenameResults = await searchWorkspaceEntries({
       cwd: workspaceDir,

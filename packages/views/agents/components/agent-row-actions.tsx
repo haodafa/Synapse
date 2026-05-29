@@ -11,11 +11,11 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { Agent } from "@multica/core/types";
-import type { AgentPresenceDetail } from "@multica/core/agents";
-import { api } from "@multica/core/api";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { workspaceKeys } from "@multica/core/workspace/queries";
+import type { Agent } from "@synapse/core/types";
+import type { AgentPresenceDetail } from "@synapse/core/agents";
+import { api } from "@synapse/core/api";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { workspaceKeys } from "@synapse/core/workspace/queries";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,15 +25,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@multica/ui/components/ui/alert-dialog";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@synapse/ui/components/ui/alert-dialog";
+import { Button } from "@synapse/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@synapse/ui/components/ui/dropdown-menu";
 import { useT } from "../../i18n";
 
 interface AgentRowActionsProps {

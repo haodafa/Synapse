@@ -2,15 +2,15 @@ import type { Logger } from "pino";
 
 import { PARENT_AGENT_ID_LABEL } from "@synapse/protocol/agent-labels";
 import type { TerminalManager } from "../../../terminal/terminal-manager.js";
-import type { CreatePaseoWorktreeInput } from "../../paseo-worktree-service.js";
+import type { CreateSynapseWorktreeInput } from "../../synapse-worktree-service.js";
 import { expandUserPath, resolvePathFromBase } from "../../path-utils.js";
 import { toWorktreeRequestError } from "../../worktree-errors.js";
 import type { WorkspaceGitService } from "../../workspace-git-service.js";
 import type {
   AgentWorktreeSetupContinuation,
-  CreatePaseoWorktreeSetupContinuationInput,
-  CreatePaseoWorktreeWorkflowFn,
-  CreatePaseoWorktreeWorkflowResult,
+  CreateSynapseWorktreeSetupContinuationInput,
+  CreateSynapseWorktreeWorkflowFn,
+  CreateSynapseWorktreeWorkflowResult,
 } from "../../worktree-session.js";
 import type { AgentAttachment, FirstAgentContext, GitSetupOptions } from "../../messages.js";
 import type { AgentManager, ManagedAgent } from "../agent-manager.js";
@@ -51,7 +51,7 @@ interface CreateAgentCommandDependencies {
   >;
   terminalManager?: TerminalManager | null;
   providerSnapshotManager: ProviderSnapshotManager;
-  createPaseoWorktree?: CreatePaseoWorktreeWorkflowFn;
+  createSynapseWorktree?: CreateSynapseWorktreeWorkflowFn;
 }
 
 export interface CreateAgentFromSessionInput {
@@ -408,7 +408,7 @@ async function resolveMcpCwd(params: {
       runSetup: false,
       paseoHome: dependencies.paseoHome,
     },
-    createPaseoWorktree: dependencies.createPaseoWorktree,
+    createSynapseWorktree: dependencies.createSynapseWorktree,
     resolveDefaultBranch: baseBranch ? async () => baseBranch : undefined,
     setupContinuation: {
       kind: "agent",
@@ -435,20 +435,20 @@ async function resolveMcpCwd(params: {
 }
 
 interface CreateMcpWorktreeOptions {
-  input: CreatePaseoWorktreeInput;
-  createPaseoWorktree: CreatePaseoWorktreeWorkflowFn | undefined;
+  input: CreateSynapseWorktreeInput;
+  createSynapseWorktree: CreateSynapseWorktreeWorkflowFn | undefined;
   resolveDefaultBranch?: (repoRoot: string) => Promise<string>;
-  setupContinuation?: CreatePaseoWorktreeSetupContinuationInput;
+  setupContinuation?: CreateSynapseWorktreeSetupContinuationInput;
 }
 
 async function createMcpWorktree(
   options: CreateMcpWorktreeOptions,
-): Promise<CreatePaseoWorktreeWorkflowResult> {
+): Promise<CreateSynapseWorktreeWorkflowResult> {
   try {
-    if (!options.createPaseoWorktree) {
+    if (!options.createSynapseWorktree) {
       throw new Error("Paseo worktree service is not configured");
     }
-    return await options.createPaseoWorktree(options.input, {
+    return await options.createSynapseWorktree(options.input, {
       ...(options.resolveDefaultBranch
         ? { resolveDefaultBranch: options.resolveDefaultBranch }
         : {}),

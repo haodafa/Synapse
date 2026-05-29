@@ -6,13 +6,13 @@ import {
   ArrowUpCircle,
   Check,
 } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
-import { api } from "@multica/core/api";
-import type { RuntimeUpdateStatus } from "@multica/core/types";
+import { Button } from "@synapse/ui/components/ui/button";
+import { api } from "@synapse/core/api";
+import type { RuntimeUpdateStatus } from "@synapse/core/types";
 import { useT } from "../../i18n";
 
 const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases/latest";
+  "https://api.github.com/repos/synapse-ai/synapse/releases/latest";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 let cachedLatestVersion: string | null = null;

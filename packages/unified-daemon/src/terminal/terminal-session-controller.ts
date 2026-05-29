@@ -13,7 +13,7 @@ import type {
   UnsubscribeTerminalRequest,
   UnsubscribeTerminalsRequest,
 } from "../server/messages.js";
-import { killTerminalsUnderPath as killWorktreeTerminalsUnderPath } from "../server/paseo-worktree-archive-service.js";
+import { killTerminalsUnderPath as killWorktreeTerminalsUnderPath } from "../server/synapse-worktree-archive-service.js";
 import {
   TerminalStreamOpcode,
   decodeTerminalResizePayload,

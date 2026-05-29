@@ -13,9 +13,9 @@ async function installCreateAgentRequestRecorder(page: Page): Promise<void> {
     const requests: unknown[] = [];
     (
       window as typeof window & {
-        __paseoE2eCreateAgentRequests?: unknown[];
+        __synapseE2eCreateAgentRequests?: unknown[];
       }
-    ).__paseoE2eCreateAgentRequests = requests;
+    ).__synapseE2eCreateAgentRequests = requests;
     const originalSend = WebSocket.prototype.send;
     WebSocket.prototype.send = function (data) {
       if (typeof data === "string") {
@@ -41,12 +41,12 @@ async function getRecordedCreateAgentCwd(page: Page, message: string): Promise<s
     const requests =
       (
         window as typeof window & {
-          __paseoE2eCreateAgentRequests?: Array<{
+          __synapseE2eCreateAgentRequests?: Array<{
             initialPrompt?: string;
             config?: { cwd?: string };
           }>;
         }
-      ).__paseoE2eCreateAgentRequests ?? [];
+      ).__synapseE2eCreateAgentRequests ?? [];
 
     for (const request of requests) {
       if (request.initialPrompt === expectedMessage) {

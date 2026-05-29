@@ -1,4 +1,4 @@
-export { createTestPaseoDaemon, type TestPaseoDaemon } from "./paseo-daemon.js";
+export { createTestSynapseDaemon, type TestSynapseDaemon } from "./synapse-daemon.js";
 export {
   DaemonClient,
   type DaemonClientConfig,

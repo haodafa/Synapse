@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { createPaseoClient } from "./index.js";
-import type { PaseoAgent, PaseoClient, PaseoProviderConfig, PaseoWorkspace } from "./index.js";
+import { createSynapseClient } from "./index.js";
+import type { PaseoAgent, SynapseClient, PaseoProviderConfig, PaseoWorkspace } from "./index.js";
 
 type FakeWebSocketHandler = (...args: unknown[]) => void;
 
@@ -80,9 +80,9 @@ function parseSentFrame(
   return JSON.parse(data);
 }
 
-async function connectClient(): Promise<{ client: PaseoClient; ws: FakeWebSocket }> {
+async function connectClient(): Promise<{ client: SynapseClient; ws: FakeWebSocket }> {
   vi.stubGlobal("WebSocket", FakeWebSocket);
-  const client = createPaseoClient({
+  const client = createSynapseClient({
     url: "ws://daemon.test",
     reconnect: { enabled: false },
   });
@@ -165,7 +165,7 @@ function createAgent(input: Partial<PaseoAgent> = {}): PaseoAgent {
   };
 }
 
-test("createPaseoClient exposes workspace list through the daemon client", async () => {
+test("createSynapseClient exposes workspace list through the daemon client", async () => {
   const { client, ws } = await connectClient();
 
   const listPromise = client.workspaces.list({

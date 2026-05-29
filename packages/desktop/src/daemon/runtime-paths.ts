@@ -45,8 +45,8 @@ export function resolveDaemonRunnerEntrypoint(): NodeEntrypointSpec {
         filePath: path.join(
           resolvePackagedAsarPath(),
           "node_modules",
-          "@getpaseo",
-          "server",
+          "@synapse",
+          "unified-daemon",
           "dist",
           "scripts",
           "supervisor-entrypoint.js",

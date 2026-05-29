@@ -77,8 +77,8 @@ import type {
   SessionOutboundMessage,
   SendAgentMessageRequest,
   EditorTargetId,
-  PaseoConfigRaw,
-  PaseoConfigRevision,
+  SynapseConfigRaw,
+  SynapseConfigRevision,
 } from "@synapse/protocol/messages";
 import type {
   AgentPermissionRequest,
@@ -344,8 +344,8 @@ type ListCommandsDraftConfig = Pick<
 >;
 export interface WriteProjectConfigInput {
   repoRoot: string;
-  config: PaseoConfigRaw;
-  expectedRevision: PaseoConfigRevision | null;
+  config: SynapseConfigRaw;
+  expectedRevision: SynapseConfigRevision | null;
   requestId?: string;
 }
 interface ListCommandsOptions {

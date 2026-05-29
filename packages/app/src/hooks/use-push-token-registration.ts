@@ -6,7 +6,7 @@ import Constants from "expo-constants";
 import type { DaemonClient } from "@synapse/client/internal/daemon-client";
 import { isWeb } from "@/constants/platform";
 
-const STORAGE_PREFIX = "@paseo:expo-push-token:";
+const STORAGE_PREFIX = "@synapse:expo-push-token:";
 
 function getExpoProjectId(): string | null {
   const constants = Constants as unknown as {

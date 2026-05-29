@@ -7,12 +7,12 @@ import type { AgentManager } from "./agent/agent-manager.js";
 import {
   attemptFirstAgentBranchAutoName,
   type AttemptFirstAgentBranchAutoNameResult,
-} from "./paseo-worktree-service.js";
+} from "./synapse-worktree-service.js";
 import { createNoopWorkspaceGitService } from "./test-utils/workspace-git-service-stub.js";
 import { generateBranchNameFromFirstAgentContext } from "./worktree-branch-name-generator.js";
 import {
-  writePaseoWorktreeFirstAgentBranchAutoNameMetadata,
-  writePaseoWorktreeMetadata,
+  writeSynapseWorktreeFirstAgentBranchAutoNameMetadata,
+  writeSynapseWorktreeMetadata,
 } from "../utils/worktree-metadata.js";
 
 const cleanupPaths: string[] = [];
@@ -141,8 +141,8 @@ describe("generateBranchNameFromFirstAgentContext", () => {
     const repoRoot = createTempDir("paseo-branch-config-");
     const worktreeRoot = createTempDir("paseo-branch-worktree-");
     mkdirSync(path.join(worktreeRoot, ".git"));
-    writePaseoWorktreeMetadata(worktreeRoot, { baseRefName: "main" });
-    writePaseoWorktreeFirstAgentBranchAutoNameMetadata(worktreeRoot, {
+    writeSynapseWorktreeMetadata(worktreeRoot, { baseRefName: "main" });
+    writeSynapseWorktreeFirstAgentBranchAutoNameMetadata(worktreeRoot, {
       placeholderBranchName: "dazzling-yak",
     });
     writeConfig(repoRoot, {

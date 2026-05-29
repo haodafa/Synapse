@@ -1,6 +1,6 @@
 import { isAbsolute } from "node:path";
 import { executableExists, findExecutable } from "../../utils/executable.js";
-import { createExternalProcessEnv, type ProcessEnvRecord } from "../paseo-env.js";
+import { createExternalProcessEnv, type ProcessEnvRecord } from "../synapse-env.js";
 export {
   AgentProviderRuntimeSettingsMapSchema,
   ProviderCommandSchema,

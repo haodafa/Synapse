@@ -9,7 +9,7 @@ import {
   isServiceScript,
   paseoConfigParseError,
   processCarriageReturns,
-  readPaseoConfig,
+  readSynapseConfig,
   resolveWorktreeRuntimeEnv,
   runWorktreeSetupCommands,
   WorktreeSetupError,
@@ -834,7 +834,7 @@ export async function spawnWorkspaceScript(
     logger,
     onLifecycleChanged,
   } = options;
-  const configResult = readPaseoConfig(repoRoot);
+  const configResult = readSynapseConfig(repoRoot);
   if (!configResult.ok) {
     throw paseoConfigParseError(configResult);
   }

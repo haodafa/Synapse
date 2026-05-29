@@ -11,8 +11,8 @@ import {
 import { WorkspaceScriptPayloadSchema } from "@synapse/protocol/messages";
 import type { ScriptHealthState } from "./script-health-monitor.js";
 import { WorkspaceScriptRuntimeStore } from "./workspace-script-runtime-store.js";
-import { readPaseoConfig } from "../utils/worktree.js";
-import type { PaseoConfig } from "@synapse/protocol/paseo-config-schema";
+import { readSynapseConfig } from "../utils/worktree.js";
+import type { SynapseConfig } from "@synapse/protocol/synapse-config-schema";
 import { createTestLogger } from "../test-utils/test-logger.js";
 
 function createWorkspaceRepo(options?: {
@@ -53,7 +53,7 @@ function createWorkspaceRepo(options?: {
 function buildPayloads(input: {
   workspaceId: string;
   workspaceDirectory: string;
-  paseoConfig?: PaseoConfig | null;
+  paseoConfig?: SynapseConfig | null;
   routeStore: ScriptRouteStore;
   runtimeStore: WorkspaceScriptRuntimeStore;
   daemonPort: number | null;
@@ -65,8 +65,8 @@ function buildPayloads(input: {
   return buildWorkspaceScriptPayloads({ ...input, paseoConfig });
 }
 
-function loadConfig(repoRoot: string): PaseoConfig | null {
-  const result = readPaseoConfig(repoRoot);
+function loadConfig(repoRoot: string): SynapseConfig | null {
+  const result = readSynapseConfig(repoRoot);
   return result.ok ? result.config : null;
 }
 
@@ -389,7 +389,7 @@ describe("script-status-projection", () => {
     }
   });
 
-  it("readPaseoConfig fails with configPath and error when paseo.json is malformed", () => {
+  it("readSynapseConfig fails with configPath and error when paseo.json is malformed", () => {
     const workspace = createWorkspaceRepo();
     const configPath = path.join(workspace.repoDir, "paseo.json");
     writeFileSync(
@@ -398,7 +398,7 @@ describe("script-status-projection", () => {
     );
 
     try {
-      const result = readPaseoConfig(workspace.repoDir);
+      const result = readSynapseConfig(workspace.repoDir);
       expect(result.ok).toBe(false);
       if (result.ok) throw new Error("unreachable");
       expect(result.configPath).toBe(configPath);

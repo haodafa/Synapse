@@ -362,7 +362,7 @@ test("runs paseo.json setup asynchronously and reports status via timeline tool_
   execSync("git branch -M main", { cwd: repoRoot, stdio: "pipe" });
 
   const setupCommand =
-    'while [ ! -f "$PASEO_WORKTREE_PATH/allow-setup" ]; do sleep 0.05; done; echo "done" > "$PASEO_WORKTREE_PATH/setup-done.txt"';
+    'while [ ! -f "$SYNAPSE_WORKTREE_PATH/allow-setup" ]; do sleep 0.05; done; echo "done" > "$SYNAPSE_WORKTREE_PATH/setup-done.txt"';
   writeFileSync(
     path.join(repoRoot, "paseo.json"),
     JSON.stringify({ worktree: { setup: [setupCommand] } }),
@@ -437,7 +437,7 @@ test("bootstraps configured worktree terminals after setup succeeds", async () =
     execSync("git branch -M main", { cwd: repoRoot, stdio: "pipe" });
 
     const setupCommand =
-      'while [ ! -f "$PASEO_WORKTREE_PATH/allow-setup" ]; do sleep 0.05; done; echo "done" > "$PASEO_WORKTREE_PATH/setup-done.txt"; echo "$PASEO_WORKTREE_PORT" > "$PASEO_WORKTREE_PATH/setup-port.txt"';
+      'while [ ! -f "$SYNAPSE_WORKTREE_PATH/allow-setup" ]; do sleep 0.05; done; echo "done" > "$SYNAPSE_WORKTREE_PATH/setup-done.txt"; echo "$SYNAPSE_WORKTREE_PORT" > "$SYNAPSE_WORKTREE_PATH/setup-port.txt"';
     writeFileSync(
       path.join(repoRoot, "paseo.json"),
       JSON.stringify({
@@ -529,7 +529,7 @@ test("bootstraps configured worktree terminals after setup succeeds", async () =
     }
     ctx.client.sendTerminalInput(manualTerminalId, {
       type: "input",
-      data: 'echo "$PASEO_WORKTREE_PORT" > "$PASEO_WORKTREE_PATH/manual-terminal-port.txt"\r',
+      data: 'echo "$SYNAPSE_WORKTREE_PORT" > "$SYNAPSE_WORKTREE_PATH/manual-terminal-port.txt"\r',
     });
     await waitForPathExists({
       targetPath: path.join(agent.cwd, "manual-terminal-port.txt"),
@@ -567,7 +567,7 @@ test("reports failures via timeline tool_call without deleting the created workt
   execSync("git branch -M main", { cwd: repoRoot, stdio: "pipe" });
 
   const setupCommand =
-    'echo "started" > "$PASEO_WORKTREE_PATH/setup-start.txt"; sleep 0.1; echo "boom" 1>&2; exit 7';
+    'echo "started" > "$SYNAPSE_WORKTREE_PATH/setup-start.txt"; sleep 0.1; echo "boom" 1>&2; exit 7';
   writeFileSync(
     path.join(repoRoot, "paseo.json"),
     JSON.stringify({
@@ -714,7 +714,7 @@ test("archives worktree by running teardown commands and shutting down worktree 
             command: 'echo "dev-server" > dev-terminal.txt; tail -f /dev/null',
           },
         ],
-        teardown: [`echo "$PASEO_WORKTREE_PATH" > "${teardownMarkerPath}"`],
+        teardown: [`echo "$SYNAPSE_WORKTREE_PATH" > "${teardownMarkerPath}"`],
       },
     }),
   );
@@ -759,7 +759,7 @@ test("archives worktree by running teardown commands and shutting down worktree 
   const beforeArchiveDirectories = ctx.daemon.daemon.terminalManager.listDirectories();
   expect(beforeArchiveDirectories).toContain(agent.cwd);
 
-  const archive = await ctx.client.archivePaseoWorktree({
+  const archive = await ctx.client.archiveSynapseWorktree({
     worktreePath: agent.cwd,
   });
   expect(archive.error).toBeNull();

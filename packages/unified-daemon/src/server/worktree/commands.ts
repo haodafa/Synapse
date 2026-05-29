@@ -1,29 +1,29 @@
 import { join } from "node:path";
 
-import { getPaseoWorktreesRoot, isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
+import { getSynapseWorktreesRoot, isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
 import {
-  archivePaseoWorktree,
-  type ArchivePaseoWorktreeDependencies,
-} from "../paseo-worktree-archive-service.js";
+  archiveSynapseWorktree,
+  type ArchiveSynapseWorktreeDependencies,
+} from "../synapse-worktree-archive-service.js";
 import type {
-  CreatePaseoWorktreeInput,
-  CreatePaseoWorktreeResult,
-} from "../paseo-worktree-service.js";
+  CreateSynapseWorktreeInput,
+  CreateSynapseWorktreeResult,
+} from "../synapse-worktree-service.js";
 import { toWorktreeWireError, type WorktreeWireError } from "../worktree-errors.js";
 import type { WorkspaceGitService, WorkspaceGitWorktreeInfo } from "../workspace-git-service.js";
 
-export interface ListPaseoWorktreesCommandDependencies {
+export interface ListSynapseWorktreesCommandDependencies {
   workspaceGitService: Pick<WorkspaceGitService, "listWorktrees">;
 }
 
-export interface ListPaseoWorktreesCommandInput {
+export interface ListSynapseWorktreesCommandInput {
   cwd: string;
   reason?: string;
 }
 
-export async function listPaseoWorktreesCommand(
-  dependencies: ListPaseoWorktreesCommandDependencies,
-  input: ListPaseoWorktreesCommandInput,
+export async function listSynapseWorktreesCommand(
+  dependencies: ListSynapseWorktreesCommandDependencies,
+  input: ListSynapseWorktreesCommandInput,
 ): Promise<WorkspaceGitWorktreeInfo[]> {
   if (input.reason) {
     return dependencies.workspaceGitService.listWorktrees(input.cwd, { reason: input.reason });
@@ -31,25 +31,25 @@ export async function listPaseoWorktreesCommand(
   return dependencies.workspaceGitService.listWorktrees(input.cwd);
 }
 
-type CreatePaseoWorktreeWorkflow<Result extends CreatePaseoWorktreeResult> = (
-  input: CreatePaseoWorktreeInput,
+type CreateSynapseWorktreeWorkflow<Result extends CreateSynapseWorktreeResult> = (
+  input: CreateSynapseWorktreeInput,
 ) => Promise<Result>;
 
-export interface CreatePaseoWorktreeCommandDependencies<
-  Result extends CreatePaseoWorktreeResult = CreatePaseoWorktreeResult,
+export interface CreateSynapseWorktreeCommandDependencies<
+  Result extends CreateSynapseWorktreeResult = CreateSynapseWorktreeResult,
 > {
   paseoHome?: string;
-  createPaseoWorktreeWorkflow?: CreatePaseoWorktreeWorkflow<Result>;
+  createSynapseWorktreeWorkflow?: CreateSynapseWorktreeWorkflow<Result>;
 }
 
-export type CreatePaseoWorktreeCommandInput = Omit<
-  CreatePaseoWorktreeInput,
+export type CreateSynapseWorktreeCommandInput = Omit<
+  CreateSynapseWorktreeInput,
   "paseoHome" | "runSetup"
 > & {
   paseoHome?: string;
 };
 
-export type CreatePaseoWorktreeCommandResult<Result extends CreatePaseoWorktreeResult> =
+export type CreateSynapseWorktreeCommandResult<Result extends CreateSynapseWorktreeResult> =
   | {
       ok: true;
       createdWorktree: Result;
@@ -60,16 +60,16 @@ export type CreatePaseoWorktreeCommandResult<Result extends CreatePaseoWorktreeR
       cause: unknown;
     };
 
-export async function createPaseoWorktreeCommand<Result extends CreatePaseoWorktreeResult>(
-  dependencies: CreatePaseoWorktreeCommandDependencies<Result>,
-  input: CreatePaseoWorktreeCommandInput,
-): Promise<CreatePaseoWorktreeCommandResult<Result>> {
+export async function createSynapseWorktreeCommand<Result extends CreateSynapseWorktreeResult>(
+  dependencies: CreateSynapseWorktreeCommandDependencies<Result>,
+  input: CreateSynapseWorktreeCommandInput,
+): Promise<CreateSynapseWorktreeCommandResult<Result>> {
   try {
-    if (!dependencies.createPaseoWorktreeWorkflow) {
+    if (!dependencies.createSynapseWorktreeWorkflow) {
       throw new Error("Paseo worktree service is not configured");
     }
 
-    const createdWorktree = await dependencies.createPaseoWorktreeWorkflow({
+    const createdWorktree = await dependencies.createSynapseWorktreeWorkflow({
       ...input,
       runSetup: false,
       paseoHome: input.paseoHome ?? dependencies.paseoHome,
@@ -84,14 +84,14 @@ export async function createPaseoWorktreeCommand<Result extends CreatePaseoWorkt
   }
 }
 
-export interface ArchivePaseoWorktreeCommandDependencies extends Omit<
-  ArchivePaseoWorktreeDependencies,
+export interface ArchiveSynapseWorktreeCommandDependencies extends Omit<
+  ArchiveSynapseWorktreeDependencies,
   "workspaceGitService"
 > {
   workspaceGitService: Pick<WorkspaceGitService, "getSnapshot" | "listWorktrees">;
 }
 
-export interface ArchivePaseoWorktreeCommandInput {
+export interface ArchiveSynapseWorktreeCommandInput {
   requestId: string;
   repoRoot?: string | null;
   worktreePath?: string;
@@ -99,7 +99,7 @@ export interface ArchivePaseoWorktreeCommandInput {
   branchName?: string;
 }
 
-export type ArchivePaseoWorktreeCommandResult =
+export type ArchiveSynapseWorktreeCommandResult =
   | {
       ok: true;
       removedAgents: string[];
@@ -111,10 +111,10 @@ export type ArchivePaseoWorktreeCommandResult =
       removedAgents: [];
     };
 
-export async function archivePaseoWorktreeCommand(
-  dependencies: ArchivePaseoWorktreeCommandDependencies,
-  input: ArchivePaseoWorktreeCommandInput,
-): Promise<ArchivePaseoWorktreeCommandResult> {
+export async function archiveSynapseWorktreeCommand(
+  dependencies: ArchiveSynapseWorktreeCommandDependencies,
+  input: ArchiveSynapseWorktreeCommandInput,
+): Promise<ArchiveSynapseWorktreeCommandResult> {
   const resolvedTarget = await resolveArchiveTarget(dependencies, input);
   const ownership = await isPaseoOwnedWorktreeCwd(resolvedTarget.targetPath, {
     paseoHome: dependencies.paseoHome,
@@ -130,7 +130,7 @@ export async function archivePaseoWorktreeCommand(
   }
 
   const repoRoot = ownership.repoRoot ?? resolvedTarget.repoRoot ?? null;
-  const removedAgents = await archivePaseoWorktree(dependencies, {
+  const removedAgents = await archiveSynapseWorktree(dependencies, {
     targetPath: resolvedTarget.targetPath,
     repoRoot,
     worktreesRoot: ownership.worktreeRoot,
@@ -149,8 +149,8 @@ interface ResolvedArchiveTarget {
 }
 
 async function resolveArchiveTarget(
-  dependencies: ArchivePaseoWorktreeCommandDependencies,
-  input: ArchivePaseoWorktreeCommandInput,
+  dependencies: ArchiveSynapseWorktreeCommandDependencies,
+  input: ArchiveSynapseWorktreeCommandInput,
 ): Promise<ResolvedArchiveTarget> {
   const repoRoot = input.repoRoot ?? null;
   if (input.worktreePath) {
@@ -180,10 +180,10 @@ async function resolveArchiveTarget(
 }
 
 async function resolveWorktreeSlugPath(
-  dependencies: ArchivePaseoWorktreeCommandDependencies,
+  dependencies: ArchiveSynapseWorktreeCommandDependencies,
   repoRoot: string,
   worktreeSlug: string,
 ): Promise<string> {
-  const worktreesRoot = await getPaseoWorktreesRoot(repoRoot, dependencies.paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(repoRoot, dependencies.paseoHome);
   return join(worktreesRoot, worktreeSlug);
 }

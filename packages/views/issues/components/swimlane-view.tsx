@@ -25,28 +25,28 @@ import type {
   IssueStatus,
   Project,
   UpdateIssueRequest,
-} from "@multica/core/types";
-import { useViewStore, useViewStoreApi } from "@multica/core/issues/stores/view-store-context";
-import type { SwimlaneGrouping } from "@multica/core/issues/stores/view-store";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { projectListOptions } from "@multica/core/projects/queries";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { useLoadMoreByStatus } from "@multica/core/issues/mutations";
-import { childrenByParentsOptions, issueKeys, type IssueSortParam, type MyIssuesFilter } from "@multica/core/issues/queries";
+} from "@synapse/core/types";
+import { useViewStore, useViewStoreApi } from "@synapse/core/issues/stores/view-store-context";
+import type { SwimlaneGrouping } from "@synapse/core/issues/stores/view-store";
+import { useWorkspacePaths } from "@synapse/core/paths";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { projectListOptions } from "@synapse/core/projects/queries";
+import { useActorName } from "@synapse/core/workspace/hooks";
+import { useLoadMoreByStatus } from "@synapse/core/issues/mutations";
+import { childrenByParentsOptions, issueKeys, type IssueSortParam, type MyIssuesFilter } from "@synapse/core/issues/queries";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from "@multica/ui/components/ui/dropdown-menu";
+} from "@synapse/ui/components/ui/dropdown-menu";
 import { sortIssues } from "../utils/sort";
-import { BOARD_STATUSES, STATUS_CONFIG } from "@multica/core/issues/config";
-import { useModalStore } from "@multica/core/modals";
+import { BOARD_STATUSES, STATUS_CONFIG } from "@synapse/core/issues/config";
+import { useModalStore } from "@synapse/core/modals";
 import { DraggableBoardCard, BoardCardContent } from "./board-card";
 import { StatusIcon } from "./status-icon";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import { Button } from "@multica/ui/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@synapse/ui/components/ui/tooltip";
+import { Button } from "@synapse/ui/components/ui/button";
 import { StatusHeading } from "./status-heading";
 import { HiddenColumnsPanel, HiddenColumnRow } from "./hidden-columns-panel";
 import { InfiniteScrollSentinel } from "./infinite-scroll-sentinel";

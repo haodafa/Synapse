@@ -3474,7 +3474,7 @@ export class AgentManager {
       agentId,
       env: {
         ...env,
-        PASEO_AGENT_ID: agentId,
+        SYNAPSE_AGENT_ID: agentId,
       },
     };
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useAuthStore } from "@multica/core/auth";
+import { useAuthStore } from "@synapse/core/auth";
 import { isZhLocale, useLocale } from "../i18n";
 import { GitHubMark, githubUrl, heroButtonClassName } from "./shared";
 

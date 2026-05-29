@@ -59,7 +59,7 @@ export type UseCase =
 
 /**
  * Questionnaire shape. `source` and `use_case` allow multiple values
- * (users hear about us through several channels and use Multica for
+ * (users hear about us through several channels and use Synapse for
  * several things); `role` stays single-select since the agent template
  * recommendation wants a primary identity.
  *

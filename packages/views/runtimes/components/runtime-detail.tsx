@@ -11,23 +11,23 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-import type { AgentRuntime, Agent, MemberWithUser } from "@multica/core/types";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
-import { useUpdateRuntime } from "@multica/core/runtimes/mutations";
-import { deriveRuntimeHealth } from "@multica/core/runtimes";
+import type { AgentRuntime, Agent, MemberWithUser } from "@synapse/core/types";
+import { useAuthStore } from "@synapse/core/auth";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { memberListOptions, agentListOptions } from "@synapse/core/workspace/queries";
+import { useUpdateRuntime } from "@synapse/core/runtimes/mutations";
+import { deriveRuntimeHealth } from "@synapse/core/runtimes";
 import {
   type AgentPresenceDetail,
   useWorkspacePresenceMap,
-} from "@multica/core/agents";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { Button } from "@multica/ui/components/ui/button";
+} from "@synapse/core/agents";
+import { useWorkspacePaths } from "@synapse/core/paths";
+import { Button } from "@synapse/ui/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+} from "@synapse/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { AppLink, useNavigation } from "../../navigation";
 import { availabilityConfig, workloadConfig } from "../../agents/presence";
@@ -306,7 +306,7 @@ function HeroCard({
         </Fact>
       </dl>
 
-      {/* Diagnostic IDs — multica CLI git hash + truncated daemon UUID.
+      {/* Diagnostic IDs — synapse CLI git hash + truncated daemon UUID.
           Only useful when filing an issue or reading logs; folded by
           default so they don't compete with the user-visible facts above. */}
       {hasTechDetails && (

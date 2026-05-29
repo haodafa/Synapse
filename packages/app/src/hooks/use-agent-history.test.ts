@@ -97,7 +97,7 @@ function historyEntry(input: {
         currentBranch: null,
         remoteUrl: null,
         worktreeRoot: null,
-        isPaseoOwnedWorktree: false,
+        isSynapseOwnedWorktree: false,
         mainRepoRoot: null,
       },
     },

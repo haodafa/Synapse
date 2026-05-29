@@ -34,7 +34,7 @@ const githubStatus: CheckoutPrStatus["github"] = {
 
 const baseStatus: CheckoutPrStatus = {
   number: 42,
-  url: "https://github.com/getpaseo/paseo/pull/42",
+  url: "https://github.com/getsynapse/synapse/pull/42",
   title: "Wire PR pane data",
   state: "open",
   baseRefName: "main",
@@ -74,7 +74,7 @@ describe("mapPrPaneData", () => {
     const data = mapPrPaneData(
       status({
         number: undefined,
-        url: "https://github.com/getpaseo/paseo/pull/1284",
+        url: "https://github.com/getsynapse/synapse/pull/1284",
       }),
       timeline({ prNumber: 1284 }),
     );
@@ -84,7 +84,7 @@ describe("mapPrPaneData", () => {
 
   it("returns null when status has no number and no parseable PR URL", () => {
     expect(
-      mapPrPaneData(status({ number: undefined, url: "https://github.com/getpaseo/paseo" }), null),
+      mapPrPaneData(status({ number: undefined, url: "https://github.com/getsynapse/synapse" }), null),
     ).toBeNull();
   });
 

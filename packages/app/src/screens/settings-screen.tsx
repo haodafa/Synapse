@@ -196,7 +196,7 @@ const RELEASE_CHANNEL_OPTIONS = [
 
 const SERVICE_URL_BEHAVIOR_LABELS: Record<ServiceUrlBehavior, string> = {
   ask: "Ask",
-  "in-app": "In Paseo",
+  "in-app": "In Synapse",
   external: "External browser",
 };
 
@@ -518,7 +518,7 @@ function DesktopAppUpdateRow() {
 
     void confirmDialog({
       title: "Install desktop update",
-      message: "This updates Paseo on this computer",
+      message: "This updates Synapse on this computer",
       confirmLabel: "Install update",
       cancelLabel: "Cancel",
     })

@@ -6,12 +6,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
-import { useModalStore } from "@multica/core/modals";
+} from "@synapse/ui/components/ui/dropdown-menu";
+import { useModalStore } from "@synapse/core/modals";
 import { useT } from "../i18n";
 
-const DOCS_URL = "https://multica.ai/docs";
-const CHANGELOG_URL = "https://multica.ai/changelog";
+const DOCS_URL = "https://synapse.ai/docs";
+const CHANGELOG_URL = "https://synapse.ai/changelog";
 
 export function HelpLauncher() {
   const { t } = useT("layout");

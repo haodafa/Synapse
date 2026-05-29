@@ -55,9 +55,9 @@ function resolveShellEnv(): Record<string, string> | undefined {
   }
 
   const shellEnv = { ...process.env };
-  delete shellEnv.PASEO_NODE_ENV;
-  delete shellEnv.PASEO_DESKTOP_MANAGED;
-  delete shellEnv.PASEO_SUPERVISED;
+  delete shellEnv.SYNAPSE_NODE_ENV;
+  delete shellEnv.SYNAPSE_DESKTOP_MANAGED;
+  delete shellEnv.SYNAPSE_SUPERVISED;
 
   const result = spawnSync(shell, [...shellArgs, command], {
     encoding: "utf8",

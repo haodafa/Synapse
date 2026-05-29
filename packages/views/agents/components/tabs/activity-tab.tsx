@@ -15,25 +15,25 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+} from "@synapse/ui/components/ui/tooltip";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import type {
   Agent,
   AgentTask,
   Issue,
   TaskFailureReason,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 import {
   type AgentActivity,
   agentTaskSnapshotOptions,
   agentTasksOptions,
   summarizeActivityWindow,
   useWorkspaceActivityMap,
-} from "@multica/core/agents";
-import { api } from "@multica/core/api";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
-import { issueDetailOptions } from "@multica/core/issues/queries";
+} from "@synapse/core/agents";
+import { api } from "@synapse/core/api";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { useWorkspacePaths } from "@synapse/core/paths";
+import { issueDetailOptions } from "@synapse/core/issues/queries";
 import { AppLink } from "../../../navigation";
 import { TranscriptButton } from "../../../common/task-transcript";
 import { taskStatusConfig } from "../../config";

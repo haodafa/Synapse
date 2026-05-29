@@ -2,9 +2,9 @@ import {
   matchLocale,
   SUPPORTED_LOCALES,
   type SupportedLocale,
-} from "@multica/core/i18n";
+} from "@synapse/core/i18n";
 
-export const MULTICA_LOCALE_HEADER = "x-multica-locale";
+export const SYNAPSE_LOCALE_HEADER = "x-synapse-locale";
 
 export function isSupportedLocale(
   value: string | null,

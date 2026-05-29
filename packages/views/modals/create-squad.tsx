@@ -3,33 +3,33 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, UserPlus, X } from "lucide-react";
-import { api } from "@multica/core/api";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { api } from "@synapse/core/api";
+import { useAuthStore } from "@synapse/core/auth";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { useWorkspacePaths } from "@synapse/core/paths";
 import {
   agentListOptions,
   memberListOptions,
   workspaceKeys,
-} from "@multica/core/workspace/queries";
-import { AGENT_DESCRIPTION_MAX_LENGTH } from "@multica/core/agents";
-import { isImeComposing } from "@multica/core/utils";
-import type { Agent, MemberWithUser } from "@multica/core/types";
+} from "@synapse/core/workspace/queries";
+import { AGENT_DESCRIPTION_MAX_LENGTH } from "@synapse/core/agents";
+import { isImeComposing } from "@synapse/core/utils";
+import type { Agent, MemberWithUser } from "@synapse/core/types";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@multica/ui/components/ui/dialog";
+} from "@synapse/ui/components/ui/dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@multica/ui/components/ui/popover";
-import { Button } from "@multica/ui/components/ui/button";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
+} from "@synapse/ui/components/ui/popover";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Label } from "@synapse/ui/components/ui/label";
 import { toast } from "sonner";
 
 import { useNavigation } from "../navigation";

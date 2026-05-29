@@ -307,7 +307,7 @@ export default function TerminalEmulator({
     for (const message of pending) {
       const payload = serializeForInjectedJavaScript(message);
       webViewRef.current.injectJavaScript(
-        `window.__PASEO_TERMINAL_WEBVIEW_RECEIVE__ && window.__PASEO_TERMINAL_WEBVIEW_RECEIVE__(${payload}); true;`,
+        `window.__SYNAPSE_TERMINAL_WEBVIEW_RECEIVE__ && window.__SYNAPSE_TERMINAL_WEBVIEW_RECEIVE__(${payload}); true;`,
       );
     }
   }, []);
@@ -319,7 +319,7 @@ export default function TerminalEmulator({
     }
     const payload = serializeForInjectedJavaScript(message);
     webViewRef.current.injectJavaScript(
-      `window.__PASEO_TERMINAL_WEBVIEW_RECEIVE__ && window.__PASEO_TERMINAL_WEBVIEW_RECEIVE__(${payload}); true;`,
+      `window.__SYNAPSE_TERMINAL_WEBVIEW_RECEIVE__ && window.__SYNAPSE_TERMINAL_WEBVIEW_RECEIVE__(${payload}); true;`,
     );
   }, []);
 
@@ -351,7 +351,7 @@ export default function TerminalEmulator({
       },
       blur: () => {
         webViewRef.current?.injectJavaScript(
-          "window.__PASEO_TERMINAL_WEBVIEW_BLUR__ && window.__PASEO_TERMINAL_WEBVIEW_BLUR__(); true;",
+          "window.__SYNAPSE_TERMINAL_WEBVIEW_BLUR__ && window.__SYNAPSE_TERMINAL_WEBVIEW_BLUR__(); true;",
         );
         Keyboard.dismiss();
       },

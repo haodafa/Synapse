@@ -1,6 +1,6 @@
 # Synapse 特性清单
 
-本文档详细列出了 Synapse 融合的所有功能，包括从 Paseo 和 Multica 继承的功能以及 Synapse 特有的增强功能。
+本文档详细列出了 Synapse 融合的所有功能，包括从 Paseo 和 Synapse 继承的功能以及 Synapse 特有的增强功能。
 
 ## ✅ 已完成功能
 
@@ -24,49 +24,49 @@
 | `synapse status` | 守护进程状态 | ✅ | Paseo |
 | `synapse restart` | 重启守护进程 | ✅ | Paseo |
 
-#### 1.2 Multica 风格命令
+#### 1.2 Synapse 风格命令
 
 | 命令 | 描述 | 状态 | 来源 |
 |------|------|------|------|
 | `synapse setup` | 一键配置 | ✅ | Synapse |
-| `synapse login` | 登录认证 | ✅ | Multica |
-| `synapse logout` | 登出 | ✅ | Multica |
-| `synapse auth status` | 认证状态 | ✅ | Multica |
+| `synapse login` | 登录认证 | ✅ | Synapse |
+| `synapse logout` | 登出 | ✅ | Synapse |
+| `synapse auth status` | 认证状态 | ✅ | Synapse |
 | `synapse config show` | 显示配置 | ✅ | Synapse |
 | `synapse config set <k> <v>` | 设置配置 | ✅ | Synapse |
-| `synapse workspace list` | 列出工作区 | ✅ | Multica |
-| `synapse workspace switch <id>` | 切换工作区 | ✅ | Multica |
-| `synapse workspace get [id]` | 获取工作区详情 | ✅ | Multica |
-| `synapse workspace member list` | 列出成员 | ✅ | Multica |
-| `synapse issue list` | 列出 Issue | ✅ | Multica |
-| `synapse issue get <id>` | 获取 Issue 详情 | ✅ | Multica |
-| `synapse issue create` | 创建 Issue | ✅ | Multica |
-| `synapse issue update <id>` | 更新 Issue | ✅ | Multica |
-| `synapse issue assign <id>` | 分配 Issue | ✅ | Multica |
-| `synapse issue status <id> <status>` | 修改状态 | ✅ | Multica |
-| `synapse issue comment list` | 列出评论 | ✅ | Multica |
-| `synapse issue comment add` | 添加评论 | ✅ | Multica |
-| `synapse issue metadata list` | 列出元数据 | ✅ | Multica |
-| `synapse issue metadata set` | 设置元数据 | ✅ | Multica |
-| `synapse issue subscriber list` | 列出订阅者 | ✅ | Multica |
-| `synapse issue subscriber add` | 添加订阅 | ✅ | Multica |
-| `synapse issue runs` | 执行历史 | ✅ | Multica |
-| `synapse project list` | 列出项目 | ✅ | Multica |
-| `synapse project get <id>` | 获取项目详情 | ✅ | Multica |
-| `synapse project create` | 创建项目 | ✅ | Multica |
-| `synapse project update <id>` | 更新项目 | ✅ | Multica |
-| `synapse project status <id> <status>` | 修改状态 | ✅ | Multica |
-| `synapse project delete <id>` | 删除项目 | ✅ | Multica |
-| `synapse autopilot list` | 列出 Autopilot | ✅ | Multica |
-| `synapse autopilot get <id>` | 获取 Autopilot 详情 | ✅ | Multica |
-| `synapse autopilot create` | 创建 Autopilot | ✅ | Multica |
-| `synapse autopilot update <id>` | 更新 Autopilot | ✅ | Multica |
-| `synapse autopilot delete <id>` | 删除 Autopilot | ✅ | Multica |
-| `synapse autopilot trigger <id>` | 触发 Autopilot | ✅ | Multica |
-| `synapse autopilot runs <id>` | 运行历史 | ✅ | Multica |
-| `synapse autopilot trigger-add` | 添加触发器 | ✅ | Multica |
-| `synapse autopilot trigger-update` | 更新触发器 | ✅ | Multica |
-| `synapse autopilot trigger-delete` | 删除触发器 | ✅ | Multica |
+| `synapse workspace list` | 列出工作区 | ✅ | Synapse |
+| `synapse workspace switch <id>` | 切换工作区 | ✅ | Synapse |
+| `synapse workspace get [id]` | 获取工作区详情 | ✅ | Synapse |
+| `synapse workspace member list` | 列出成员 | ✅ | Synapse |
+| `synapse issue list` | 列出 Issue | ✅ | Synapse |
+| `synapse issue get <id>` | 获取 Issue 详情 | ✅ | Synapse |
+| `synapse issue create` | 创建 Issue | ✅ | Synapse |
+| `synapse issue update <id>` | 更新 Issue | ✅ | Synapse |
+| `synapse issue assign <id>` | 分配 Issue | ✅ | Synapse |
+| `synapse issue status <id> <status>` | 修改状态 | ✅ | Synapse |
+| `synapse issue comment list` | 列出评论 | ✅ | Synapse |
+| `synapse issue comment add` | 添加评论 | ✅ | Synapse |
+| `synapse issue metadata list` | 列出元数据 | ✅ | Synapse |
+| `synapse issue metadata set` | 设置元数据 | ✅ | Synapse |
+| `synapse issue subscriber list` | 列出订阅者 | ✅ | Synapse |
+| `synapse issue subscriber add` | 添加订阅 | ✅ | Synapse |
+| `synapse issue runs` | 执行历史 | ✅ | Synapse |
+| `synapse project list` | 列出项目 | ✅ | Synapse |
+| `synapse project get <id>` | 获取项目详情 | ✅ | Synapse |
+| `synapse project create` | 创建项目 | ✅ | Synapse |
+| `synapse project update <id>` | 更新项目 | ✅ | Synapse |
+| `synapse project status <id> <status>` | 修改状态 | ✅ | Synapse |
+| `synapse project delete <id>` | 删除项目 | ✅ | Synapse |
+| `synapse autopilot list` | 列出 Autopilot | ✅ | Synapse |
+| `synapse autopilot get <id>` | 获取 Autopilot 详情 | ✅ | Synapse |
+| `synapse autopilot create` | 创建 Autopilot | ✅ | Synapse |
+| `synapse autopilot update <id>` | 更新 Autopilot | ✅ | Synapse |
+| `synapse autopilot delete <id>` | 删除 Autopilot | ✅ | Synapse |
+| `synapse autopilot trigger <id>` | 触发 Autopilot | ✅ | Synapse |
+| `synapse autopilot runs <id>` | 运行历史 | ✅ | Synapse |
+| `synapse autopilot trigger-add` | 添加触发器 | ✅ | Synapse |
+| `synapse autopilot trigger-update` | 更新触发器 | ✅ | Synapse |
+| `synapse autopilot trigger-delete` | 删除触发器 | ✅ | Synapse |
 
 ### 2. 守护进程功能
 
@@ -81,38 +81,38 @@
 | 日志收集 | 实时日志流 | ✅ | Paseo |
 | Worktree 管理 | Git worktree 隔离 | ✅ | Paseo |
 
-#### 2.2 Multica 守护进程能力
+#### 2.2 Synapse 守护进程能力
 
 | 功能 | 描述 | 状态 | 来源 |
 |------|------|------|------|
-| 任务队列 | Issue 管理 | ✅ | Multica |
-| 执行历史 | Run 记录 | ✅ | Multica |
-| Autopilot | 定时任务 | ✅ | Multica |
-| 技能存储 | Skills 持久化 | ✅ | Multica |
+| 任务队列 | Issue 管理 | ✅ | Synapse |
+| 执行历史 | Run 记录 | ✅ | Synapse |
+| Autopilot | 定时任务 | ✅ | Synapse |
+| 技能存储 | Skills 持久化 | ✅ | Synapse |
 | Webhook | 外部集成 | 🔄 | 计划中 |
-| 多工作区 | Workspace 隔离 | ✅ | Multica |
+| 多工作区 | Workspace 隔离 | ✅ | Synapse |
 
 #### 2.3 Synapse 增强能力
 
 | 功能 | 描述 | 状态 | 来源 |
 |------|------|------|------|
 | 统一 WebSocket | 双命名空间支持 | ✅ | Synapse |
-| 跨命名空间事件 | Paseo + Multica 事件桥接 | ✅ | Synapse |
+| 跨命名空间事件 | Paseo + Synapse 事件桥接 | ✅ | Synapse |
 | REST + WS 双协议 | HTTP 和 WebSocket | ✅ | Synapse |
 | 健康检查 | /health 端点 | ✅ | Synapse |
 
 ### 3. Web UI 功能
 
-#### 3.1 Multica Web 功能
+#### 3.1 Synapse Web 功能
 
 | 功能 | 描述 | 状态 | 来源 |
 |------|------|------|------|
-| 看板视图 | Kanban 风格 | ✅ | Multica |
-| Issue 管理 | 创建、编辑、删除 | ✅ | Multica |
-| 项目管理 | 项目概览 | ✅ | Multica |
-| 成员管理 | 用户和 Agent | ✅ | Multica |
-| 评论系统 | 讨论功能 | ✅ | Multica |
-| 实时更新 | WebSocket 推送 | ✅ | Multica |
+| 看板视图 | Kanban 风格 | ✅ | Synapse |
+| Issue 管理 | 创建、编辑、删除 | ✅ | Synapse |
+| 项目管理 | 项目概览 | ✅ | Synapse |
+| 成员管理 | 用户和 Agent | ✅ | Synapse |
+| 评论系统 | 讨论功能 | ✅ | Synapse |
+| 实时更新 | WebSocket 推送 | ✅ | Synapse |
 | 搜索功能 | 全文搜索 | 🔄 | 计划中 |
 
 #### 3.2 Paseo Web 功能
@@ -161,24 +161,24 @@
 | 模型 | 描述 | 状态 | 来源 |
 |------|------|------|------|
 | Agent | Agent 实例 | ✅ | Paseo |
-| Issue | 任务/工单 | ✅ | Multica |
-| Project | 项目 | ✅ | Multica |
-| Workspace | 工作区 | ✅ | Multica |
-| Member | 成员（用户/Agent） | ✅ | Multica |
-| Run | 执行记录 | ✅ | Multica |
-| Autopilot | 定时任务 | ✅ | Multica |
-| Skill | 技能 | ✅ | Multica |
+| Issue | 任务/工单 | ✅ | Synapse |
+| Project | 项目 | ✅ | Synapse |
+| Workspace | 工作区 | ✅ | Synapse |
+| Member | 成员（用户/Agent） | ✅ | Synapse |
+| Run | 执行记录 | ✅ | Synapse |
+| Autopilot | 定时任务 | ✅ | Synapse |
+| Skill | 技能 | ✅ | Synapse |
 | Squad | Agent 团队 | 🔄 | 计划中 |
 | Worktree | Git worktree | ✅ | Paseo |
-| Comment | 评论 | ✅ | Multica |
+| Comment | 评论 | ✅ | Synapse |
 
 ### 7. Agent Provider 支持
 
 | Provider | 描述 | 状态 | 来源 |
 |----------|------|------|------|
 | Claude Code | Anthropic Claude | ✅ | Paseo |
-| Codex | OpenAI Codex | ✅ | Multica |
-| OpenCode | OpenCode CLI | ✅ | Multica |
+| Codex | OpenAI Codex | ✅ | Synapse |
+| OpenCode | OpenCode CLI | ✅ | Synapse |
 | Copilot | GitHub Copilot | 🔄 | 计划中 |
 | Pi | Pi AI | 🔄 | 计划中 |
 | Gemini | Google Gemini | 🔄 | 计划中 |
@@ -200,8 +200,8 @@
 
 | 功能 | 描述 | 状态 | 来源 |
 |------|------|------|------|
-| 技能创建 | 定义新技能 | ✅ | Multica |
-| 技能列表 | 查看可用技能 | ✅ | Multica |
+| 技能创建 | 定义新技能 | ✅ | Synapse |
+| 技能列表 | 查看可用技能 | ✅ | Synapse |
 | 技能调用 | 执行技能 | 🔄 | 计划中 |
 | 技能评分 | 成功率统计 | 🔄 | 计划中 |
 | 技能推荐 | 智能推荐 | 🔄 | 计划中 |
@@ -212,11 +212,11 @@
 
 | 功能 | 描述 | 状态 | 来源 |
 |------|------|------|------|
-| 多成员支持 | 用户和 Agent | ✅ | Multica |
+| 多成员支持 | 用户和 Agent | ✅ | Synapse |
 | 角色权限 | 权限管理 | 🔄 | 计划中 |
-| @提及 | @agent 或 @user | ✅ | Multica |
-| 阻塞管理 | Blocker 上报 | ✅ | Multica |
-| 实时活动 | 时间线视图 | ✅ | Multica |
+| @提及 | @agent 或 @user | ✅ | Synapse |
+| 阻塞管理 | Blocker 上报 | ✅ | Synapse |
+| 实时活动 | 时间线视图 | ✅ | Synapse |
 | 通知系统 | 状态变更通知 | 🔄 | 计划中 |
 
 ## 🔄 开发中功能
@@ -257,7 +257,7 @@
 ### v0.1.0 (当前版本)
 
 **已完成:**
-- 统一 CLI 命令系统（Paseo + Multica）
+- 统一 CLI 命令系统（Paseo + Synapse）
 - 统一守护进程核心
 - WebSocket 双向通信
 - REST API 接口

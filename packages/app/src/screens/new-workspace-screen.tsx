@@ -33,7 +33,7 @@ import { navigateToPreparedWorkspaceTab } from "@/utils/workspace-navigation";
 import type { ComposerAttachment, UserComposerAttachment } from "@/attachments/types";
 import type { ImageAttachment, MessagePayload } from "@/composer/types";
 import type { AgentAttachment, GitHubSearchItem } from "@synapse/protocol/messages";
-import type { CreatePaseoWorktreeInput } from "@synapse/client/internal/daemon-client";
+import type { CreateSynapseWorktreeInput } from "@synapse/client/internal/daemon-client";
 import type { AgentProvider } from "@synapse/protocol/agent-types";
 import { isEmptyWorkspaceSubmission, runCreateEmptyWorkspace } from "./new-workspace-empty";
 import {
@@ -317,7 +317,7 @@ interface SubmitDraftInput {
 async function createAndMergeWorkspace(input: {
   client: NonNullable<ReturnType<typeof useHostRuntimeClient>>;
   createInput: Parameters<
-    NonNullable<ReturnType<typeof useHostRuntimeClient>>["createPaseoWorktree"]
+    NonNullable<ReturnType<typeof useHostRuntimeClient>>["createSynapseWorktree"]
   >[0];
   mergeWorkspaces: (
     serverId: string,
@@ -325,7 +325,7 @@ async function createAndMergeWorkspace(input: {
   ) => void;
   serverId: string;
 }): Promise<ReturnType<typeof normalizeWorkspaceDescriptor>> {
-  const payload = await input.client.createPaseoWorktree(input.createInput);
+  const payload = await input.client.createSynapseWorktree(input.createInput);
   if (payload.error || !payload.workspace) {
     throw new Error(payload.error ?? "Failed to create worktree");
   }
@@ -710,7 +710,7 @@ export function NewWorkspaceScreen({
       cwd: string;
       prompt: string;
       attachments: AgentAttachment[];
-    }): CreatePaseoWorktreeInput => {
+    }): CreateSynapseWorktreeInput => {
       const checkoutRequest = resolveCheckoutRequest(selectedItem, currentBranch);
       const trimmedPrompt = input.prompt.trim();
       const hasFirstAgentContext = trimmedPrompt.length > 0 || input.attachments.length > 0;

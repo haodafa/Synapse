@@ -918,15 +918,15 @@ class FakeAgentSession implements AgentSession {
     if (this.providerName === "codex" && fullName.startsWith("prompts:")) {
       const promptId = fullName.slice("prompts:".length);
       return {
-        text: `PASEO_OK ${args ?? ""}`.trim(),
-        timeline: [{ type: "assistant_message", text: `PASEO_OK ${promptId}` }],
+        text: `SYNAPSE_OK ${args ?? ""}`.trim(),
+        timeline: [{ type: "assistant_message", text: `SYNAPSE_OK ${promptId}` }],
         usage: { inputTokens: 1, outputTokens: 1 },
       };
     }
 
     return {
-      text: "PASEO_SKILL_OK",
-      timeline: [{ type: "assistant_message", text: "PASEO_SKILL_OK" }],
+      text: "SYNAPSE_SKILL_OK",
+      timeline: [{ type: "assistant_message", text: "SYNAPSE_SKILL_OK" }],
       usage: { inputTokens: 1, outputTokens: 1 },
     };
   }

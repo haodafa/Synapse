@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { MulticaIcon } from "@multica/ui/components/common/multica-icon";
-import { cn } from "@multica/ui/lib/utils";
-import { useAuthStore } from "@multica/core/auth";
+import { SynapseIcon } from "@synapse/ui/components/common/synapse-icon";
+import { cn } from "@synapse/ui/lib/utils";
+import { useAuthStore } from "@synapse/core/auth";
 import { isZhLocale, useLocale } from "../i18n";
 import { GitHubMark, githubUrl, headerButtonClassName } from "./shared";
 
@@ -38,7 +38,7 @@ export function LandingHeader({
       <div className="mx-auto flex h-[76px] max-w-[1320px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-6 lg:gap-8">
           <Link href="/" className="flex shrink-0 items-center gap-3">
-            <MulticaIcon
+            <SynapseIcon
               className={cn(
                 "size-5",
                 variant === "dark" ? "text-white" : "text-[#0a0d12]",
@@ -51,7 +51,7 @@ export function LandingHeader({
                 variant === "dark" ? "text-white/92" : "text-[#0a0d12]",
               )}
             >
-              multica
+              synapse
             </span>
           </Link>
 

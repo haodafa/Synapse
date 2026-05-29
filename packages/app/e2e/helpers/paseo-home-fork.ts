@@ -3,7 +3,7 @@ import { copyFile, mkdir, readdir, rm, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import path from "node:path";
 
-export interface PaseoHomeMetadataForkResult {
+export interface SynapseHomeMetadataForkResult {
   sourceHome: string;
   targetHome: string;
   agentFiles: number;
@@ -21,7 +21,7 @@ interface CopyStats {
   skippedMissing: string[];
 }
 
-export function resolvePaseoHomePath(value: string): string {
+export function resolveSynapseHomePath(value: string): string {
   if (value === "~") {
     return homedir();
   }
@@ -91,15 +91,15 @@ async function copyProjectRegistryFiles(
   return stats;
 }
 
-export async function forkPaseoHomeMetadata(input: {
+export async function forkSynapseHomeMetadata(input: {
   sourceHome: string;
   targetHome: string;
-}): Promise<PaseoHomeMetadataForkResult> {
-  const sourceHome = resolvePaseoHomePath(input.sourceHome);
-  const targetHome = resolvePaseoHomePath(input.targetHome);
+}): Promise<SynapseHomeMetadataForkResult> {
+  const sourceHome = resolveSynapseHomePath(input.sourceHome);
+  const targetHome = resolveSynapseHomePath(input.targetHome);
 
   if (sourceHome === targetHome) {
-    throw new Error("Refusing to fork Paseo metadata onto the same PASEO_HOME.");
+    throw new Error("Refusing to fork Synapse metadata onto the same SYNAPSE_HOME.");
   }
 
   await mkdir(targetHome, { recursive: true });

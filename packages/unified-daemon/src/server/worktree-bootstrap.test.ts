@@ -73,7 +73,7 @@ describe("runAsyncWorktreeBootstrap", () => {
     realTerminalManagers = [];
     tempDir = realpathSync(mkdtempSync(join(tmpdir(), "worktree-bootstrap-test-")));
     repoDir = join(tempDir, "repo");
-    paseoHome = join(tempDir, "paseo-home");
+    paseoHome = join(tempDir, "synapse-home");
 
     mkdirSync(repoDir, { recursive: true });
     execFileSync("git", ["init", "-b", "main"], { cwd: repoDir, stdio: "pipe" });
@@ -417,15 +417,15 @@ describe("runAsyncWorktreeBootstrap", () => {
     expect(createTerminalCalls[0]?.name).toBe("api");
     expect(terminalRecords[0]?.sentInputs).toEqual(["npm run api\r"]);
     expect(createTerminalCalls[0]?.env).not.toHaveProperty("PORT");
-    expect(createTerminalCalls[0]?.env?.PASEO_PORT).toEqual(expect.any(String));
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_PORT).toEqual(expect.any(String));
     expect(createTerminalCalls[0]?.env?.HOST).toBe("127.0.0.1");
-    expect(createTerminalCalls[0]?.env?.PASEO_URL).toBe(
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_URL).toBe(
       "http://api.feature-socket-service.repo.localhost:6767",
     );
-    expect(createTerminalCalls[0]?.env?.PASEO_SERVICE_API_PORT).toBe(
-      createTerminalCalls[0]?.env?.PASEO_PORT,
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_SERVICE_API_PORT).toBe(
+      createTerminalCalls[0]?.env?.SYNAPSE_PORT,
     );
-    expect(createTerminalCalls[0]?.env?.PASEO_SERVICE_API_URL).toBe(
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_SERVICE_API_URL).toBe(
       "http://api.feature-socket-service.repo.localhost:6767",
     );
   }
@@ -446,10 +446,10 @@ describe("runAsyncWorktreeBootstrap", () => {
     if (plannedAppServerPort === undefined) {
       throw new Error("Expected app-server to be present in the service port plan");
     }
-    expect(createTerminalCalls[0]?.env?.PASEO_SERVICE_APP_SERVER_PORT).toBe(
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_SERVICE_APP_SERVER_PORT).toBe(
       String(plannedAppServerPort),
     );
-    expect(createTerminalCalls[0]?.env?.PASEO_SERVICE_APP_SERVER_URL).toBe(
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_SERVICE_APP_SERVER_URL).toBe(
       "http://app-server.feature-socket-service.repo.localhost:6767",
     );
   }
@@ -466,7 +466,7 @@ describe("runAsyncWorktreeBootstrap", () => {
     });
   }
 
-  function commitPaseoScripts(
+  function commitSynapseScripts(
     scripts: Record<string, { command: string; type?: "script" | "service" }>,
     message = "add script config",
   ): void {
@@ -479,7 +479,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   }
 
   it("spawns plain scripts in persistent shell terminals without env injection or routes", async () => {
-    commitPaseoScripts({
+    commitSynapseScripts({
       web: {
         command: "npm run dev",
       },
@@ -519,7 +519,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("records plain script exit codes from shell command completion without terminal exit", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         typecheck: {
           command: 'node -e "process.exit(7)"',
@@ -558,7 +558,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("reuses a live terminal when rerunning after plain script completion", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         typecheck: {
           command: "npm run typecheck",
@@ -624,7 +624,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("tracks command completion when reusing a live terminal from a stopped plain script entry", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         typecheck: {
           command: "npm run typecheck",
@@ -679,7 +679,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("uses terminal exit as a fallback before shell command completion", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         typecheck: {
           command: "npm run typecheck",
@@ -717,7 +717,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("rejects duplicate plain script starts while running", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         typecheck: {
           command: 'node -e "setTimeout(() => {}, 30000)"',
@@ -760,7 +760,7 @@ describe("runAsyncWorktreeBootstrap", () => {
   });
 
   it("spawns services with route registration and injected peer service env vars", async () => {
-    commitPaseoScripts(
+    commitSynapseScripts(
       {
         api: {
           type: "service",
@@ -910,7 +910,7 @@ describe("runAsyncWorktreeBootstrap", () => {
     }
     expect(secondPort).not.toBe(firstPort);
     expect(secondPort).toEqual(expect.any(Number));
-    expect(createTerminalCalls[2]?.env?.PASEO_SERVICE_WORKER_PORT).toBe(String(workerPort));
+    expect(createTerminalCalls[2]?.env?.SYNAPSE_SERVICE_WORKER_PORT).toBe(String(workerPort));
     expect(routeStore.getRouteEntry("api.feature-respawn-service.repo.localhost")).toMatchObject({
       hostname: "api.feature-respawn-service.repo.localhost",
       port: secondPort,
@@ -1070,8 +1070,8 @@ describe("runAsyncWorktreeBootstrap", () => {
 
     expect(Array.from(plan.keys())).toEqual(["app-server", "worker"]);
     expect(createTerminalCalls).toHaveLength(1);
-    expect(createTerminalCalls[0]?.env).toHaveProperty("PASEO_SERVICE_APP_SERVER_PORT");
-    expect(createTerminalCalls[0]?.env).toHaveProperty("PASEO_SERVICE_WORKER_PORT");
+    expect(createTerminalCalls[0]?.env).toHaveProperty("SYNAPSE_SERVICE_APP_SERVER_PORT");
+    expect(createTerminalCalls[0]?.env).toHaveProperty("SYNAPSE_SERVICE_WORKER_PORT");
   });
 
   it("binds services to the network when the daemon listens on a non-loopback host", async () => {
@@ -1115,7 +1115,7 @@ describe("runAsyncWorktreeBootstrap", () => {
 
     expect(createTerminalCalls).toHaveLength(1);
     expect(createTerminalCalls[0]?.env?.HOST).toBe("0.0.0.0");
-    expect(createTerminalCalls[0]?.env?.PASEO_URL).toBe(
+    expect(createTerminalCalls[0]?.env?.SYNAPSE_URL).toBe(
       "http://web.feature-remote-service.repo.localhost:6767",
     );
   });

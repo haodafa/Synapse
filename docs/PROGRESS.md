@@ -41,7 +41,7 @@
 | `synapse onboard` | 初始化设置 | ✅ |
 | `synapse daemon start` | 启动守护进程 | ✅ |
 
-#### 1.2 Multica 风格命令 (85+)
+#### 1.2 Synapse 风格命令 (85+)
 
 **认证 & 配置**
 - `synapse setup` - 一键配置
@@ -175,7 +175,7 @@
 
 **核心功能**
 - ✅ 双协议支持 (REST + WebSocket)
-- ✅ 三命名空间事件 (paseo.*, multica.*, synapse.*)
+- ✅ 三命名空间事件 (paseo.*, synapse.*, synapse.*)
 - ✅ 身份认证与授权
 - ✅ 请求验证 (Zod)
 - ✅ 速率限制
@@ -188,8 +188,8 @@
 **WebSocket 事件**
 - ✅ `paseo.agent.*` - Agent 事件
 - ✅ `paseo.session.*` - 会话事件
-- ✅ `multica.issue.*` - Issue 事件
-- ✅ `multica.project.*` - 项目事件
+- ✅ `synapse.issue.*` - Issue 事件
+- ✅ `synapse.project.*` - 项目事件
 - ✅ `synapse.skill.*` - Skill 事件
 - ✅ `synapse.squad.*` - Squad 事件
 - ✅ `synapse.orchestration.*` - 编排事件

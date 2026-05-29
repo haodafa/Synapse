@@ -10,7 +10,7 @@ import type {
   Comment,
   TimelineEntry,
   Reaction,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 import type {
   CommentCreatedPayload,
   CommentUpdatedPayload,
@@ -20,11 +20,11 @@ import type {
   ActivityCreatedPayload,
   ReactionAddedPayload,
   ReactionRemovedPayload,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 import {
   issueTimelineOptions,
   issueKeys,
-} from "@multica/core/issues/queries";
+} from "@synapse/core/issues/queries";
 import {
   useCreateComment,
   useUpdateComment,
@@ -32,9 +32,9 @@ import {
   useResolveComment,
   useToggleCommentReaction,
   type ToggleCommentReactionVars,
-} from "@multica/core/issues/mutations";
-import { sortTimelineEntriesAsc } from "@multica/core/issues/timeline-sort";
-import { useWSEvent, useWSReconnect } from "@multica/core/realtime";
+} from "@synapse/core/issues/mutations";
+import { sortTimelineEntriesAsc } from "@synapse/core/issues/timeline-sort";
+import { useWSEvent, useWSReconnect } from "@synapse/core/realtime";
 import { toast } from "sonner";
 import { useT } from "../../i18n";
 

@@ -73,7 +73,7 @@ interface SessionHandlerInternals {
   handleStashListRequest(params: unknown): Promise<unknown>;
   handleStashSaveRequest(params: unknown): Promise<unknown>;
   handleStashPopRequest(params: unknown): Promise<unknown>;
-  createPaseoWorktree(params: unknown): Promise<unknown>;
+  createSynapseWorktree(params: unknown): Promise<unknown>;
   handleStartWorkspaceScriptRequest(params: unknown): Promise<unknown>;
   sttManager: {
     transcribe(audio: Buffer, format: string): Promise<unknown>;
@@ -125,7 +125,7 @@ const spawnMocks = vi.hoisted(() => ({
 }));
 
 const paseoWorktreeServiceMocks = vi.hoisted(() => ({
-  createPaseoWorktree: vi.fn(),
+  createSynapseWorktree: vi.fn(),
 }));
 
 interface Deferred<T> {
@@ -164,11 +164,11 @@ vi.mock("../utils/checkout-git.js", async (importOriginal) => {
   };
 });
 
-vi.mock("./paseo-worktree-service.js", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./paseo-worktree-service.js")>();
+vi.mock("./synapse-worktree-service.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./synapse-worktree-service.js")>();
   return {
     ...actual,
-    createPaseoWorktree: paseoWorktreeServiceMocks.createPaseoWorktree,
+    createSynapseWorktree: paseoWorktreeServiceMocks.createSynapseWorktree,
   };
 });
 
@@ -271,7 +271,7 @@ function createSessionForTest(options: SessionForTestOptions = {}): Session {
     logger,
     downloadTokenStore: asDownloadTokenStore(),
     pushTokenStore: asPushTokenStore(),
-    paseoHome: "/tmp/paseo-home",
+    paseoHome: "/tmp/synapse-home",
     agentManager: asAgentManager({
       listAgents: vi.fn(() => []),
       subscribe: vi.fn(() => () => {}),
@@ -1152,7 +1152,7 @@ describe("session checkout merge handling", () => {
         baseRef: "main",
         mode: "merge",
       },
-      { paseoHome: "/tmp/paseo-home" },
+      { paseoHome: "/tmp/synapse-home" },
     );
     expect(workspaceGitService.getSnapshot).toHaveBeenCalledWith("/tmp/base-worktree", {
       force: true,
@@ -3415,7 +3415,7 @@ describe("session paseo worktree creation handling", () => {
   test("forces workspace git refreshes for the source repo and created worktree", async () => {
     const workspaceGitService = { getSnapshot: vi.fn().mockResolvedValue({}) };
     const session = createSessionForTest({ workspaceGitService });
-    paseoWorktreeServiceMocks.createPaseoWorktree.mockResolvedValue({
+    paseoWorktreeServiceMocks.createSynapseWorktree.mockResolvedValue({
       repoRoot: "/tmp/repo",
       worktree: {
         branchName: "feature/new-worktree",
@@ -3431,7 +3431,7 @@ describe("session paseo worktree creation handling", () => {
       created: true,
     });
 
-    await asSessionInternals(session).createPaseoWorktree({
+    await asSessionInternals(session).createSynapseWorktree({
       cwd: "/tmp/repo",
       worktreeSlug: "new-worktree",
       runSetup: false,

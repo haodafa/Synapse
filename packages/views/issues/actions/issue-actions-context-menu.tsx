@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState, type ReactElement } from "react";
-import type { Issue } from "@multica/core/types";
+import type { Issue } from "@synapse/core/types";
 import {
   ContextMenu,
   ContextMenuTrigger,
   ContextMenuContent,
-} from "@multica/ui/components/ui/context-menu";
+} from "@synapse/ui/components/ui/context-menu";
 import { useIssueActions } from "./use-issue-actions";
 import {
   IssueActionsMenuItems,

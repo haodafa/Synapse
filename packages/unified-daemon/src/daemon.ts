@@ -138,7 +138,7 @@ export class UnifiedDaemon {
       }
     });
 
-    // ============ MULTICA-STYLE WORKSPACE ROUTES ============
+    // ============ SYNAPSE-STYLE WORKSPACE ROUTES ============
 
     this.app.get("/api/workspaces", (req, res) => {
       const workspaces = Array.from(this.workspaces.values());
@@ -157,7 +157,7 @@ export class UnifiedDaemon {
       res.json([]);
     });
 
-    // ============ MULTICA-STYLE ISSUE ROUTES ============
+    // ============ SYNAPSE-STYLE ISSUE ROUTES ============
 
     this.app.get("/api/workspaces/:workspaceId/issues", (req, res) => {
       const issues = Array.from(this.issues.values());
@@ -243,7 +243,7 @@ export class UnifiedDaemon {
       res.json(issue);
     });
 
-    // ============ MULTICA-STYLE PROJECT ROUTES ============
+    // ============ SYNAPSE-STYLE PROJECT ROUTES ============
 
     this.app.get("/api/workspaces/:workspaceId/projects", (req, res) => {
       const projects = Array.from(this.projects.values()).filter(
@@ -272,7 +272,7 @@ export class UnifiedDaemon {
       res.json(project);
     });
 
-    // ============ MULTICA-STYLE AUTOPILOT ROUTES ============
+    // ============ SYNAPSE-STYLE AUTOPILOT ROUTES ============
 
     this.app.get("/api/workspaces/:workspaceId/autopilots", (req, res) => {
       const autopilots = Array.from(this.autopilots.values()).filter(
@@ -369,11 +369,11 @@ export class UnifiedDaemon {
       this.handleAgentStop(clientId, payload);
     });
 
-    this.wsServer.on("multica:issue:create", ({ clientId, payload }) => {
+    this.wsServer.on("synapse:issue:create", ({ clientId, payload }) => {
       this.handleIssueCreate(clientId, payload);
     });
 
-    this.wsServer.on("multica:run:start", ({ clientId, payload }) => {
+    this.wsServer.on("synapse:run:start", ({ clientId, payload }) => {
       this.handleRunStart(clientId, payload);
     });
 

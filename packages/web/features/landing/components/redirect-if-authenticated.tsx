@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { workspaceListOptions } from "@multica/core/workspace";
-import { resolvePostAuthDestination, useHasOnboarded } from "@multica/core/paths";
+import { useAuthStore } from "@synapse/core/auth";
+import { workspaceListOptions } from "@synapse/core/workspace";
+import { resolvePostAuthDestination, useHasOnboarded } from "@synapse/core/paths";
 
 /**
  * Client-side fallback redirect for authenticated visitors on the landing page.

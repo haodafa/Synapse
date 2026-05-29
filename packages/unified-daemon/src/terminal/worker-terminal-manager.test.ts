@@ -293,7 +293,7 @@ it("keeps registered cwd env inheritance behind the worker manager interface", a
 
   manager.registerCwdEnv({
     cwd,
-    env: { PASEO_WORKER_TERMINAL_TEST: "worker-env" },
+    env: { SYNAPSE_WORKER_TERMINAL_TEST: "worker-env" },
   });
   trackTerminal(
     await manager.createTerminal({
@@ -301,7 +301,7 @@ it("keeps registered cwd env inheritance behind the worker manager interface", a
       ...nodeTerminalCommand(`
       require("node:fs").writeFileSync(
         ${JSON.stringify(markerPath)},
-        process.env.PASEO_WORKER_TERMINAL_TEST ?? "",
+        process.env.SYNAPSE_WORKER_TERMINAL_TEST ?? "",
       );
       setInterval(() => {}, 1000);
     `),

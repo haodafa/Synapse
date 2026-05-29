@@ -32,7 +32,7 @@ import {
 import { parseGitRevParsePath } from "../utils/git-rev-parse-path.js";
 import { runGitCommand } from "../utils/run-git-command.js";
 import { resolveGitHubRemote, type GitHubRemoteIdentity } from "../utils/github-remote.js";
-import { listPaseoWorktrees, type PaseoWorktreeInfo } from "../utils/worktree.js";
+import { listSynapseWorktrees, type SynapseWorktreeInfo } from "../utils/worktree.js";
 import { READ_ONLY_GIT_ENV } from "./checkout-git-utils.js";
 import {
   buildWorkspaceGitMetadataFromSnapshot,
@@ -58,7 +58,7 @@ const LINUX_WATCH_REFRESH_COOLDOWN_MS = 2_000;
 const LINUX_WATCH_IGNORE_TTL_MS = 5 * 60 * 1_000;
 
 const linuxWatchReaddirConcurrency =
-  parseInt(process.env.PASEO_LINUX_WATCH_READDIR_CONCURRENCY ?? "16", 10) || 16;
+  parseInt(process.env.SYNAPSE_LINUX_WATCH_READDIR_CONCURRENCY ?? "16", 10) || 16;
 const linuxWatchReaddirLimit = pLimit(linuxWatchReaddirConcurrency);
 
 export interface WorkspaceGitRuntimeSnapshot {
@@ -196,7 +196,7 @@ export interface WorkspaceGitStashEntry {
 
 export type WorkspaceGitBranchValidationResult = BranchCheckoutResolution;
 export type WorkspaceGitBranchSuggestion = BranchSuggestion;
-export type WorkspaceGitWorktreeInfo = PaseoWorktreeInfo;
+export type WorkspaceGitWorktreeInfo = SynapseWorktreeInfo;
 
 export type WorkspaceGitSnapshotOptions =
   | {
@@ -247,7 +247,7 @@ interface WorkspaceGitServiceDependencies {
   resolveBranchCheckout: typeof resolveBranchCheckout;
   resolveRepositoryDefaultBranch: typeof resolveRepositoryDefaultBranch;
   listBranchSuggestions: typeof listBranchSuggestions;
-  listPaseoWorktrees: typeof listPaseoWorktrees;
+  listSynapseWorktrees: typeof listSynapseWorktrees;
   github: GitHubService;
   resolveAbsoluteGitDir: (cwd: string) => Promise<string | null>;
   hasOriginRemote: (cwd: string) => Promise<boolean>;
@@ -328,7 +328,7 @@ function buildDefaultWorkspaceGitServiceDeps(): WorkspaceGitServiceDependencies 
     resolveBranchCheckout,
     resolveRepositoryDefaultBranch,
     listBranchSuggestions,
-    listPaseoWorktrees,
+    listSynapseWorktrees,
     github: createGitHubService(),
     resolveAbsoluteGitDir,
     hasOriginRemote,
@@ -578,7 +578,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
     const repoRoot = await this.resolveRepoRoot(cwdOrRepoRoot, options);
     const key = JSON.stringify(["worktrees", repoRoot]);
     return this.readAuxiliaryCache(this.worktreeListCache, key, options, () =>
-      this.deps.listPaseoWorktrees({
+      this.deps.listSynapseWorktrees({
         cwd: repoRoot,
         paseoHome: this.paseoHome,
       }),

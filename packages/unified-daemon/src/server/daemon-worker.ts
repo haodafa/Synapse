@@ -1,6 +1,6 @@
-import { createPaseoDaemon } from "./bootstrap.js";
+import { createSynapseDaemon } from "./bootstrap.js";
 import { loadConfig } from "./config.js";
-import { resolvePaseoHome } from "./paseo-home.js";
+import { resolveSynapseHome } from "./synapse-home.js";
 import { createRootLogger } from "./logger.js";
 import type { DaemonLifecycleIntent } from "./bootstrap.js";
 
@@ -25,7 +25,7 @@ interface BootstrapResult {
 
 function bootstrapFromEnvironment(): BootstrapResult {
   try {
-    const paseoHome = resolvePaseoHome();
+    const paseoHome = resolveSynapseHome();
     const config = loadConfig(paseoHome);
     const logger = createRootLogger({ log: config.log }, { paseoHome, file: false });
     return { paseoHome, logger, config };
@@ -53,7 +53,7 @@ function applyCliFlagOverrides(config: ReturnType<typeof loadConfig>): void {
 
 async function main() {
   const { logger, config } = bootstrapFromEnvironment();
-  let daemon: Awaited<ReturnType<typeof createPaseoDaemon>> | null = null;
+  let daemon: Awaited<ReturnType<typeof createSynapseDaemon>> | null = null;
   let shutdownPromise: Promise<number> | null = null;
   let exitHookInstalled = false;
 
@@ -149,7 +149,7 @@ async function main() {
   };
 
   try {
-    daemon = await createPaseoDaemon(
+    daemon = await createSynapseDaemon(
       {
         ...config,
         onLifecycleIntent: handleLifecycleIntent,

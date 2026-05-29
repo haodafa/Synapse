@@ -76,11 +76,11 @@ import {
 const PI_PROVIDER = "pi";
 const DEFAULT_PI_THINKING_LEVEL: PiThinkingLevel = "medium";
 const PI_BINARY_COMMAND = process.env.PI_COMMAND ?? process.env.PI_ACP_PI_COMMAND ?? "pi";
-const PASEO_PI_TREE_EXTENSION_COMMAND = "paseo_tree";
-const PASEO_PI_CAPTURE_EXTENSION_COMMAND = "paseo_capture_entries";
-const PASEO_PI_ENTRY_CAPTURE_MARKER = "PASEO_ENTRY_CAPTURE";
-const PASEO_PI_COMMAND_RESULT_MARKER = "PASEO_COMMAND_RESULT";
-const PASEO_PI_EXTENSION_RESULT_TIMEOUT_MS = 10_000;
+const SYNAPSE_PI_TREE_EXTENSION_COMMAND = "paseo_tree";
+const SYNAPSE_PI_CAPTURE_EXTENSION_COMMAND = "paseo_capture_entries";
+const SYNAPSE_PI_ENTRY_CAPTURE_MARKER = "SYNAPSE_ENTRY_CAPTURE";
+const SYNAPSE_PI_COMMAND_RESULT_MARKER = "SYNAPSE_COMMAND_RESULT";
+const SYNAPSE_PI_EXTENSION_RESULT_TIMEOUT_MS = 10_000;
 const QUESTION_RESPONSE_HEADER = "Response";
 const QUESTION_COMMENT_HEADER = "Comment";
 const PI_ASK_USER_FREEFORM_SENTINEL = "✏️ Type custom response...";
@@ -417,7 +417,7 @@ function createPiMcpConfigFile(servers: Record<string, McpServerConfig>): PiMcpC
 
 function createPiPaseoExtensionFile(): PiTempFile {
   const dir = mkdtempSync(join(tmpdir(), "paseo-pi-extension-"));
-  const filePath = join(dir, "paseo-integration.mjs");
+  const filePath = join(dir, "synapse-integration.mjs");
   writeFileSync(
     filePath,
     `
@@ -451,7 +451,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 
 	function emitEntryCapture(ctx, reason, requestId) {
 	  ctx.ui.notify(
-	    "${PASEO_PI_ENTRY_CAPTURE_MARKER} " +
+	    "${SYNAPSE_PI_ENTRY_CAPTURE_MARKER} " +
 	      JSON.stringify({ reason, requestId, entries: getCapturedUserEntries(ctx) }),
 	    "info",
 	  );
@@ -459,7 +459,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 
 	function emitCommandResult(ctx, requestId, result) {
 	  ctx.ui.notify(
-	    "${PASEO_PI_COMMAND_RESULT_MARKER} " + JSON.stringify({ requestId, ...result }),
+	    "${SYNAPSE_PI_COMMAND_RESULT_MARKER} " + JSON.stringify({ requestId, ...result }),
 	    result.ok ? "info" : "error",
 	  );
 	}
@@ -473,7 +473,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 	    emitEntryCapture(ctx, "turn_end");
 	  });
 
-	  pi.registerCommand("${PASEO_PI_CAPTURE_EXTENSION_COMMAND}", {
+	  pi.registerCommand("${SYNAPSE_PI_CAPTURE_EXTENSION_COMMAND}", {
 	    description: "Internal Paseo entry capture bridge",
 	    handler: async (args, ctx) => {
 	      const payload = decodePayload(args.trim());
@@ -481,7 +481,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 	    },
 	  });
 
-	  pi.registerCommand("${PASEO_PI_TREE_EXTENSION_COMMAND}", {
+	  pi.registerCommand("${SYNAPSE_PI_TREE_EXTENSION_COMMAND}", {
 	    description: "Internal Paseo tree navigation bridge",
 	    handler: async (args, ctx) => {
 	      const payload = decodePayload(args.trim());
@@ -1108,7 +1108,7 @@ export class PiRpcAgentSession implements AgentSession {
     const requestId = randomUUID();
     const resultPromise = this.waitForExtensionResult(requestId);
     const payload = Buffer.from(JSON.stringify({ targetId, requestId })).toString("base64url");
-    await this.runtimeSession.prompt(`/${PASEO_PI_TREE_EXTENSION_COMMAND} ${payload}`);
+    await this.runtimeSession.prompt(`/${SYNAPSE_PI_TREE_EXTENSION_COMMAND} ${payload}`);
     return await resultPromise;
   }
 
@@ -1176,7 +1176,7 @@ export class PiRpcAgentSession implements AgentSession {
     const requestId = randomUUID();
     const resultPromise = this.waitForExtensionResult(requestId);
     const payload = Buffer.from(JSON.stringify({ requestId, reason })).toString("base64url");
-    await this.runtimeSession.prompt(`/${PASEO_PI_CAPTURE_EXTENSION_COMMAND} ${payload}`);
+    await this.runtimeSession.prompt(`/${SYNAPSE_PI_CAPTURE_EXTENSION_COMMAND} ${payload}`);
     await resultPromise;
   }
 
@@ -1185,7 +1185,7 @@ export class PiRpcAgentSession implements AgentSession {
       const timer = setTimeout(() => {
         this.pendingExtensionResults.delete(requestId);
         reject(new Error(`Pi extension result timed out for request ${requestId}`));
-      }, PASEO_PI_EXTENSION_RESULT_TIMEOUT_MS);
+      }, SYNAPSE_PI_EXTENSION_RESULT_TIMEOUT_MS);
       this.pendingExtensionResults.set(requestId, { resolve, reject, timer });
     });
   }
@@ -1255,7 +1255,7 @@ export class PiRpcAgentSession implements AgentSession {
   }
 
   private handleEntryCaptureMarker(message: string): boolean {
-    const payload = parseExtensionMarkerPayload(message, PASEO_PI_ENTRY_CAPTURE_MARKER);
+    const payload = parseExtensionMarkerPayload(message, SYNAPSE_PI_ENTRY_CAPTURE_MARKER);
     if (!payload) {
       return false;
     }
@@ -1268,7 +1268,7 @@ export class PiRpcAgentSession implements AgentSession {
   }
 
   private handleCommandResultMarker(message: string): boolean {
-    const payload = parseExtensionMarkerPayload(message, PASEO_PI_COMMAND_RESULT_MARKER);
+    const payload = parseExtensionMarkerPayload(message, SYNAPSE_PI_COMMAND_RESULT_MARKER);
     if (!payload) {
       return false;
     }

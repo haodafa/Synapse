@@ -1,9 +1,9 @@
 "use client";
 
 import { ArrowLeft, LogOut } from "lucide-react";
-import { Button } from "@multica/ui/components/ui/button";
-import type { Workspace } from "@multica/core/types";
-import { useConfigStore } from "@multica/core/config";
+import { Button } from "@synapse/ui/components/ui/button";
+import type { Workspace } from "@synapse/core/types";
+import { useConfigStore } from "@synapse/core/config";
 import { useLogout } from "../auth";
 import { DragStrip } from "../platform";
 import { useT } from "../i18n";

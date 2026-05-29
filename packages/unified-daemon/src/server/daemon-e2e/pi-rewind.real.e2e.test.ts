@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { PiRpcAgentClient } from "../agent/providers/pi/agent.js";
 import type { AgentTimelineItem } from "../agent/agent-sdk-types.js";
 import { DaemonClient } from "../test-utils/daemon-client.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon, type TestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 import {
   closeRewindSession,
   fetchTimelineItems,
@@ -15,7 +15,7 @@ import {
 
 interface PiRewindHarness {
   client: DaemonClient;
-  daemon: TestPaseoDaemon;
+  daemon: TestSynapseDaemon;
 }
 
 interface PiRewindSession {
@@ -65,7 +65,7 @@ function expectPiSessionId(value: string): void {
 
 function piPrompt(input: { promptToken: string; doneToken: string }): string {
   return [
-    `PASEO_PI_REWIND_PROMPT_${input.promptToken}.`,
+    `SYNAPSE_PI_REWIND_PROMPT_${input.promptToken}.`,
     "Remember this marker for the conversation.",
     `Reply exactly: ${input.doneToken}`,
   ].join(" ");
@@ -107,7 +107,7 @@ describe("daemon E2E (real pi) - rewind", () => {
 
   beforeAll(async () => {
     const logger = pino({ level: "silent" });
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       agentClients: { pi: new PiRpcAgentClient({ logger }) },
       logger,
     });

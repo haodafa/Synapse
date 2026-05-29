@@ -82,7 +82,7 @@
 
 ---
 
-## 🤝 Multica 特性（已融合）
+## 🤝 Synapse 特性（已融合）
 
 ### 1. 看板任务管理
 
@@ -206,7 +206,7 @@
 | 特性 | 描述 | 状态 |
 |------|------|------|
 | 双协议支持 | REST + WebSocket | ✅ |
-| 三命名空间 | paseo/multica/synapse | ✅ |
+| 三命名空间 | paseo/synapse/synapse | ✅ |
 | 事件广播 | 统一事件系统 | ✅ |
 | 类型安全 | Zod schema 验证 | ✅ |
 
@@ -555,7 +555,7 @@ synapse config set           ✅ 设置配置
 ## 🙏 致谢
 
 - [Paseo](https://github.com/getpaseo/paseo) - 跨设备控制和本地执行
-- [Multica](https://github.com/multica-ai/multica) - 团队协作和技能沉淀
+- [Synapse](https://github.com/synapse-ai/synapse) - 团队协作和技能沉淀
 
 ---
 

@@ -1,6 +1,6 @@
 /**
  * The 3 starter tasks the Runtime-path Welcome Modal offers a user after
- * Multica Helper is created. Each card maps to ONE issue being created
+ * Synapse Helper is created. Each card maps to ONE issue being created
  * via `api.createIssue` with:
  *   - title = STARTER_PROMPT.title[lang]
  *   - description = STARTER_PROMPT.prompt[lang]
@@ -24,12 +24,12 @@ interface StarterPrompt {
 export const HELPER_STARTER_PROMPTS: Record<StarterCardId, StarterPrompt> = {
   intro: {
     title: {
-      en: "Introduce Multica to me",
-      zh: "简单介绍一下 Multica",
+      en: "Introduce Synapse to me",
+      zh: "简单介绍一下 Synapse",
     },
     prompt: {
-      en: "Introduce Multica to me in 1–2 paragraphs. Cover what it is, the core concepts (workspace / issue / agent / runtime), and how it differs from tools like Linear or Jira.",
-      zh: "用 1-2 段话简单介绍 Multica 给我。讲清楚它是什么、核心概念有哪些(workspace / issue / agent / runtime)、和 Linear / Jira 之类的工具核心区别在哪。",
+      en: "Introduce Synapse to me in 1–2 paragraphs. Cover what it is, the core concepts (workspace / issue / agent / runtime), and how it differs from tools like Linear or Jira.",
+      zh: "用 1-2 段话简单介绍 Synapse 给我。讲清楚它是什么、核心概念有哪些(workspace / issue / agent / runtime)、和 Linear / Jira 之类的工具核心区别在哪。",
     },
   },
   tour: {
@@ -38,24 +38,24 @@ export const HELPER_STARTER_PROMPTS: Record<StarterCardId, StarterPrompt> = {
       zh: "带我熟悉每个功能",
     },
     prompt: {
-      en: "Walk me through Multica's core features — issue, agent, squad, autopilot, chat. Pick one realistic scenario I might run into and explain how all these pieces fit together.",
-      zh: "陪我熟悉 Multica 的每个核心功能 —— issue、agent、squad、autopilot、chat。挑一个我可能用得上的真实场景,讲讲这几个东西是怎么配合的。",
+      en: "Walk me through Synapse's core features — issue, agent, squad, autopilot, chat. Pick one realistic scenario I might run into and explain how all these pieces fit together.",
+      zh: "陪我熟悉 Synapse 的每个核心功能 —— issue、agent、squad、autopilot、chat。挑一个我可能用得上的真实场景,讲讲这几个东西是怎么配合的。",
     },
   },
   welcome_page: {
     title: {
-      en: "Show me what Multica can do for me — as slides",
-      zh: "用 slides 介绍 Multica 能为我做什么",
+      en: "Show me what Synapse can do for me — as slides",
+      zh: "用 slides 介绍 Synapse 能为我做什么",
     },
     prompt: {
-      en: `Build me a single-file HTML slide deck that shows what Multica can do for me. Tailor it to my role and use case (see "About me" below). Paste the FULL HTML in a fenced \`\`\`html block in a comment on this issue so I can copy it straight out, save as \`multica-intro.html\`, and double-click to open it in a browser.
+      en: `Build me a single-file HTML slide deck that shows what Synapse can do for me. Tailor it to my role and use case (see "About me" below). Paste the FULL HTML in a fenced \`\`\`html block in a comment on this issue so I can copy it straight out, save as \`synapse-intro.html\`, and double-click to open it in a browser.
 
 **Format**
 - One self-contained .html, all CSS / JS inline. Zero dependencies, no build tools, no external images (use CSS-generated visuals — gradients, geometric shapes, SVG inline).
 - 5–8 slides total:
-  1. Title — "What Multica can do for [my role]"
+  1. Title — "What Synapse can do for [my role]"
   2. Four core concepts — workspace / issue / agent / runtime, one slide
-  3–6. 3–4 concrete scenarios tailored to my use case, each in the form "When you want X → here's how Multica handles it"
+  3–6. 3–4 concrete scenarios tailored to my use case, each in the form "When you want X → here's how Synapse handles it"
   7. Closing — one specific next-step action
 
 **Viewport rules (non-negotiable)**
@@ -74,14 +74,14 @@ export const HELPER_STARTER_PROMPTS: Record<StarterCardId, StarterPrompt> = {
 - ArrowLeft / ArrowRight and Space to advance. Small page indicator in a corner.
 
 When done, also reply with a one-sentence summary of which scenarios you picked for me and why.`,
-      zh: `给我做一份单文件 HTML 演示稿,介绍 Multica 能为我做什么。根据我的角色和使用场景定制(见下面"关于我")。把完整 HTML 贴到这条 issue 的评论里的 \`\`\`html 代码块中,我直接复制下来存成 \`multica-intro.html\` 双击就能在浏览器里打开。
+      zh: `给我做一份单文件 HTML 演示稿,介绍 Synapse 能为我做什么。根据我的角色和使用场景定制(见下面"关于我")。把完整 HTML 贴到这条 issue 的评论里的 \`\`\`html 代码块中,我直接复制下来存成 \`synapse-intro.html\` 双击就能在浏览器里打开。
 
 **产出格式**
 - 一个自包含 .html,CSS / JS 全部 inline。零依赖、不用打包、不引外部图片(视觉用纯 CSS 生成 —— 渐变、几何形状、内联 SVG)。
 - 5-8 张 slide:
-  1. 标题页 —— "Multica 能为 [我的角色] 做什么"
+  1. 标题页 —— "Synapse 能为 [我的角色] 做什么"
   2. 四个核心概念 —— workspace / issue / agent / runtime,一张
-  3-6. 3-4 个针对我使用场景的具体例子,形如"当你想做 X → Multica 是这样处理的"
+  3-6. 3-4 个针对我使用场景的具体例子,形如"当你想做 X → Synapse 是这样处理的"
   7. 收尾页 —— 一个具体的下一步动作
 
 **视口约束(必须遵守)**

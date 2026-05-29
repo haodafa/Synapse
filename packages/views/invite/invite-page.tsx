@@ -2,24 +2,24 @@
 
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
-import { useAuthStore } from "@multica/core/auth";
+import { api } from "@synapse/core/api";
+import { useAuthStore } from "@synapse/core/auth";
 import {
   workspaceKeys,
   workspaceListOptions,
-} from "@multica/core/workspace/queries";
+} from "@synapse/core/workspace/queries";
 import {
   paths,
   resolvePostAuthDestination,
   useHasOnboarded,
-} from "@multica/core/paths";
+} from "@synapse/core/paths";
 import { useNavigation } from "../navigation";
 import { useLogout } from "../auth";
 import { DragStrip } from "../platform";
 import { useT } from "../i18n";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Card, CardContent } from "@synapse/ui/components/ui/card";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
 import { ArrowLeft, LogOut, Users, Check, X } from "lucide-react";
 
 export interface InvitePageProps {

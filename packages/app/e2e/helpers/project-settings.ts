@@ -139,32 +139,32 @@ export async function removeProjectScript(page: Page, scriptName: string): Promi
 
 // --- File manipulation ---
 
-export async function corruptPaseoConfig(repoPath: string): Promise<void> {
-  await writeFile(path.join(repoPath, "paseo.json"), "{not valid json}");
+export async function corruptSynapseConfig(repoPath: string): Promise<void> {
+  await writeFile(path.join(repoPath, "synapse.json"), "{not valid json}");
 }
 
-export async function bumpPaseoConfigOnDisk(repoPath: string): Promise<void> {
-  const configPath = path.join(repoPath, "paseo.json");
+export async function bumpSynapseConfigOnDisk(repoPath: string): Promise<void> {
+  const configPath = path.join(repoPath, "synapse.json");
   const raw = await readFile(configPath, "utf8");
   const config = JSON.parse(raw) as Record<string, unknown>;
   config._bump = Date.now();
   await writeFile(configPath, JSON.stringify(config, null, 2) + "\n");
 }
 
-export async function restorePaseoConfig(
+export async function restoreSynapseConfig(
   repoPath: string,
   config: Record<string, unknown>,
 ): Promise<void> {
-  await writeFile(path.join(repoPath, "paseo.json"), JSON.stringify(config, null, 2) + "\n");
+  await writeFile(path.join(repoPath, "synapse.json"), JSON.stringify(config, null, 2) + "\n");
 }
 
 // The daemon writes atomically via a temp file + rename, so blocking writes requires
 // removing write permission from the *directory*, not just the file.
-export async function blockPaseoConfigWrites(repoPath: string): Promise<void> {
+export async function blockSynapseConfigWrites(repoPath: string): Promise<void> {
   await chmod(repoPath, 0o555);
 }
 
-export async function unblockPaseoConfigWrites(repoPath: string): Promise<void> {
+export async function unblockSynapseConfigWrites(repoPath: string): Promise<void> {
   await chmod(repoPath, 0o755);
 }
 

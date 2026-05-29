@@ -45,7 +45,7 @@ export const useProjectDraftStore = create<ProjectDraftStore>()(
       },
     }),
     {
-      name: "multica_project_draft",
+      name: "synapse_project_draft",
       storage: createJSONStorage(() => createWorkspaceAwareStorage(defaultStorage)),
     },
   ),

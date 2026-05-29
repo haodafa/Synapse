@@ -10,8 +10,8 @@ import {
   Plug,
   Terminal,
 } from "lucide-react";
-import type { Agent, AgentRuntime } from "@multica/core/types";
-import { providerSupportsMcpConfig } from "@multica/core/agents";
+import type { Agent, AgentRuntime } from "@synapse/core/types";
+import { providerSupportsMcpConfig } from "@synapse/core/agents";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@multica/ui/components/ui/alert-dialog";
+} from "@synapse/ui/components/ui/alert-dialog";
 import { ActivityTab } from "./tabs/activity-tab";
 import { InstructionsTab } from "./tabs/instructions-tab";
 import { SkillsTab } from "./tabs/skills-tab";

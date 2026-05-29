@@ -1,8 +1,8 @@
 "use client";
 
-import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/actor-avatar";
-import { useActorName } from "@multica/core/workspace/hooks";
-import { cn } from "@multica/ui/lib/utils";
+import { ActorAvatar as ActorAvatarBase } from "@synapse/ui/components/common/actor-avatar";
+import { useActorName } from "@synapse/core/workspace/hooks";
+import { cn } from "@synapse/ui/lib/utils";
 
 interface AgentAvatarStackProps {
   // Agent ids to render, in display order. The component does NOT dedupe —

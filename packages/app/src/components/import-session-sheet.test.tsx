@@ -186,7 +186,7 @@ function renderSheet(
     },
   });
 
-  const cwd = options && "cwd" in options ? (options.cwd ?? undefined) : "/repo/paseo";
+  const cwd = options && "cwd" in options ? (options.cwd ?? undefined) : "/repo/synapse";
 
   return render(
     <QueryClientProvider client={queryClient}>
@@ -217,7 +217,7 @@ function createImportedAgentSnapshot(id: string): Awaited<ReturnType<DaemonClien
   return {
     id,
     provider: "custom-provider",
-    cwd: "/repo/paseo",
+    cwd: "/repo/synapse",
     model: null,
     createdAt: "2026-04-30T10:00:00.000Z",
     updatedAt: "2026-04-30T10:00:00.000Z",
@@ -247,7 +247,7 @@ function createProviderSessionEntry(
     providerId: "custom-provider",
     providerLabel: "Custom Agent",
     providerHandleId: "provider-thread-1",
-    cwd: "/repo/paseo",
+    cwd: "/repo/synapse",
     title: "Import me",
     firstPromptPreview: "Import this external provider session",
     lastPromptPreview: "Import this external provider session",
@@ -403,7 +403,7 @@ describe("ImportSessionSheet", () => {
 
     await waitFor(() => {
       expect(fetchRecentProviderSessions).toHaveBeenCalledWith({
-        cwd: "/repo/paseo",
+        cwd: "/repo/synapse",
         providers: ["claude"],
         limit: 15,
       });
@@ -445,7 +445,7 @@ describe("ImportSessionSheet", () => {
             visible={visible}
             client={client}
             serverId="server-1"
-            cwd="/repo/paseo"
+            cwd="/repo/synapse"
             onClose={vi.fn()}
             onImportedAgent={vi.fn()}
           />
@@ -465,7 +465,7 @@ describe("ImportSessionSheet", () => {
     await screen.findByText("Cached importable session");
     await waitFor(() => {
       expect(fetchRecentProviderSessions).toHaveBeenCalledWith({
-        cwd: "/repo/paseo",
+        cwd: "/repo/synapse",
         providers: ["claude"],
         limit: 15,
       });
@@ -499,7 +499,7 @@ describe("ImportSessionSheet", () => {
       expect(importAgent).toHaveBeenCalledWith({
         providerId: "claude",
         providerHandleId: "provider-thread-1",
-        cwd: "/repo/paseo",
+        cwd: "/repo/synapse",
       });
     });
     expect(onImportedAgent).toHaveBeenCalledWith("agent-imported");
@@ -535,7 +535,7 @@ describe("ImportSessionSheet", () => {
     expect(importAgent).toHaveBeenCalledWith({
       providerId: "claude",
       providerHandleId: "provider-thread-1",
-      cwd: "/repo/paseo",
+      cwd: "/repo/synapse",
     });
     expect(onImportedAgent).not.toHaveBeenCalled();
     expect(onClose).not.toHaveBeenCalled();
@@ -578,13 +578,13 @@ describe("ImportSessionSheet", () => {
 
     await waitFor(() => {
       expect(fetchRecentProviderSessions).toHaveBeenCalledWith({
-        cwd: "/repo/paseo",
+        cwd: "/repo/synapse",
         providers: ["claude"],
         limit: 15,
       });
     });
     expect(fetchRecentProviderSessions).toHaveBeenCalledWith({
-      cwd: "/repo/paseo",
+      cwd: "/repo/synapse",
       providers: ["codex"],
       limit: 15,
     });

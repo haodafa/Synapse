@@ -48,7 +48,7 @@ export interface PaseoLogger {
   error(obj: object, msg?: string): void;
 }
 
-export interface PaseoClientConfig {
+export interface SynapseClientConfig {
   url: string;
   clientId?: string;
   appVersion?: string;
@@ -306,7 +306,7 @@ export interface PaseoProviderActions {
   subscribe(handler: (update: PaseoProviderSnapshotUpdate) => void): () => void;
 }
 
-export interface PaseoConfigActions {
+export interface SynapseConfigActions {
   /**
    * Reads daemon config through the existing config RPC. Provider profiles,
    * custom provider entries, keys/env, custom binaries, and provider enablement
@@ -326,18 +326,18 @@ export interface PaseoConfigActions {
   ): Promise<{ requestId: string; config: MutableDaemonConfig }>;
 }
 
-export interface PaseoClient {
+export interface SynapseClient {
   readonly workspaces: PaseoWorkspaceActions;
   readonly agents: PaseoAgentActions;
   readonly providers: PaseoProviderActions;
-  readonly config: PaseoConfigActions;
+  readonly config: SynapseConfigActions;
   connect(): Promise<void>;
   close(): Promise<void>;
   ensureConnected(): void;
   getConnectionState(): ConnectionState;
 }
 
-export function createPaseoClient(config: PaseoClientConfig): PaseoClient {
+export function createSynapseClient(config: SynapseClientConfig): SynapseClient {
   const daemonClient = new DaemonClient({
     ...config,
     clientId: config.clientId ?? createGeneratedClientId(),

@@ -1,0 +1,27 @@
+{
+  "name": "@synapse/relay",
+  "version": "0.0.2",
+  "description": "Synapse Relay (stub)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./e2ee": {
+      "types": "./dist/e2ee.d.ts",
+      "default": "./dist/e2ee.js"
+    }
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist',{ recursive: true, force: true })\" && tsc -p tsconfig.json --incremental false"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

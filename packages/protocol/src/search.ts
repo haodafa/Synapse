@@ -127,8 +127,8 @@ export function buildSearchQuery(options: {
     query: options.query,
     filters: options.filters,
     sort: options.sort,
-    limit: options.limit,
-    offset: options.offset,
+    limit: options.limit ?? 20,
+    offset: options.offset ?? 0,
   };
 }
 

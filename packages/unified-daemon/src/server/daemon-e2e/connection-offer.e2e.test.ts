@@ -8,7 +8,7 @@ import { Writable } from "node:stream";
 import { spawn } from "node:child_process";
 
 import { generateLocalPairingOffer } from "../pairing-offer.js";
-import { createTestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 
 function createCapturingLogger() {
   const lines: string[] = [];
@@ -77,11 +77,11 @@ describe("ConnectionOfferV2 (daemon E2E)", () => {
   });
 
   test("emits relay-only offer URL with stable serverId", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const { logger } = createCapturingLogger();
 
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       listen: "0.0.0.0",
       logger,
       relayEnabled: true,
@@ -120,12 +120,12 @@ describe("ConnectionOfferV2 (daemon E2E)", () => {
   });
 
   test("persists serverId and daemon keypair across daemon restarts", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const tempHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-offer-home-"));
 
     const { logger: logger1 } = createCapturingLogger();
-    const daemon1 = await createTestPaseoDaemon({
+    const daemon1 = await createTestSynapseDaemon({
       listen: "0.0.0.0",
       logger: logger1,
       relayEnabled: true,
@@ -153,7 +153,7 @@ describe("ConnectionOfferV2 (daemon E2E)", () => {
       await daemon1.close();
 
       const { logger: logger2 } = createCapturingLogger();
-      const daemon2 = await createTestPaseoDaemon({
+      const daemon2 = await createTestSynapseDaemon({
         listen: "0.0.0.0",
         logger: logger2,
         relayEnabled: true,
@@ -196,7 +196,7 @@ describe("ConnectionOfferV2 (daemon E2E)", () => {
   });
 
   test("respects --no-relay (CLI) by not emitting a pairing offer", async () => {
-    process.env.PASEO_PRIMARY_LAN_IP = "192.168.1.12";
+    process.env.SYNAPSE_PRIMARY_LAN_IP = "192.168.1.12";
 
     const tempHome = await mkdtemp(path.join(os.tmpdir(), "paseo-offer-e2e-"));
     const port = await getAvailablePort();
@@ -207,12 +207,12 @@ describe("ConnectionOfferV2 (daemon E2E)", () => {
 
     const env = {
       ...process.env,
-      PASEO_HOME: tempHome,
-      PASEO_LISTEN: `0.0.0.0:${port}`,
+      SYNAPSE_HOME: tempHome,
+      SYNAPSE_LISTEN: `0.0.0.0:${port}`,
       OPENAI_API_KEY: "",
-      PASEO_DICTATION_ENABLED: "0",
-      PASEO_VOICE_MODE_ENABLED: "0",
-      PASEO_LOG_FORMAT: "json",
+      SYNAPSE_DICTATION_ENABLED: "0",
+      SYNAPSE_VOICE_MODE_ENABLED: "0",
+      SYNAPSE_LOG_FORMAT: "json",
     };
 
     const stdoutLines: string[] = [];

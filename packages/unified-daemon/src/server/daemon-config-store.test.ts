@@ -64,7 +64,7 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists provider enabled flags into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
+    const paseoHome = mkdtempSync(path.join(tmpdir(), "synapse-daemon-config-store-"));
     tempDirs.push(paseoHome);
 
     const initial = loadPersistedConfig(paseoHome);
@@ -108,7 +108,7 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists append system prompt into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
+    const paseoHome = mkdtempSync(path.join(tmpdir(), "synapse-daemon-config-store-"));
     tempDirs.push(paseoHome);
 
     const store = new DaemonConfigStore(
@@ -130,7 +130,7 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists provider additional models into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
+    const paseoHome = mkdtempSync(path.join(tmpdir(), "synapse-daemon-config-store-"));
     tempDirs.push(paseoHome);
 
     const store = new DaemonConfigStore(
@@ -167,7 +167,7 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists daemon append system prompt into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
+    const paseoHome = mkdtempSync(path.join(tmpdir(), "synapse-daemon-config-store-"));
     tempDirs.push(paseoHome);
 
     const store = new DaemonConfigStore(
@@ -189,7 +189,7 @@ describe("DaemonConfigStore", () => {
   });
 
   test("patch persists custom ACP provider overrides into config.json", () => {
-    const paseoHome = mkdtempSync(path.join(tmpdir(), "paseo-daemon-config-store-"));
+    const paseoHome = mkdtempSync(path.join(tmpdir(), "synapse-daemon-config-store-"));
     tempDirs.push(paseoHome);
 
     const store = new DaemonConfigStore(

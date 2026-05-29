@@ -260,7 +260,7 @@ test.describe("Workspace navigation regression", () => {
     });
 
     await page.goto(
-      `/h/${encodeURIComponent(serverId)}/workspace/${encodeURIComponent("/tmp/paseo-missing-workspace")}`,
+      `/h/${encodeURIComponent(serverId)}/workspace/${encodeURIComponent("/tmp/synapse-missing-workspace")}`,
     );
 
     await expectHostConnectingOrOffline(page);
@@ -425,7 +425,7 @@ test.describe("Workspace navigation regression", () => {
       await page.evaluate(
         ({ agentId, serverId: targetServerId }) => {
           globalThis.dispatchEvent(
-            new CustomEvent("paseo:web-notification-click", {
+            new CustomEvent("synapse:web-notification-click", {
               detail: {
                 data: {
                   serverId: targetServerId,

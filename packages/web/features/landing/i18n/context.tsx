@@ -9,8 +9,8 @@ import {
   useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
-import { useConfigStore } from "@multica/core/config";
-import { createBrowserCookieLocaleAdapter } from "@multica/core/i18n/browser";
+import { useConfigStore } from "@synapse/core/config";
+import { createBrowserCookieLocaleAdapter } from "@synapse/core/i18n/browser";
 import { createEnDict } from "./en";
 import { createZhDict } from "./zh";
 import {

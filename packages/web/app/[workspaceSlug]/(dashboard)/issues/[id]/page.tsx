@@ -1,8 +1,8 @@
 "use client";
 
 import { use } from "react";
-import { IssueDetail } from "@multica/views/issues/components";
-import { ErrorBoundary } from "@multica/ui/components/common/error-boundary";
+import { IssueDetail } from "@synapse/views/issues/components";
+import { ErrorBoundary } from "@synapse/ui/components/common/error-boundary";
 
 export default function IssueDetailPage({
   params,

@@ -2,10 +2,10 @@
 
 import { useMemo } from "react";
 import { useStore } from "zustand";
-import { Button } from "@multica/ui/components/ui/button";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import type { Issue } from "@multica/core/types";
-import { myIssuesViewStore, type MyIssuesScope } from "@multica/core/issues/stores/my-issues-view-store";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@synapse/ui/components/ui/tooltip";
+import type { Issue } from "@synapse/core/types";
+import { myIssuesViewStore, type MyIssuesScope } from "@synapse/core/issues/stores/my-issues-view-store";
 import { useT } from "../../i18n";
 import { WorkspaceAgentWorkingChip } from "../../issues/components/workspace-agent-working-chip";
 import { IssueDisplayControls } from "../../issues/components/issues-header";

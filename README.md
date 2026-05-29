@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>融合 Paseo + Multica 的 AI 开发操作系统</strong>
+  <strong>融合 Paseo + Synapse 的 AI 开发操作系统</strong>
 </p>
 
 <p align="center">
@@ -35,7 +35,7 @@
 - ⚡ **实时响应** - WebSocket 低延迟双向通信
 - 🔒 **本地优先** - 所有数据本地执行，无遥测、无追踪
 
-### 👥 团队协作（继承自 Multica）
+### 👥 团队协作（继承自 Synapse）
 
 <p>
   <strong>让 AI 成为真正的团队成员</strong>
@@ -92,7 +92,7 @@ synapse status
 # 🚀 启动 Agent（继承自 Paseo）
 synapse run "重构项目的认证模块"
 
-# 📋 创建 Issue（继承自 Multica）
+# 📋 创建 Issue（继承自 Synapse）
 synapse issue create \
   --title "实现 JWT 认证" \
   --priority high \
@@ -152,7 +152,7 @@ synapse autopilot create \
 │                    Synapse Unified Daemon                  │
 │                    (Node.js + Express)                    │
 ├────────────────────┬───────────────────────────────────────┤
-│   Paseo Engine     │        Multica Engine                │
+│   Paseo Engine     │        Synapse Engine                │
 │   Agent 管理       │        任务队列                       │
 │   Worktree 隔离    │        技能系统                       │
 │   跨设备控制       │        团队协作                       │
@@ -241,7 +241,7 @@ synapse orchestration advisor "如何优化数据库查询"
 
 ## 🌟 与其他工具的对比
 
-| 特性 | Synapse | 仅 Paseo | 仅 Multica |
+| 特性 | Synapse | 仅 Paseo | 仅 Synapse |
 |------|---------|---------|-----------|
 | 跨设备控制 | ✅ | ✅ | ❌ |
 | 团队协作 | ✅ | ❌ | ✅ |
@@ -277,7 +277,7 @@ Apache License 2.0 - 详见 [LICENSE](LICENSE) 文件
 ## 🙏 致谢
 
 - [Paseo](https://github.com/getpaseo/paseo) - 提供跨设备控制和本地执行技术
-- [Multica](https://github.com/multica-ai/multica) - 提供团队协作和技能沉淀方案
+- [Synapse](https://github.com/synapse-ai/synapse) - 提供团队协作和技能沉淀方案
 
 ## 📬 联系方式
 

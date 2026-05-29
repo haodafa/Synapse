@@ -10,24 +10,24 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Agent, UpdateAgentRequest } from "@multica/core/types";
+import type { Agent, UpdateAgentRequest } from "@synapse/core/types";
 import {
   type AgentPresenceDetail,
   useWorkspacePresenceMap,
-} from "@multica/core/agents";
-import { api, ApiError } from "@multica/core/api";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
+} from "@synapse/core/agents";
+import { api, ApiError } from "@synapse/core/api";
+import { useAuthStore } from "@synapse/core/auth";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { useWorkspacePaths } from "@synapse/core/paths";
 import {
   agentListOptions,
   memberListOptions,
   workspaceKeys,
-} from "@multica/core/workspace/queries";
-import { runtimeListOptions } from "@multica/core/runtimes";
-import { useAgentPermissions } from "@multica/core/permissions";
-import { Button } from "@multica/ui/components/ui/button";
-import { CapabilityBanner } from "@multica/ui/components/common/capability-banner";
+} from "@synapse/core/workspace/queries";
+import { runtimeListOptions } from "@synapse/core/runtimes";
+import { useAgentPermissions } from "@synapse/core/permissions";
+import { Button } from "@synapse/ui/components/ui/button";
+import { CapabilityBanner } from "@synapse/ui/components/common/capability-banner";
 import {
   Dialog,
   DialogContent,
@@ -35,14 +35,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+} from "@synapse/ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@multica/ui/components/ui/dropdown-menu";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
+} from "@synapse/ui/components/ui/dropdown-menu";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
 import { AppLink, useNavigation } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
 import { availabilityConfig } from "../presence";

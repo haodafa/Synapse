@@ -5,9 +5,9 @@ import {
   Markdown as MarkdownBase,
   type MarkdownProps as MarkdownBaseProps,
   type RenderMode,
-} from "@multica/ui/markdown";
-import { useConfigStore } from "@multica/core/config";
-import type { Attachment as AttachmentRecord } from "@multica/core/types";
+} from "@synapse/ui/markdown";
+import { useConfigStore } from "@synapse/core/config";
+import type { Attachment as AttachmentRecord } from "@synapse/core/types";
 import { IssueMentionCard } from "../issues/components/issue-mention-card";
 import {
   Attachment as AttachmentRenderer,

@@ -156,7 +156,7 @@ export const useReviewDraftStore = create<ReviewDraftStore>()(
       },
     }),
     {
-      name: "@paseo:review-draft-store",
+      name: "@synapse:review-draft-store",
       version: STORE_VERSION,
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => serializeReviewDraftState(state),
@@ -252,7 +252,7 @@ export function buildReviewAttachmentSnapshot(
 
   const attachment: ReviewAttachment = {
     type: "review",
-    mimeType: "application/paseo-review",
+    mimeType: "application/synapse-review",
     cwd: input.cwd,
     mode: input.mode,
     baseRef: normalizeBaseRef(input.baseRef) || null,

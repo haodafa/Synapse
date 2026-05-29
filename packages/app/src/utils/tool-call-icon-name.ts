@@ -1,7 +1,7 @@
 import type { ToolCallDetail, ToolCallIconName } from "@synapse/protocol/agent-types";
-import { isPaseoToolName } from "@synapse/protocol/tool-name-normalization";
+import { isSynapseToolName } from "@synapse/protocol/tool-name-normalization";
 
-export type ToolCallIcon = ToolCallIconName | "paseo";
+export type ToolCallIcon = ToolCallIconName | "synapse";
 
 const TOOL_DETAIL_ICON_NAMES: Record<ToolCallDetail["type"], ToolCallIcon> = {
   shell: "square_terminal",
@@ -31,8 +31,8 @@ export function resolveToolCallIconName(toolName: string, detail?: ToolCallDetai
   if (lowerName === "speak") {
     return "mic_vocal";
   }
-  if (isPaseoToolName(lowerName)) {
-    return "paseo";
+  if (isSynapseToolName(lowerName)) {
+    return "synapse";
   }
   if (lowerName === "task") {
     return "bot";

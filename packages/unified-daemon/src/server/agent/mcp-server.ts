@@ -31,14 +31,14 @@ import { ensureAgentLoaded } from "./agent-loading.js";
 import { isStoredAgentProviderAvailable } from "../persistence-hooks.js";
 import {
   killTerminalsUnderPath,
-  type ArchivePaseoWorktreeDependencies,
-} from "../paseo-worktree-archive-service.js";
+  type ArchiveSynapseWorktreeDependencies,
+} from "../synapse-worktree-archive-service.js";
 import { WaitForAgentTracker } from "./wait-for-agent-tracker.js";
 import { createAgentCommand } from "./create-agent/create.js";
 import type { VoiceCallerContext, VoiceSpeakHandler } from "../voice-types.js";
 import { expandUserPath, isSameOrDescendantPath, resolvePathFromBase } from "../path-utils.js";
 import type { TerminalManager } from "../../terminal/terminal-manager.js";
-import type { CreatePaseoWorktreeWorkflowFn } from "../worktree-session.js";
+import type { CreateSynapseWorktreeWorkflowFn } from "../worktree-session.js";
 import type { ScheduleService } from "../schedule/service.js";
 import {
   ScheduleRunSchema,
@@ -74,11 +74,11 @@ import type { GitHubService } from "../../services/github-service.js";
 import type { WorkspaceGitService } from "../workspace-git-service.js";
 import { WorktreeRequestError } from "../worktree-errors.js";
 import {
-  archivePaseoWorktreeCommand,
-  type ArchivePaseoWorktreeCommandDependencies,
-  createPaseoWorktreeCommand,
-  type CreatePaseoWorktreeCommandInput,
-  listPaseoWorktreesCommand,
+  archiveSynapseWorktreeCommand,
+  type ArchiveSynapseWorktreeCommandDependencies,
+  createSynapseWorktreeCommand,
+  type CreateSynapseWorktreeCommandInput,
+  listSynapseWorktreesCommand,
 } from "../worktree/commands.js";
 
 export interface AgentMcpServerOptions {
@@ -93,12 +93,12 @@ export interface AgentMcpServerOptions {
     WorkspaceGitService,
     "getSnapshot" | "listWorktrees" | "resolveRepoRoot"
   >;
-  archiveWorkspaceRecord?: ArchivePaseoWorktreeDependencies["archiveWorkspaceRecord"];
-  emitWorkspaceUpdatesForWorkspaceIds?: ArchivePaseoWorktreeDependencies["emitWorkspaceUpdatesForWorkspaceIds"];
-  markWorkspaceArchiving?: ArchivePaseoWorktreeDependencies["markWorkspaceArchiving"];
-  clearWorkspaceArchiving?: ArchivePaseoWorktreeDependencies["clearWorkspaceArchiving"];
-  emitSessionMessage?: ArchivePaseoWorktreeDependencies["emit"];
-  createPaseoWorktree?: CreatePaseoWorktreeWorkflowFn;
+  archiveWorkspaceRecord?: ArchiveSynapseWorktreeDependencies["archiveWorkspaceRecord"];
+  emitWorkspaceUpdatesForWorkspaceIds?: ArchiveSynapseWorktreeDependencies["emitWorkspaceUpdatesForWorkspaceIds"];
+  markWorkspaceArchiving?: ArchiveSynapseWorktreeDependencies["markWorkspaceArchiving"];
+  clearWorkspaceArchiving?: ArchiveSynapseWorktreeDependencies["clearWorkspaceArchiving"];
+  emitSessionMessage?: ArchiveSynapseWorktreeDependencies["emit"];
+  createSynapseWorktree?: CreateSynapseWorktreeWorkflowFn;
   paseoHome?: string;
   /**
    * ID of the agent that is connecting to this MCP server.
@@ -868,7 +868,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
           workspaceGitService: options.workspaceGitService,
           terminalManager,
           providerSnapshotManager,
-          createPaseoWorktree: options.createPaseoWorktree,
+          createSynapseWorktree: options.createSynapseWorktree,
         },
         {
           kind: "mcp",
@@ -2002,7 +2002,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
       if (!options.workspaceGitService) {
         throw new Error("WorkspaceGitService is required to list worktrees");
       }
-      const worktrees = await listPaseoWorktreesCommand(
+      const worktrees = await listSynapseWorktreesCommand(
         { workspaceGitService: options.workspaceGitService },
         {
           cwd: resolvedCwd,
@@ -2060,10 +2060,10 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
     },
     async ({ cwd, target }) => {
       const repoRoot = resolveScopedCwd(cwd, { required: true });
-      const commandResult = await createPaseoWorktreeCommand(
+      const commandResult = await createSynapseWorktreeCommand(
         {
           paseoHome: options.paseoHome,
-          createPaseoWorktreeWorkflow: options.createPaseoWorktree,
+          createSynapseWorktreeWorkflow: options.createSynapseWorktree,
         },
         createMcpWorktreeCommandInput(repoRoot, target),
       );
@@ -2113,7 +2113,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
       }
       const repoRoot = await options.workspaceGitService.resolveRepoRoot(resolvedCwd);
 
-      const result = await archivePaseoWorktreeCommand(
+      const result = await archiveSynapseWorktreeCommand(
         archiveWorktreeDependencies(options, {
           agentManager,
           agentStorage,
@@ -2304,7 +2304,7 @@ interface ArchiveWorktreeCommandContext {
 function archiveWorktreeDependencies(
   options: AgentMcpServerOptions,
   context: ArchiveWorktreeCommandContext,
-): ArchivePaseoWorktreeCommandDependencies {
+): ArchiveSynapseWorktreeCommandDependencies {
   if (!options.github) {
     throw new Error("GitHub service is required to archive worktrees");
   }
@@ -2356,7 +2356,7 @@ function archiveWorktreeDependencies(
 function createMcpWorktreeCommandInput(
   repoRoot: string,
   target: McpCreateWorktreeTarget,
-): CreatePaseoWorktreeCommandInput {
+): CreateSynapseWorktreeCommandInput {
   const base = { cwd: repoRoot } as const;
   switch (target.mode) {
     case "branch-off":

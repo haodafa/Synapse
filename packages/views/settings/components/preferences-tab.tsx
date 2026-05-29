@@ -8,17 +8,17 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@multica/ui/components/ui/select";
-import { useTheme } from "@multica/ui/components/common/theme-provider";
-import { cn } from "@multica/ui/lib/utils";
+} from "@synapse/ui/components/ui/select";
+import { useTheme } from "@synapse/ui/components/common/theme-provider";
+import { cn } from "@synapse/ui/lib/utils";
 import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
   type SupportedLocale,
-} from "@multica/core/i18n";
-import { useLocaleAdapter } from "@multica/core/i18n/react";
-import { useAuthStore } from "@multica/core/auth";
-import { api } from "@multica/core/api";
+} from "@synapse/core/i18n";
+import { useLocaleAdapter } from "@synapse/core/i18n/react";
+import { useAuthStore } from "@synapse/core/auth";
+import { api } from "@synapse/core/api";
 import { browserTimezone, timezoneOptions } from "../../common/timezone-select";
 import { useT } from "../../i18n";
 

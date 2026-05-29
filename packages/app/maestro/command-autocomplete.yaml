@@ -1,4 +1,4 @@
-appId: sh.paseo
+appId: sh.synapse
 ---
 - launchApp:
     clearState: false

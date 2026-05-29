@@ -6,7 +6,7 @@ import type {
   EditorTargetId,
   KnownEditorTargetId,
 } from "@synapse/protocol/messages";
-import { createExternalProcessEnv } from "./paseo-env.js";
+import { createExternalProcessEnv } from "./synapse-env.js";
 import { findExecutable } from "../utils/executable.js";
 import { spawnProcess } from "../utils/spawn.js";
 

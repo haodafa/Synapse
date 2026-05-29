@@ -226,7 +226,7 @@ export function sanitizeInput(input: string): string {
 }
 
 export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
-  const sanitized = { ...obj };
+  const sanitized = { ...obj } as Record<string, any>;
   for (const key in sanitized) {
     if (typeof sanitized[key] === 'string') {
       sanitized[key] = sanitizeInput(sanitized[key]);
@@ -234,7 +234,7 @@ export function sanitizeObject<T extends Record<string, any>>(obj: T): T {
       sanitized[key] = sanitizeObject(sanitized[key]);
     }
   }
-  return sanitized;
+  return sanitized as T;
 }
 
 // ==================== XSS Protection ====================

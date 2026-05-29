@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, test } from "vitest";
 import { CodexAppServerAgentClient } from "../agent/providers/codex-app-server-agent.js";
 import type { AgentTimelineItem } from "../agent/agent-sdk-types.js";
 import { DaemonClient } from "../test-utils/daemon-client.js";
-import { createTestPaseoDaemon, type TestPaseoDaemon } from "../test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon, type TestSynapseDaemon } from "../test-utils/synapse-daemon.js";
 import { getFullAccessConfig } from "./agent-configs.js";
 import {
   closeRewindSession,
@@ -19,7 +19,7 @@ import {
 
 interface CodexRewindHarness {
   client: DaemonClient;
-  daemon: TestPaseoDaemon;
+  daemon: TestSynapseDaemon;
 }
 
 interface CodexRewindSession {
@@ -101,7 +101,7 @@ function editPrompt(input: {
   doneToken: string;
 }): string {
   return [
-    `PASEO_CODEX_REWIND_PROMPT_${input.promptToken}.`,
+    `SYNAPSE_CODEX_REWIND_PROMPT_${input.promptToken}.`,
     `Use apply_patch to make ${input.fileName} contain exactly:`,
     "```",
     input.content.trimEnd(),
@@ -112,7 +112,7 @@ function editPrompt(input: {
 
 function singleCreatePrompt(): string {
   return [
-    "PASEO_CODEX_REWIND_PROMPT_SINGLE_CREATE.",
+    "SYNAPSE_CODEX_REWIND_PROMPT_SINGLE_CREATE.",
     "Use apply_patch to create codex-dummy.txt with exactly CODEX_CREATED.",
     "When the file is saved, reply exactly: CODEX_SINGLE_CREATE_DONE",
   ].join("\n");
@@ -146,7 +146,7 @@ describe("daemon E2E (real codex) - rewind", () => {
 
   beforeAll(async () => {
     const logger = pino({ level: "silent" });
-    const daemon = await createTestPaseoDaemon({
+    const daemon = await createTestSynapseDaemon({
       agentClients: { codex: new CodexAppServerAgentClient(logger) },
       logger,
     });

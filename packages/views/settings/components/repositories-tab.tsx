@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { Save, Plus, Trash2, Pencil, X } from "lucide-react";
-import { Input } from "@multica/ui/components/ui/input";
-import { Button } from "@multica/ui/components/ui/button";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Card, CardContent } from "@synapse/ui/components/ui/card";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useCurrentWorkspace } from "@multica/core/paths";
-import { memberListOptions, workspaceKeys } from "@multica/core/workspace/queries";
-import { api } from "@multica/core/api";
-import type { Workspace, WorkspaceRepo } from "@multica/core/types";
+import { useAuthStore } from "@synapse/core/auth";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { useCurrentWorkspace } from "@synapse/core/paths";
+import { memberListOptions, workspaceKeys } from "@synapse/core/workspace/queries";
+import { api } from "@synapse/core/api";
+import type { Workspace, WorkspaceRepo } from "@synapse/core/types";
 import { useT } from "../../i18n";
 
 function dropAndShiftIndex(set: Set<number>, removed: number): Set<number> {

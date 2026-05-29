@@ -12,10 +12,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@multica/ui/components",
-    "ui": "@multica/ui/components/ui",
-    "hooks": "@multica/ui/hooks",
-    "lib": "@multica/ui/lib",
-    "utils": "@multica/ui/lib/utils"
+    "components": "@synapse/ui/components",
+    "ui": "@synapse/ui/components/ui",
+    "hooks": "@synapse/ui/hooks",
+    "lib": "@synapse/ui/lib",
+    "utils": "@synapse/ui/lib/utils"
   }
 }

@@ -1,12 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { notificationPreferenceOptions } from "@multica/core/notification-preferences/queries";
-import { useUpdateNotificationPreferences } from "@multica/core/notification-preferences/mutations";
-import type { NotificationGroupKey, NotificationPreferences } from "@multica/core/types";
-import { Card, CardContent } from "@multica/ui/components/ui/card";
-import { Switch } from "@multica/ui/components/ui/switch";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { notificationPreferenceOptions } from "@synapse/core/notification-preferences/queries";
+import { useUpdateNotificationPreferences } from "@synapse/core/notification-preferences/mutations";
+import type { NotificationGroupKey, NotificationPreferences } from "@synapse/core/types";
+import { Card, CardContent } from "@synapse/ui/components/ui/card";
+import { Switch } from "@synapse/ui/components/ui/switch";
 import { toast } from "sonner";
 import { useT } from "../../i18n";
 

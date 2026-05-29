@@ -6,8 +6,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Check, ChevronDown, MoreVertical, Pencil, Plus, X } from "lucide-react-native";
 import { useProjectIconQuery } from "@/hooks/use-project-icon-query";
 import type {
-  PaseoConfigRaw,
-  PaseoConfigRevision,
+  SynapseConfigRaw,
+  SynapseConfigRevision,
   ProjectConfigRpcError,
 } from "@synapse/protocol/messages";
 import type { DaemonClient } from "@synapse/client/internal/daemon-client";
@@ -83,13 +83,13 @@ const METADATA_PROMPT_FIELDS: Record<MetadataPromptKey, MetadataPromptField> = {
 
 const WORKTREE_GROUP_INFO =
   "Commands that run when a worktree is created or torn down for this project";
-const WORKTREE_DOCS_URL = "https://paseo.sh/docs/worktrees";
+const WORKTREE_DOCS_URL = "https://synapse.sh/docs/worktrees";
 const WORKTREE_DOCS_TOOLTIP =
   "See docs for more details and the environment variables available to these commands";
 const SCRIPTS_GROUP_INFO =
   "Long-running services and one-off commands you can launch from any agent in this project";
 const METADATA_GROUP_INFO =
-  "Project-specific instructions injected into the AI prompts Paseo uses to generate metadata — use them to enforce your team's conventions like branch naming, commit style, or PR format";
+  "Project-specific instructions injected into the AI prompts Synapse uses to generate metadata — use them to enforce your team's conventions like branch naming, commit style, or PR format";
 
 const NO_TARGET_MESSAGE = "We don't have an editable copy of this project on any connected host.";
 
@@ -218,8 +218,8 @@ function ProjectSettingsBody({
   });
 
   const data = readQuery.data;
-  const loadedConfig: PaseoConfigRaw | null = data?.ok ? (data.config ?? {}) : null;
-  const loadedRevision: PaseoConfigRevision | null = data?.ok ? data.revision : null;
+  const loadedConfig: SynapseConfigRaw | null = data?.ok ? (data.config ?? {}) : null;
+  const loadedRevision: SynapseConfigRevision | null = data?.ok ? data.revision : null;
   const readError: ProjectConfigRpcError | null = data && !data.ok ? data.error : null;
 
   const handleReload = useCallback(() => {
@@ -258,8 +258,8 @@ function ProjectSettingsBody({
 
 interface RenderContentInput {
   readQuery: ReturnType<typeof useQuery<ReadProjectConfigData>>;
-  loadedConfig: PaseoConfigRaw | null;
-  loadedRevision: PaseoConfigRevision | null;
+  loadedConfig: SynapseConfigRaw | null;
+  loadedRevision: SynapseConfigRevision | null;
   readError: ProjectConfigRpcError | null;
   selectedHost: ProjectHostEntry;
   queryKey: readonly [string, string, string];
@@ -337,7 +337,7 @@ function renderContent({
   );
 }
 
-function revisionToKey(revision: PaseoConfigRevision | null): string {
+function revisionToKey(revision: SynapseConfigRevision | null): string {
   if (!revision) return "none";
   return `${revision.mtimeMs}-${revision.size}`;
 }
@@ -370,7 +370,7 @@ function resolveReadFailureCopy(input: {
   if (input.kind === "invalid_project_config") {
     return {
       testID: "invalid-callout",
-      title: "paseo.json couldn't be parsed",
+      title: "synapse.json couldn't be parsed",
       description: "Fix the file on disk, then reload.",
     };
   }
@@ -387,13 +387,13 @@ function resolveReadFailureCopy(input: {
     const detail = errorToDetail(input.error);
     return {
       testID: "read-transport-callout",
-      title: "Couldn't load paseo.json",
+      title: "Couldn't load synapse.json",
       description: detail ?? "The host didn't respond.",
     };
   }
   return {
     testID: "read-failed-callout",
-    title: "Couldn't load paseo.json",
+    title: "Couldn't load synapse.json",
     description: "Reload to try again.",
   };
 }
@@ -405,8 +405,8 @@ function errorToDetail(error: unknown): string | null {
 }
 
 interface ProjectConfigFormProps {
-  baseConfig: PaseoConfigRaw;
-  revision: PaseoConfigRevision | null;
+  baseConfig: SynapseConfigRaw;
+  revision: SynapseConfigRevision | null;
   repoRoot: string;
   queryKey: readonly [string, string, string];
   client: DaemonClient;
@@ -430,8 +430,8 @@ function ProjectConfigForm({
 
   const saveMutation = useMutation({
     mutationFn: async (input: {
-      config: PaseoConfigRaw;
-      expectedRevision: PaseoConfigRevision | null;
+      config: SynapseConfigRaw;
+      expectedRevision: SynapseConfigRevision | null;
     }) => {
       return client.writeProjectConfig({
         repoRoot,
@@ -690,7 +690,7 @@ function ProjectConfigForm({
             testID="stale-callout"
             variant="error"
             title="Config changed on disk"
-            description="Reload to fetch the latest paseo.json before saving."
+            description="Reload to fetch the latest synapse.json before saving."
           >
             <Button
               testID="stale-callout-action-0"
@@ -709,7 +709,7 @@ function ProjectConfigForm({
           <Alert
             testID="write-failed-callout"
             variant="error"
-            title="Couldn't save paseo.json"
+            title="Couldn't save synapse.json"
             description="Try again, or reload the latest version from disk."
           >
             <Button
@@ -1191,7 +1191,7 @@ function ScriptEditModal({ script, onChange, onCancel, onSave }: ScriptEditModal
           <View style={styles.serviceToggleText}>
             <Text style={styles.serviceToggleLabel}>Run as a service</Text>
             <Text style={styles.modalHint}>
-              Paseo supervises the process and assigns a port via $PASEO_PORT
+              Synapse supervises the process and assigns a port via $SYNAPSE_PORT
             </Text>
           </View>
           <Switch

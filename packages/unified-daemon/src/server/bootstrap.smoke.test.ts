@@ -4,9 +4,9 @@ import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import pino from "pino";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-import { createPaseoDaemon, parseListenString, type PaseoDaemonConfig } from "./bootstrap.js";
+import { createSynapseDaemon, parseListenString, type SynapseDaemonConfig } from "./bootstrap.js";
 import { generateLocalPairingOffer } from "./pairing-offer.js";
-import { createTestPaseoDaemon } from "./test-utils/paseo-daemon.js";
+import { createTestSynapseDaemon } from "./test-utils/synapse-daemon.js";
 import { createTestAgentClients } from "./test-utils/fake-agent-client.js";
 import { isPlatform } from "../test-utils/platform.js";
 
@@ -16,7 +16,7 @@ describe("paseo daemon bootstrap", () => {
   });
 
   test("starts and serves health endpoint", async () => {
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestSynapseDaemon({
       openai: { apiKey: "test-openai-api-key" },
       speech: {
         providers: {
@@ -51,7 +51,7 @@ describe("paseo daemon bootstrap", () => {
         },
       },
     );
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestSynapseDaemon({
       logger,
       mcpDebug: true,
     });
@@ -93,7 +93,7 @@ describe("paseo daemon bootstrap", () => {
     const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
     await mkdir(paseoHome, { recursive: true });
 
-    const config: PaseoDaemonConfig = {
+    const config: SynapseDaemonConfig = {
       listen: "127.0.0.1:0",
       paseoHome,
       corsAllowedOrigins: [],
@@ -116,7 +116,7 @@ describe("paseo daemon bootstrap", () => {
     };
 
     try {
-      await expect(createPaseoDaemon(config, pino({ level: "silent" }))).rejects.toThrow(
+      await expect(createSynapseDaemon(config, pino({ level: "silent" }))).rejects.toThrow(
         "Missing OpenAI credentials",
       );
     } finally {
@@ -136,7 +136,7 @@ describe("paseo daemon bootstrap", () => {
       vi.fn(() => fetchGate),
     );
 
-    const daemonHandle = await createTestPaseoDaemon({
+    const daemonHandle = await createTestSynapseDaemon({
       speech: {
         providers: {
           dictationStt: { provider: "local", explicit: true, enabled: true },
@@ -211,7 +211,7 @@ describe("paseo daemon bootstrap", () => {
       await mkdir(paseoHome, { recursive: true });
       const logger = pino({ level: "silent" });
 
-      const config: PaseoDaemonConfig = {
+      const config: SynapseDaemonConfig = {
         listen: socketPath,
         paseoHome,
         corsAllowedOrigins: [],
@@ -229,7 +229,7 @@ describe("paseo daemon bootstrap", () => {
         speech: undefined,
       };
 
-      const daemon = await createPaseoDaemon(config, logger);
+      const daemon = await createSynapseDaemon(config, logger);
 
       try {
         await daemon.start();

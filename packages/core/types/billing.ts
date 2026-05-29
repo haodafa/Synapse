@@ -1,6 +1,6 @@
-// Mirrors the multica-cloud Billing module response shapes
-// (multica-cloud/docs/api/billing.md). These types are the contract our
-// frontend consumes via /api/cloud-billing/* — multica-api itself does
+// Mirrors the synapse-cloud Billing module response shapes
+// (synapse-cloud/docs/api/billing.md). These types are the contract our
+// frontend consumes via /api/cloud-billing/* — synapse-api itself does
 // not own the schema, it just proxies bytes. Keep field names verbatim
 // with what the cloud sends.
 //

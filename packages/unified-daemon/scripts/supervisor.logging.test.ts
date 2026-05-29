@@ -89,7 +89,7 @@ async function runSupervisorFixture(options: {
 
 describe("supervisor durable logging", () => {
   test("resolves rotation defaults", () => {
-    const paseoHome = path.join(path.sep, "tmp", "paseo-home");
+    const paseoHome = path.join(path.sep, "tmp", "synapse-home");
     const logFile = resolveSupervisorLogFile(paseoHome, {}, {});
 
     expect(logFile).toEqual({
@@ -99,7 +99,7 @@ describe("supervisor durable logging", () => {
   });
 
   test("lets persisted rotation override env rotation defaults", () => {
-    const paseoHome = path.join(path.sep, "tmp", "paseo-home");
+    const paseoHome = path.join(path.sep, "tmp", "synapse-home");
     const logFile = resolveSupervisorLogFile(
       paseoHome,
       {
@@ -111,8 +111,8 @@ describe("supervisor durable logging", () => {
         },
       },
       {
-        PASEO_LOG_ROTATE_SIZE: "200m",
-        PASEO_LOG_ROTATE_COUNT: "12",
+        SYNAPSE_LOG_ROTATE_SIZE: "200m",
+        SYNAPSE_LOG_ROTATE_COUNT: "12",
       },
     );
 
@@ -123,13 +123,13 @@ describe("supervisor durable logging", () => {
   });
 
   test("uses env rotation when persisted rotation is absent", () => {
-    const paseoHome = path.join(path.sep, "tmp", "paseo-home");
+    const paseoHome = path.join(path.sep, "tmp", "synapse-home");
     const logFile = resolveSupervisorLogFile(
       paseoHome,
       {},
       {
-        PASEO_LOG_ROTATE_SIZE: "50m",
-        PASEO_LOG_ROTATE_COUNT: "8",
+        SYNAPSE_LOG_ROTATE_SIZE: "50m",
+        SYNAPSE_LOG_ROTATE_COUNT: "8",
       },
     );
 

@@ -38,7 +38,7 @@ async function resolveBehavior(url: string): Promise<Exclude<ServiceUrlBehavior,
 
   const result = await askWithCheckbox(`Open ${url}?`, {
     title: "Open service URL",
-    okLabel: "In Paseo",
+    okLabel: "In Synapse",
     cancelLabel: "External browser",
     checkboxLabel: "Don't ask again",
   });

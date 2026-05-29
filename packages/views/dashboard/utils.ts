@@ -3,7 +3,7 @@ import type {
   DashboardUsageByAgent,
   DashboardAgentRunTime,
   DashboardRunTimeDaily,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 import {
   addDaysIso,
   estimateCost,

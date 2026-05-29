@@ -382,7 +382,7 @@ function DaemonSection({ host, isLocalDaemon }: { host: HostProfile; isLocalDaem
   return (
     <>
       <SettingsSection title="Daemon settings">
-        <InjectPaseoToolsCard serverId={host.serverId} />
+        <InjectSynapseToolsCard serverId={host.serverId} />
         <AppendSystemPromptCard serverId={host.serverId} />
       </SettingsSection>
       {isLocalDaemon ? (
@@ -461,7 +461,7 @@ function RestartDaemonCard({ host }: { host: HostProfile }) {
     if (!isHostConnected()) {
       Alert.alert(
         "Host offline",
-        "This host is offline. Paseo reconnects automatically—wait until it's back online before restarting.",
+        "This host is offline. Synapse reconnects automatically—wait until it's back online before restarting.",
       );
       return;
     }
@@ -484,7 +484,7 @@ function RestartDaemonCard({ host }: { host: HostProfile }) {
             setIsRestarting(false);
             Alert.alert(
               "Error",
-              "Failed to send the restart request. Paseo reconnects automatically—try again once the host shows as online.",
+              "Failed to send the restart request. Synapse reconnects automatically—try again once the host shows as online.",
             );
           });
         void waitForDaemonRestart();
@@ -525,7 +525,7 @@ function RestartDaemonCard({ host }: { host: HostProfile }) {
   );
 }
 
-function InjectPaseoToolsCard({ serverId }: { serverId: string }) {
+function InjectSynapseToolsCard({ serverId }: { serverId: string }) {
   const isConnected = useHostRuntimeIsConnected(serverId);
   const { config, patchConfig } = useDaemonConfig(serverId);
 
@@ -546,7 +546,7 @@ function InjectPaseoToolsCard({ serverId }: { serverId: string }) {
     <View style={settingsStyles.card} testID="host-page-inject-mcp-card">
       <View style={settingsStyles.row}>
         <View style={settingsStyles.rowContent}>
-          <Text style={settingsStyles.rowTitle}>Enable Paseo tools</Text>
+          <Text style={settingsStyles.rowTitle}>Enable Synapse tools</Text>
           <Text style={settingsStyles.rowHint}>
             Agents will be able to manage worktrees, agents and schedules
           </Text>
@@ -554,7 +554,7 @@ function InjectPaseoToolsCard({ serverId }: { serverId: string }) {
         <Switch
           value={config?.mcp.injectIntoAgents !== false}
           onValueChange={handleValueChange}
-          accessibilityLabel="Inject Paseo tools"
+          accessibilityLabel="Inject Synapse tools"
         />
       </View>
     </View>

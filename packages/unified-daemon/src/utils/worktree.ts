@@ -7,28 +7,28 @@ import net from "node:net";
 import { createHash } from "node:crypto";
 import stripAnsi from "strip-ansi";
 import { buildStringCommandShellInvocation } from "./string-command-shell.js";
-import { readPaseoConfigJson, resolvePaseoConfigPath } from "./paseo-config-file.js";
+import { readSynapseConfigJson, resolveSynapseConfigPath } from "./synapse-config-file.js";
 export {
-  PaseoConfigRawSchema,
-  PaseoLifecycleCommandRawSchema,
-  PaseoScriptEntryRawSchema,
-  PaseoWorktreeConfigRawSchema,
-  PaseoConfigSchema,
-  type PaseoConfig,
-  type PaseoConfigRaw,
-} from "@synapse/protocol/paseo-config-schema";
-import { PaseoConfigSchema, type PaseoConfig } from "@synapse/protocol/paseo-config-schema";
+  SynapseConfigRawSchema,
+  SynapseLifecycleCommandRawSchema,
+  SynapseScriptEntryRawSchema,
+  SynapseWorktreeConfigRawSchema,
+  SynapseConfigSchema,
+  type SynapseConfig,
+  type SynapseConfigRaw,
+} from "@synapse/protocol/synapse-config-schema";
+import { SynapseConfigSchema, type SynapseConfig } from "@synapse/protocol/synapse-config-schema";
 import {
   normalizeBaseRefName,
-  readPaseoWorktreeMetadata,
-  readPaseoWorktreeRuntimePort,
-  writePaseoWorktreeMetadata,
-  writePaseoWorktreeRuntimeMetadata,
+  readSynapseWorktreeMetadata,
+  readSynapseWorktreeRuntimePort,
+  writeSynapseWorktreeMetadata,
+  writeSynapseWorktreeRuntimeMetadata,
 } from "./worktree-metadata.js";
 import { runGitCommand } from "./run-git-command.js";
 import { spawnProcess } from "./spawn.js";
-import { resolvePaseoHome } from "../server/paseo-home.js";
-import { createExternalProcessEnv } from "../server/paseo-env.js";
+import { resolveSynapseHome } from "../server/synapse-home.js";
+import { createExternalProcessEnv } from "../server/synapse-env.js";
 import { parseGitRevParsePath, resolveGitRevParsePath } from "./git-rev-parse-path.js";
 import { validateBranchSlug } from "@synapse/protocol/branch-slug";
 
@@ -46,11 +46,11 @@ export interface WorktreeConfig {
 
 export interface WorktreeRuntimeEnv {
   [key: string]: string;
-  PASEO_SOURCE_CHECKOUT_PATH: string;
-  PASEO_ROOT_PATH: string;
-  PASEO_WORKTREE_PATH: string;
-  PASEO_BRANCH_NAME: string;
-  PASEO_WORKTREE_PORT: string;
+  SYNAPSE_SOURCE_CHECKOUT_PATH: string;
+  SYNAPSE_ROOT_PATH: string;
+  SYNAPSE_WORKTREE_PATH: string;
+  SYNAPSE_BRANCH_NAME: string;
+  SYNAPSE_WORKTREE_PORT: string;
 }
 
 export interface WorktreeSetupCommandResult {
@@ -136,14 +136,14 @@ export class WorktreeTeardownError extends Error {
   }
 }
 
-export interface PaseoWorktreeInfo {
+export interface SynapseWorktreeInfo {
   path: string;
   createdAt: string;
   branchName?: string;
   head?: string;
 }
 
-export interface PaseoWorktreeOwnership {
+export interface SynapseWorktreeOwnership {
   allowed: boolean;
   repoRoot?: string;
   worktreeRoot?: string;
@@ -198,19 +198,19 @@ export class UnknownBranchError extends Error {
   }
 }
 
-export type ReadPaseoConfigResult =
-  | { ok: true; config: PaseoConfig | null }
+export type ReadSynapseConfigResult =
+  | { ok: true; config: SynapseConfig | null }
   | { ok: false; configPath: string; error: unknown };
 
-export function readPaseoConfig(repoRoot: string): ReadPaseoConfigResult {
+export function readSynapseConfig(repoRoot: string): ReadSynapseConfigResult {
   try {
-    const json = readPaseoConfigJson(repoRoot);
+    const json = readSynapseConfigJson(repoRoot);
     if (json === null) {
       return { ok: true, config: null };
     }
-    return { ok: true, config: PaseoConfigSchema.parse(json) };
+    return { ok: true, config: SynapseConfigSchema.parse(json) };
   } catch (error) {
-    return { ok: false, configPath: resolvePaseoConfigPath(repoRoot), error };
+    return { ok: false, configPath: resolveSynapseConfigPath(repoRoot), error };
   }
 }
 
@@ -221,8 +221,8 @@ export function paseoConfigParseError(failure: { configPath: string; error: unkn
   });
 }
 
-function readPaseoConfigOrThrow(repoRoot: string): PaseoConfig | null {
-  const result = readPaseoConfig(repoRoot);
+function readSynapseConfigOrThrow(repoRoot: string): SynapseConfig | null {
+  const result = readSynapseConfig(repoRoot);
   if (!result.ok) {
     throw paseoConfigParseError(result);
   }
@@ -230,15 +230,15 @@ function readPaseoConfigOrThrow(repoRoot: string): PaseoConfig | null {
 }
 
 export function getWorktreeSetupCommands(repoRoot: string): string[] {
-  return readPaseoConfigOrThrow(repoRoot)?.worktree?.setup ?? [];
+  return readSynapseConfigOrThrow(repoRoot)?.worktree?.setup ?? [];
 }
 
 export function getWorktreeTeardownCommands(repoRoot: string): string[] {
-  return readPaseoConfigOrThrow(repoRoot)?.worktree?.teardown ?? [];
+  return readSynapseConfigOrThrow(repoRoot)?.worktree?.teardown ?? [];
 }
 
 export function getWorktreeTerminalSpecs(repoRoot: string): WorktreeTerminalConfig[] {
-  const terminals = readPaseoConfigOrThrow(repoRoot)?.worktree?.terminals;
+  const terminals = readSynapseConfigOrThrow(repoRoot)?.worktree?.terminals;
   if (!Array.isArray(terminals) || terminals.length === 0) {
     return [];
   }
@@ -271,7 +271,7 @@ export function getWorktreeTerminalSpecs(repoRoot: string): WorktreeTerminalConf
   return specs;
 }
 
-export function getScriptConfigs(config: PaseoConfig | null): Map<string, ScriptConfig> {
+export function getScriptConfigs(config: SynapseConfig | null): Map<string, ScriptConfig> {
   const scripts = config?.scripts;
   if (!scripts || typeof scripts !== "object") {
     return new Map();
@@ -655,12 +655,12 @@ export async function resolveWorktreeRuntimeEnv(options: {
   const branchName =
     options.branchName ?? (await resolveBranchNameForWorktreePath(options.worktreePath));
 
-  let worktreePort = readPaseoWorktreeRuntimePort(options.worktreePath);
+  let worktreePort = readSynapseWorktreeRuntimePort(options.worktreePath);
   if (worktreePort === null) {
     worktreePort = await getAvailablePort();
-    const metadata = readPaseoWorktreeMetadata(options.worktreePath);
+    const metadata = readSynapseWorktreeMetadata(options.worktreePath);
     if (metadata) {
-      writePaseoWorktreeRuntimeMetadata(options.worktreePath, { worktreePort });
+      writeSynapseWorktreeRuntimeMetadata(options.worktreePath, { worktreePort });
     }
   } else {
     await assertPortAvailable(worktreePort);
@@ -670,12 +670,12 @@ export async function resolveWorktreeRuntimeEnv(options: {
     // Source checkout path is the original git repo root (shared across worktrees), not the
     // worktree itself. This allows setup scripts to copy local files (e.g. .env) from the
     // source checkout.
-    PASEO_SOURCE_CHECKOUT_PATH: repoRootPath,
+    SYNAPSE_SOURCE_CHECKOUT_PATH: repoRootPath,
     // Backward-compatible alias.
-    PASEO_ROOT_PATH: repoRootPath,
-    PASEO_WORKTREE_PATH: options.worktreePath,
-    PASEO_BRANCH_NAME: branchName,
-    PASEO_WORKTREE_PORT: String(worktreePort),
+    SYNAPSE_ROOT_PATH: repoRootPath,
+    SYNAPSE_WORKTREE_PATH: options.worktreePath,
+    SYNAPSE_BRANCH_NAME: branchName,
+    SYNAPSE_WORKTREE_PORT: String(worktreePort),
   };
 }
 
@@ -694,18 +694,18 @@ export async function runWorktreeTeardownCommands(options: {
     options.repoRootPath ?? (await inferRepoRootPathFromWorktreePath(options.worktreePath));
   const branchName =
     options.branchName ?? (await resolveBranchNameForWorktreePath(options.worktreePath));
-  const worktreePort = readPaseoWorktreeRuntimePort(options.worktreePath);
+  const worktreePort = readSynapseWorktreeRuntimePort(options.worktreePath);
 
   const teardownEnv: NodeJS.ProcessEnv = createExternalProcessEnv(process.env, {
     // Source checkout path is the original git repo root (shared across worktrees), not the
     // worktree itself. This allows lifecycle scripts to copy or clean resources using paths
     // from the source checkout.
-    PASEO_SOURCE_CHECKOUT_PATH: repoRootPath,
+    SYNAPSE_SOURCE_CHECKOUT_PATH: repoRootPath,
     // Backward-compatible alias.
-    PASEO_ROOT_PATH: repoRootPath,
-    PASEO_WORKTREE_PATH: options.worktreePath,
-    PASEO_BRANCH_NAME: branchName,
-    ...(worktreePort !== null ? { PASEO_WORKTREE_PORT: String(worktreePort) } : {}),
+    SYNAPSE_ROOT_PATH: repoRootPath,
+    SYNAPSE_WORKTREE_PATH: options.worktreePath,
+    SYNAPSE_BRANCH_NAME: branchName,
+    ...(worktreePort !== null ? { SYNAPSE_WORKTREE_PORT: String(worktreePort) } : {}),
   });
 
   const results: WorktreeTeardownCommandResult[] = [];
@@ -766,8 +766,8 @@ export async function deriveWorktreeProjectHash(cwd: string): Promise<string> {
   }
 }
 
-export async function getPaseoWorktreesRoot(cwd: string, paseoHome?: string): Promise<string> {
-  const home = paseoHome ? resolve(paseoHome) : resolvePaseoHome();
+export async function getSynapseWorktreesRoot(cwd: string, paseoHome?: string): Promise<string> {
+  const home = paseoHome ? resolve(paseoHome) : resolveSynapseHome();
   const projectHash = await deriveWorktreeProjectHash(cwd);
   return join(home, "worktrees", projectHash);
 }
@@ -777,7 +777,7 @@ export async function computeWorktreePath(
   slug: string,
   paseoHome?: string,
 ): Promise<string> {
-  const worktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
   return join(worktreesRoot, slug);
 }
 
@@ -799,7 +799,7 @@ function resolveRepoRootFromGitCommonDir(commonDir: string): string {
 export async function isPaseoOwnedWorktreeCwd(
   cwd: string,
   options?: { paseoHome?: string },
-): Promise<PaseoWorktreeOwnership> {
+): Promise<SynapseWorktreeOwnership> {
   const resolvedCwd = normalizePathForOwnership(cwd);
 
   // repoRoot is best-effort: git may be unreachable from the worktree (e.g. a
@@ -813,10 +813,10 @@ export async function isPaseoOwnedWorktreeCwd(
     // ignore
   }
 
-  const paseoHome = options?.paseoHome ? resolve(options.paseoHome) : resolvePaseoHome();
+  const paseoHome = options?.paseoHome ? resolve(options.paseoHome) : resolveSynapseHome();
   const paseoWorktreesPrefix = normalizePathForOwnership(join(paseoHome, "worktrees")) + sep;
 
-  // Ownership is defined by the path living under $PASEO_HOME/worktrees/<hash>/<slug>[/...].
+  // Ownership is defined by the path living under $SYNAPSE_HOME/worktrees/<hash>/<slug>[/...].
   // The <hash>/<slug> prefix is Paseo-private — nothing else writes there — so the
   // path shape alone is sufficient proof of ownership, even when git has already
   // forgotten about the worktree.
@@ -847,11 +847,11 @@ export async function isPaseoOwnedWorktreeCwd(
   };
 }
 
-type ParsedPaseoWorktreeInfo = Omit<PaseoWorktreeInfo, "createdAt">;
+type ParsedSynapseWorktreeInfo = Omit<SynapseWorktreeInfo, "createdAt">;
 
-function parseWorktreeList(output: string): ParsedPaseoWorktreeInfo[] {
-  const entries: ParsedPaseoWorktreeInfo[] = [];
-  let current: ParsedPaseoWorktreeInfo | null = null;
+function parseWorktreeList(output: string): ParsedSynapseWorktreeInfo[] {
+  const entries: ParsedSynapseWorktreeInfo[] = [];
+  let current: ParsedSynapseWorktreeInfo | null = null;
 
   for (const line of output.split("\n")) {
     if (line.startsWith("worktree ")) {
@@ -898,14 +898,14 @@ function resolveWorktreeCreatedAtIso(worktreePath: string): string {
   }
 }
 
-export async function listPaseoWorktrees({
+export async function listSynapseWorktrees({
   cwd,
   paseoHome,
 }: {
   cwd: string;
   paseoHome?: string;
-}): Promise<PaseoWorktreeInfo[]> {
-  const worktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome);
+}): Promise<SynapseWorktreeInfo[]> {
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
   const { stdout } = await runGitCommand(["worktree", "list", "--porcelain"], {
     cwd,
     envOverlay: READ_ONLY_GIT_ENV,
@@ -925,7 +925,7 @@ export async function resolveExistingWorktreeForSlug({
   repoRoot,
   paseoHome,
 }: ResolveExistingWorktreeForSlugOptions): Promise<WorktreeConfig | null> {
-  const worktrees = await listPaseoWorktrees({
+  const worktrees = await listSynapseWorktrees({
     cwd: repoRoot,
     paseoHome,
   });
@@ -950,7 +950,7 @@ export async function resolveExistingWorktreeForSlug({
   };
 }
 
-export async function resolvePaseoWorktreeRootForCwd(
+export async function resolveSynapseWorktreeRootForCwd(
   cwd: string,
   options?: { paseoHome?: string },
 ): Promise<{ repoRoot: string; worktreeRoot: string; worktreePath: string } | null> {
@@ -961,7 +961,7 @@ export async function resolvePaseoWorktreeRootForCwd(
     return null;
   }
 
-  const worktreesRoot = await getPaseoWorktreesRoot(cwd, options?.paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, options?.paseoHome);
   const resolvedRoot = normalizePathForOwnership(worktreesRoot) + sep;
 
   let worktreeRoot: string | null = null;
@@ -984,7 +984,7 @@ export async function resolvePaseoWorktreeRootForCwd(
     return null;
   }
 
-  const knownWorktrees = await listPaseoWorktrees({
+  const knownWorktrees = await listSynapseWorktrees({
     cwd,
     paseoHome: options?.paseoHome,
   });
@@ -1000,7 +1000,7 @@ export async function resolvePaseoWorktreeRootForCwd(
   };
 }
 
-export async function deletePaseoWorktree({
+export async function deleteSynapseWorktree({
   cwd,
   worktreePath,
   worktreeSlug,
@@ -1024,7 +1024,7 @@ export async function deletePaseoWorktree({
   if (worktreesRoot) {
     resolvedWorktreesRoot = worktreesRoot;
   } else if (cwd) {
-    resolvedWorktreesRoot = await getPaseoWorktreesRoot(cwd, paseoHome);
+    resolvedWorktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
   } else {
     throw new Error("cwd or worktreesRoot is required to delete a Paseo worktree");
   }
@@ -1033,7 +1033,7 @@ export async function deletePaseoWorktree({
   const requestedPath = worktreePath ?? join(resolvedWorktreesRoot, worktreeSlug!);
   const resolvedRequested = normalizePathForOwnership(requestedPath);
   const resolvedWorktree =
-    (await resolvePaseoWorktreeRootForCwd(requestedPath, { paseoHome }))?.worktreePath ??
+    (await resolveSynapseWorktreeRootForCwd(requestedPath, { paseoHome }))?.worktreePath ??
     resolvedRequested;
 
   if (!resolvedWorktree.startsWith(resolvedRoot)) {
@@ -1123,7 +1123,7 @@ export const createWorktree = async ({
   paseoHome,
 }: CreateWorktreeOptions): Promise<WorktreeConfig> => {
   const sourcePlan = await resolveWorktreeSourcePlan({ cwd, source, desiredSlug: worktreeSlug });
-  let worktreePath = join(await getPaseoWorktreesRoot(cwd, paseoHome), worktreeSlug);
+  let worktreePath = join(await getSynapseWorktreesRoot(cwd, paseoHome), worktreeSlug);
   mkdirSync(dirname(worktreePath), { recursive: true });
 
   // Also handle worktree path collision
@@ -1149,7 +1149,7 @@ export const createWorktree = async ({
     });
   }
 
-  writePaseoWorktreeMetadata(worktreePath, { baseRefName: sourcePlan.metadataBaseRefName });
+  writeSynapseWorktreeMetadata(worktreePath, { baseRefName: sourcePlan.metadataBaseRefName });
 
   // If paseo.json exists in the main repo but wasn't checked into the worktree
   // (e.g. uncommitted on first-time setup), seed the worktree with it so setup

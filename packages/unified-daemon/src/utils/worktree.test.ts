@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   createWorktree as createWorktreePrimitive,
   deriveWorktreeProjectHash,
-  deletePaseoWorktree,
+  deleteSynapseWorktree,
   isPaseoOwnedWorktreeCwd,
   slugify,
   type CreateWorktreeOptions,
@@ -50,7 +50,7 @@ describe("paseo worktree manager", () => {
   beforeEach(() => {
     tempDir = realpathSync(mkdtempSync(join(tmpdir(), "worktree-manager-test-")));
     repoDir = join(tempDir, "test-repo");
-    paseoHome = join(tempDir, "paseo-home");
+    paseoHome = join(tempDir, "synapse-home");
 
     mkdirSync(repoDir, { recursive: true });
     execFileSync("git", ["init", "-b", "main"], { cwd: repoDir });
@@ -89,7 +89,7 @@ describe("paseo worktree manager", () => {
   });
 
   it("rejects paths that are not under the paseo worktrees root", async () => {
-    const outsidePath = join(tempDir, "outside-paseo-home");
+    const outsidePath = join(tempDir, "outside-synapse-home");
     mkdirSync(outsidePath, { recursive: true });
 
     const ownership = await isPaseoOwnedWorktreeCwd(outsidePath, { paseoHome });
@@ -126,7 +126,7 @@ describe("paseo worktree manager", () => {
     });
     expect(existsSync(created.worktreePath)).toBe(true);
 
-    await deletePaseoWorktree({
+    await deleteSynapseWorktree({
       cwd: repoDir,
       worktreePath: created.worktreePath,
       paseoHome,
@@ -144,7 +144,7 @@ describe("paseo worktree manager", () => {
       paseoHome,
     });
 
-    await deletePaseoWorktree({
+    await deleteSynapseWorktree({
       cwd: repoDir,
       worktreePath: created.worktreePath,
       paseoHome,
@@ -153,7 +153,7 @@ describe("paseo worktree manager", () => {
 
     // Second call — nothing left on disk and no admin entry — must not throw.
     await expect(
-      deletePaseoWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome }),
+      deleteSynapseWorktree({ cwd: repoDir, worktreePath: created.worktreePath, paseoHome }),
     ).resolves.toBeUndefined();
   });
 
@@ -172,7 +172,7 @@ describe("paseo worktree manager", () => {
 
     // Simulate the handler path when git has forgotten about the worktree:
     // caller forwards the path-derived worktreesRoot from the ownership check.
-    await deletePaseoWorktree({
+    await deleteSynapseWorktree({
       cwd: null,
       worktreePath: created.worktreePath,
       worktreesRoot: ownership.worktreeRoot,

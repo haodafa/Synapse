@@ -1,13 +1,13 @@
 
-# Synapse: Paseo + Multica 融合方案
+# Synapse: Paseo + Synapse 融合方案
 
-> 融合 Paseo 跨设备控制 + Multica 团队协作的 AI 开发操作系统
+> 融合 Paseo 跨设备控制 + Synapse 团队协作的 AI 开发操作系统
 
 ## 产品愿景
 
 Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 - **Paseo 的优势**：跨设备远程控制（iOS/Android/Desktop/Web/CLI）、语音交互、Git Worktree 隔离、多 Agent 编排（/paseo-handoff, /paseo-loop）
-- **Multica 的优势**：看板式团队协作、Agent 拟人化、技能沉淀系统、完整任务生命周期管理
+- **Synapse 的优势**：看板式团队协作、Agent 拟人化、技能沉淀系统、完整任务生命周期管理
 
 ---
 
@@ -32,7 +32,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 │                 ┌──────────────────────────────────┐                        │
 │                 │      Unified Daemon (Node.js)    │                        │
 │                 │       ← Paseo daemon +          │                        │
-│                 │    Multica daemon integration    │                        │
+│                 │    Synapse daemon integration    │                        │
 │                 └──────────────────────────────────┘                        │
 └─────────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -40,7 +40,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 ├─────────────────────────────────────────────────────────────────────────────┤
 │  ┌──────────────────┐      ┌───────────────────────────────────────────┐  │
 │  │  Local File DB   │      │            PostgreSQL + pgvector           │  │
-│  │  (Paseo-style)   │      │          (Multica-style persistent)       │  │
+│  │  (Paseo-style)   │      │          (Synapse-style persistent)       │  │
 │  └──────────────────┘      └───────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -57,10 +57,10 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 
 | 模块 | 主要功能 | 技术继承 |
 |------|----------|----------|
-| **Unified Daemon** | 融合 Paseo 的 Agent 进程管理 + Multica 的本地运行时 | Paseo server + Multica daemon |
-| **Unified CLI** | 整合两者的 CLI 命令 | Paseo Commander.js + Multica 风格命令 |
-| **Web UI** | 看板 + 实时监控 + 技能管理 | Multica Next.js + Paseo UI 组件 |
-| **Mobile/Desktop** | 跨设备控制 + 语音 | Paseo Expo/Electron + Multica UI |
+| **Unified Daemon** | 融合 Paseo 的 Agent 进程管理 + Synapse 的本地运行时 | Paseo server + Synapse daemon |
+| **Unified CLI** | 整合两者的 CLI 命令 | Synapse commander.js + Synapse 风格命令 |
+| **Web UI** | 看板 + 实时监控 + 技能管理 | Synapse Next.js + Paseo UI 组件 |
+| **Mobile/Desktop** | 跨设备控制 + 语音 | Paseo Expo/Electron + Synapse UI |
 | **Database** | PostgreSQL + pgvector 用于持久化团队协作数据，本地文件用于 Agent 存储 | 两者结合 |
 
 ---
@@ -74,18 +74,18 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 ├── packages/
 │   ├── protocol/          # 共享协议类型 (从 paseo/packages/protocol)
 │   ├── client/            # 守护进程客户端 (从 paseo/packages/client)
-│   ├── unified-daemon/    # 统一守护进程 (融合 paseo server + multica daemon)
+│   ├── unified-daemon/    # 统一守护进程 (融合 paseo server + synapse daemon)
 │   │   ├── src/
 │   │   │   ├── paseo/     # Paseo 相关核心
-│   │   │   ├── multica/   # Multica 相关核心
+│   │   │   ├── synapse/   # Synapse 相关核心
 │   │   │   └── bridge/    # 桥接层
 │   │   └── package.json
-│   ├── cli/               # 统一 CLI (融合 paseo cli + multica cli)
-│   ├── app/               # Expo 移动端 (从 paseo/app，扩展 Multica 功能)
+│   ├── cli/               # 统一 CLI (融合 Synapse CLI + synapse cli)
+│   ├── app/               # Expo 移动端 (从 paseo/app，扩展 Synapse 功能)
 │   ├── desktop/           # Electron 桌面端 (从 paseo/desktop)
-│   ├── web/               # Next.js Web UI (从 multica/apps/web)
-│   ├── ui/                # 共享 UI 组件 (从 multica/packages/ui)
-│   └── core/              # 核心业务逻辑 (从 multica/packages/core)
+│   ├── web/               # Next.js Web UI (从 synapse/apps/web)
+│   ├── ui/                # 共享 UI 组件 (从 synapse/packages/ui)
+│   └── core/              # 核心业务逻辑 (从 synapse/packages/core)
 ├── scripts/               # 构建和开发脚本
 ├── docs/                  # 文档
 ├── LICENSE                # Apache 2.0 (商业友好)
@@ -99,15 +99,15 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 ### Phase 1: 基础融合（最小可行产品）
 
 1. **统一 CLI**
-   - 整合 `paseo` 和 `multica` 命令为 `synapse` 命令
+   - 整合 `paseo` 和 `synapse` 命令为 `synapse` 命令
    - 支持：`synapse daemon start` / `synapse agent run` / `synapse issue create` / `synapse ls`
 
 2. **统一 Daemon**
-   - 基于 Paseo 守护进程架构，扩展 Multica 的任务队列和看板数据结构
-   - WebSocket API 同时支持 Paseo 风格和 Multica 风格
+   - 基于 Paseo 守护进程架构，扩展 Synapse 的任务队列和看板数据结构
+   - WebSocket API 同时支持 Paseo 风格和 Synapse 风格
 
 3. **基础 Web UI**
-   - 复用 Multica Next.js 前端，添加 Paseo 的监控面板
+   - 复用 Synapse Next.js 前端，添加 Paseo 的监控面板
    - 看板视图 + Agent 流视图
 
 ### Phase 2: 深度融合
@@ -116,7 +116,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
    - 在 Web 看板分配任务，在手机/桌面/CLI 都能实时查看进度
 
 2. **技能沉淀 + Agent 编排结合**
-   - `/paseo-handoff` 交接可同时触发 Multica 技能调用
+   - `/paseo-handoff` 交接可同时触发 Synapse 技能调用
    - 循环修复可复用历史技能
 
 3. **Worktree 隔离 + 任务隔离**
@@ -131,7 +131,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
    - `@FrontendTeam` 分配任务，委员会自动诊断问题
 
 2. **Autopilots + 定时任务**
-   - 定时循环执行任务（Paseo 调度 + Multica Autopilot）
+   - 定时循环执行任务（Paseo 调度 + Synapse Autopilot）
 
 ---
 
@@ -142,24 +142,24 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 | 技术 | 选择 | 原因 |
 |------|------|------|
 | 主要语言 | TypeScript | 两者都是 TS，便于融合 |
-| 后端核心 | Node.js + Go 可选 | Paseo Node.js 更易扩展，Multica Go 性能好 |
-| 前端 | Next.js 16 + Expo | Multica Next.js 成熟，Paseo Expo 跨设备 |
-| 数据库 | PostgreSQL + pgvector | Multica 的选择，用于技能语义搜索 |
-| 构建工具 | Turborepo | Multica 使用，管理 monorepo 高效 |
+| 后端核心 | Node.js + Go 可选 | Paseo Node.js 更易扩展，Synapse Go 性能好 |
+| 前端 | Next.js 16 + Expo | Synapse Next.js 成熟，Paseo Expo 跨设备 |
+| 数据库 | PostgreSQL + pgvector | Synapse 的选择，用于技能语义搜索 |
+| 构建工具 | Turborepo | Synapse 使用，管理 monorepo 高效 |
 | 协议 | WebSocket + REST | 两者都使用 |
 
 ### 代码复用策略
 
 1. **高度复用**（> 90% 代码可直接用）
    - Paseo: `protocol`, `client`, `app`, `desktop`, `cli` 基础框架
-   - Multica: `web` 前端, `core` 核心逻辑, `ui` 组件库
+   - Synapse: `web` 前端, `core` 核心逻辑, `ui` 组件库
 
 2. **需要修改/重写**
-   - Paseo `server` → `unified-daemon`，需要嵌入 Multica 的任务逻辑
-   - Multica `server` Go 部分 → 暂保留，但通过桥接层与 Node.js daemon 通信
+   - Paseo `server` → `unified-daemon`，需要嵌入 Synapse 的任务逻辑
+   - Synapse `server` Go 部分 → 暂保留，但通过桥接层与 Node.js daemon 通信
 
 3. **桥接层**
-   - `bridge/` 目录实现 Paseo 事件 ↔ Multica 事件双向映射
+   - `bridge/` 目录实现 Paseo 事件 ↔ Synapse 事件双向映射
 
 ---
 
@@ -167,20 +167,20 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 
 ### Step 1: 创建融合仓库骨架
 1. 初始化新仓库 `synapse`
-2. 复制 Paseo 和 Multica 的核心包
+2. 复制 Paseo 和 Synapse 的核心包
 3. 设置 Turborepo 构建系统
 
 ### Step 2: 统一 CLI
-1. 融合 `paseo/packages/cli` 和 `multica` CLI 命令
+1. 融合 `paseo/packages/cli` 和 `synapse` CLI 命令
 2. 测试基础命令
 
 ### Step 3: 统一 Daemon
 1. 基于 Paseo server 构建统一 daemon
-2. 添加 Multica 任务队列和看板状态
+2. 添加 Synapse 任务队列和看板状态
 3. 实现桥接层
 
 ### Step 4: 集成 Web UI
-1. 基于 Multica web 应用
+1. 基于 Synapse web 应用
 2. 接入新的统一 daemon API
 3. 添加 Paseo 风格的监控面板
 
@@ -197,7 +197,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 
 融合两者的消息类型，命名空间区分：
 - `paseo.*` - Paseo 原生命令
-- `multica.*` - Multica 原生命令
+- `synapse.*` - Synapse 原生命令
 - `synapse.*` - 新增融合命令
 
 ### 示例消息
@@ -223,7 +223,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 | 代码库过大 | 分阶段实施，先做 MVP，再逐步完善 |
 | 两个产品的设计理念差异 | 明确核心职责划分，保持 API 兼容性 |
 | 测试覆盖 | 保留两者的原有测试，新增融合测试 |
-| 社区生态 | 保持对 Paseo/Multica 社区友好，设计迁移路径 |
+| 社区生态 | 保持对 Paseo/Synapse 社区友好，设计迁移路径 |
 
 ---
 
@@ -243,7 +243,7 @@ Synapse 是一个 AI 原生的团队开发操作系统，它融合：
 
 ## 九、总结
 
-Synapse 不仅仅是 Paseo + Multica 的简单相加，它通过统一的架构和协调的设计，创造了一个更强大的 AI 开发操作系统。它让：
+Synapse 不仅仅是 Paseo + Synapse 的简单相加，它通过统一的架构和协调的设计，创造了一个更强大的 AI 开发操作系统。它让：
 - 个人开发者享受 Paseo 的自由和便利
-- 团队享受 Multica 的协作和沉淀
+- 团队享受 Synapse 的协作和沉淀
 - 两者无缝切换，共同发展

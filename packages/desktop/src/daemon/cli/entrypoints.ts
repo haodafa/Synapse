@@ -10,7 +10,7 @@ import {
 } from "../package-paths.js";
 
 const CLI_PACKAGE_NAME = "@synapse/cli";
-const CLI_BIN_ENTRY = `${CLI_PACKAGE_NAME}/bin/paseo`;
+const CLI_BIN_ENTRY = `${CLI_PACKAGE_NAME}/bin/synapse`;
 const CLI_RUN_ENTRY = `${CLI_PACKAGE_NAME}/dist/run.js`;
 
 const esmRequire = createRequire(__filename);
@@ -30,7 +30,7 @@ export function resolveExternalCliEntrypoint(): NodeEntrypointSpec {
         filePath: path.join(
           resolvePackagedAsarPath(),
           "node_modules",
-          "@getpaseo",
+          "@synapse",
           "cli",
           "dist",
           "index.js",
@@ -65,10 +65,10 @@ export function resolvePassthroughCliEntrypoint(): string {
       filePath: path.join(
         resolvePackagedAsarPath(),
         "node_modules",
-        "@getpaseo",
-        "cli",
-        "dist",
-        "run.js",
+          "@synapse",
+          "cli",
+          "dist",
+          "run.js",
       ),
     });
   }

@@ -22,24 +22,24 @@ import type {
   Skill,
   SkillFile,
   UpdateSkillRequest,
-} from "@multica/core/types";
+} from "@synapse/core/types";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "@multica/core/api";
+import { api } from "@synapse/core/api";
 import { useTimeAgo } from "../../i18n";
-import { useWorkspaceId } from "@multica/core/hooks";
-import { useWorkspacePaths } from "@multica/core/paths";
+import { useWorkspaceId } from "@synapse/core/hooks";
+import { useWorkspacePaths } from "@synapse/core/paths";
 import {
   agentListOptions,
   memberListOptions,
   selectSkillAssignments,
   skillDetailOptions,
   workspaceKeys,
-} from "@multica/core/workspace/queries";
-import { resolvePublicFileUrl } from "@multica/core/workspace/avatar-url";
-import { runtimeListOptions } from "@multica/core/runtimes";
-import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
-import { Button, buttonVariants } from "@multica/ui/components/ui/button";
+} from "@synapse/core/workspace/queries";
+import { resolvePublicFileUrl } from "@synapse/core/workspace/avatar-url";
+import { runtimeListOptions } from "@synapse/core/runtimes";
+import { ActorAvatar } from "@synapse/ui/components/common/actor-avatar";
+import { Button, buttonVariants } from "@synapse/ui/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -47,20 +47,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { Textarea } from "@multica/ui/components/ui/textarea";
+} from "@synapse/ui/components/ui/dialog";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Label } from "@synapse/ui/components/ui/label";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
+import { Textarea } from "@synapse/ui/components/ui/textarea";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+} from "@synapse/ui/components/ui/tooltip";
 import { AppLink, useNavigation } from "../../navigation";
 import { useCanEditSkill } from "../hooks/use-can-edit-skill";
-import { useSkillPermissions } from "@multica/core/permissions";
-import { CapabilityBanner } from "@multica/ui/components/common/capability-banner";
+import { useSkillPermissions } from "@synapse/core/permissions";
+import { CapabilityBanner } from "@synapse/ui/components/common/capability-banner";
 import { readOrigin, totalFileCount, type OriginInfo } from "../lib/origin";
 import { FileTree } from "./file-tree";
 import { FileViewer } from "./file-viewer";

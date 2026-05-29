@@ -14,35 +14,35 @@ import type {
   AgentRuntime,
   RuntimeLocalSkillSummary,
   Skill,
-} from "@multica/core/types";
-import { useAuthStore } from "@multica/core/auth";
-import { useWorkspaceId } from "@multica/core/hooks";
+} from "@synapse/core/types";
+import { useAuthStore } from "@synapse/core/auth";
+import { useWorkspaceId } from "@synapse/core/hooks";
 import {
   runtimeListOptions,
   runtimeLocalSkillsKeys,
   runtimeLocalSkillsOptions,
   resolveRuntimeLocalSkillImport,
-} from "@multica/core/runtimes";
+} from "@synapse/core/runtimes";
 import {
   skillDetailOptions,
   workspaceKeys,
-} from "@multica/core/workspace/queries";
-import { Button } from "@multica/ui/components/ui/button";
-import { Badge } from "@multica/ui/components/ui/badge";
-import { Checkbox } from "@multica/ui/components/ui/checkbox";
-import { Input } from "@multica/ui/components/ui/input";
-import { Label } from "@multica/ui/components/ui/label";
-import { Progress } from "@multica/ui/components/ui/progress";
-import { Textarea } from "@multica/ui/components/ui/textarea";
+} from "@synapse/core/workspace/queries";
+import { Button } from "@synapse/ui/components/ui/button";
+import { Badge } from "@synapse/ui/components/ui/badge";
+import { Checkbox } from "@synapse/ui/components/ui/checkbox";
+import { Input } from "@synapse/ui/components/ui/input";
+import { Label } from "@synapse/ui/components/ui/label";
+import { Progress } from "@synapse/ui/components/ui/progress";
+import { Textarea } from "@synapse/ui/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@multica/ui/components/ui/select";
-import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
+} from "@synapse/ui/components/ui/select";
+import { Skeleton } from "@synapse/ui/components/ui/skeleton";
+import { useScrollFade } from "@synapse/ui/hooks/use-scroll-fade";
 import { useT } from "../../i18n";
 import { isNameConflictError } from "../lib/utils";
 

@@ -25,7 +25,7 @@ import { join } from "node:path";
 import {
   createE2ETestContext,
   createTempDirs,
-  runPaseoCli,
+  runSynapse CLI,
   startTestDaemon,
 } from "./helpers/test-daemon.ts";
 
@@ -221,7 +221,7 @@ try {
 
     const disabledCtx = await startTestDaemon({ paseoHome, workDir, timeout: 120000 });
     try {
-      const result = await runPaseoCli(disabledCtx, ["provider", "ls", "--json"]);
+      const result = await runSynapse CLI(disabledCtx, ["provider", "ls", "--json"]);
       assert.strictEqual(result.exitCode, 0, "provider ls should exit 0");
       const data = JSON.parse(result.stdout.trim()) as ProviderListRow[];
       const claude = data.find((p) => p.provider === "claude");
@@ -232,7 +232,7 @@ try {
       assert(opencode, "enabled opencode provider should stay in provider ls");
       assert.strictEqual(opencode.enabled, "Enabled", "enabled provider should report Enabled");
 
-      const modelsResult = await runPaseoCli(disabledCtx, ["provider", "models", "claude"]);
+      const modelsResult = await runSynapse CLI(disabledCtx, ["provider", "models", "claude"]);
       assert.notStrictEqual(
         modelsResult.exitCode,
         0,

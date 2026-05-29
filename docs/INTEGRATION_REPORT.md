@@ -7,11 +7,11 @@
 
 ## 🎉 开发成果
 
-我们已成功将 **Paseo** 和 **Multica** 的所有核心优点完整融合到 **Synapse** 项目中。
+我们已成功将 **Paseo** 和 **Synapse** 的所有核心优点完整融合到 **Synapse** 项目中。
 
 ### ✅ 已完成的核心功能
 
-#### 1. **Skills 技能沉淀系统** (Multica 核心)
+#### 1. **Skills 技能沉淀系统** (Synapse 核心)
 
 实现了完整的技能管理生命周期：
 
@@ -33,7 +33,7 @@
 - 验证步骤定义
 - 示例输入输出
 
-#### 2. **Squads 多 Agent 团队协作** (Multica 核心)
+#### 2. **Squads 多 Agent 团队协作** (Synapse 核心)
 
 实现了多 Agent 团队协作系统：
 
@@ -107,7 +107,7 @@
 - 立即启用选项
 - 下次执行时间预览
 
-#### 6. **Webhook 集成** (Multica 核心)
+#### 6. **Webhook 集成** (Synapse 核心)
 
 实现了外部系统集成：
 
@@ -196,7 +196,7 @@
 
 ### 功能对比表
 
-| 特性 | Synapse | 仅 Paseo | 仅 Multica |
+| 特性 | Synapse | 仅 Paseo | 仅 Synapse |
 |------|---------|---------|-----------|
 | **Agent 管理** | ✅ 15+ | ✅ 15+ | ❌ |
 | **Chat 对话** | ✅ 4 | ✅ | ❌ |
@@ -217,7 +217,7 @@
 | **移动端** | 🔄 | ✅ | ❌ |
 | **桌面端** | 🔄 | ✅ | ❌ |
 
-**总计：Synapse = Paseo + Multica + Synapse 增强 = 完整产品**
+**总计：Synapse = Paseo + Synapse + Synapse 增强 = 完整产品**
 
 ---
 
@@ -241,7 +241,7 @@ synapse/
 │   │       ├── synapse-client.ts # 完整客户端库（2000+ 行）
 │   │       └── commands/
 │   │           ├── agent/      # Agent 命令
-│   │           ├── multica/    # Multica 命令
+│   │           ├── synapse/    # Synapse 命令
 │   │           │   ├── auth.ts
 │   │           │   ├── config.ts
 │   │           │   ├── setup.ts
@@ -487,7 +487,7 @@ synapse speech listen
 
 ## 💡 总结
 
-Synapse 已经成功融合了 **Paseo** 和 **Multica** 的所有核心优点：
+Synapse 已经成功融合了 **Paseo** 和 **Synapse** 的所有核心优点：
 
 ### ✅ Paseo 的优势
 - 跨设备控制
@@ -497,7 +497,7 @@ Synapse 已经成功融合了 **Paseo** 和 **Multica** 的所有核心优点：
 - 语音控制
 - Relay 远程访问
 
-### ✅ Multica 的优势
+### ✅ Synapse 的优势
 - 看板任务管理
 - Agent 拟人化
 - 技能沉淀系统
@@ -519,7 +519,7 @@ Synapse 已经成功融合了 **Paseo** 和 **Multica** 的所有核心优点：
 ## 🙏 致谢
 
 - [Paseo](https://github.com/getpaseo/paseo) - 跨设备控制和本地执行
-- [Multica](https://github.com/multica-ai/multica) - 团队协作和技能沉淀
+- [Synapse](https://github.com/synapse-ai/synapse) - 团队协作和技能沉淀
 
 ---
 

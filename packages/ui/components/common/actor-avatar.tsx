@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Bot, Users } from "lucide-react";
-import { cn } from "@multica/ui/lib/utils";
-import { MulticaIcon } from "./multica-icon";
+import { cn } from "@synapse/ui/lib/utils";
+import { SynapseIcon } from "./synapse-icon";
 
 interface ActorAvatarProps {
   name: string;
@@ -54,7 +54,7 @@ function ActorAvatar({
           onError={() => setImgError(true)}
         />
       ) : isSystem ? (
-        <MulticaIcon noSpin style={{ width: size * 0.55, height: size * 0.55 }} />
+        <SynapseIcon noSpin style={{ width: size * 0.55, height: size * 0.55 }} />
       ) : isAgent ? (
         <Bot style={{ width: size * 0.55, height: size * 0.55 }} />
       ) : isSquad ? (

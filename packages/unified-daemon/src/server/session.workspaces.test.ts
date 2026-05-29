@@ -102,7 +102,7 @@ interface SessionTestAccess {
   forwardAgentUpdate(...args: unknown[]): Promise<unknown>;
   handleArchiveAgentRequest(agentId: string, requestId: string): Promise<unknown>;
   handleMessage(message: unknown): Promise<unknown>;
-  handleCreatePaseoWorktreeRequest(params: unknown): Promise<unknown>;
+  handleCreateSynapseWorktreeRequest(params: unknown): Promise<unknown>;
   listAgentPayloads(...args: unknown[]): Promise<unknown[]>;
   listFetchWorkspacesEntries(params: unknown): Promise<ListFetchResult>;
   listFetchAgentsEntries(params: unknown): Promise<ListFetchResult>;
@@ -591,7 +591,7 @@ test("create_agent_request keeps requested child cwd when grouped under an exist
         logger: asSessionLogger(logger),
         downloadTokenStore: asDownloadTokenStore(),
         pushTokenStore: asPushTokenStore(),
-        paseoHome: path.join(workdir, "paseo-home"),
+        paseoHome: path.join(workdir, "synapse-home"),
         agentManager,
         agentStorage,
         projectRegistry,
@@ -2450,7 +2450,7 @@ test("create paseo worktree request returns a registered workspace descriptor", 
   const emitted: SessionOutboundMessage[] = [];
   const tempDir = realpathSync(mkdtempSync(path.join(tmpdir(), "session-worktree-test-")));
   const repoDir = path.join(tempDir, "repo");
-  const paseoHome = path.join(tempDir, "paseo-home");
+  const paseoHome = path.join(tempDir, "synapse-home");
   mkdirSync(repoDir, { recursive: true });
   execFileSync("git", ["init", "-b", "main"], { cwd: repoDir, stdio: "pipe" });
   execFileSync("git", ["config", "user.email", "test@test.com"], {
@@ -2528,7 +2528,7 @@ test("create paseo worktree request returns a registered workspace descriptor", 
     if (isSessionOutboundMessage(message)) emitted.push(message);
   };
   try {
-    await session.handleCreatePaseoWorktreeRequest({
+    await session.handleCreateSynapseWorktreeRequest({
       type: "create_paseo_worktree_request",
       cwd: repoDir,
       worktreeSlug: "worktree-123",

@@ -1,5 +1,5 @@
-import { readPaseoConfigJson } from "./paseo-config-file.js";
-import { PaseoConfigSchema } from "@synapse/protocol/paseo-config-schema";
+import { readSynapseConfigJson } from "./synapse-config-file.js";
+import { SynapseConfigSchema } from "@synapse/protocol/synapse-config-schema";
 import { wrapWithUserInstructions } from "./wrap-user-instructions.js";
 
 export type MetadataConfigKey = "agentTitle" | "branchName" | "commitMessage" | "pullRequest";
@@ -33,8 +33,8 @@ async function readProjectMetadataInstructions(
   }
   try {
     const repoRoot = await options.workspaceGitService.resolveRepoRoot(options.cwd);
-    const json = readPaseoConfigJson(repoRoot);
-    const config = PaseoConfigSchema.parse(json);
+    const json = readSynapseConfigJson(repoRoot);
+    const config = SynapseConfigSchema.parse(json);
     return config.metadataGeneration?.[options.configKey]?.instructions;
   } catch {
     return undefined;

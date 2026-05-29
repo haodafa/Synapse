@@ -4,12 +4,12 @@ import { expect, test as base } from "./fixtures";
 import { connectNewWorkspaceDaemonClient, openProjectViaDaemon } from "./helpers/new-workspace";
 import { createTempGitRepo } from "./helpers/workspace";
 import {
-  blockPaseoConfigWrites,
-  bumpPaseoConfigOnDisk,
+  blockSynapseConfigWrites,
+  bumpSynapseConfigOnDisk,
   clickReloadProjectSettings,
   clickRetryProjectSettingsSave,
   clickSaveProjectSettings,
-  corruptPaseoConfig,
+  corruptSynapseConfig,
   editWorktreeSetup,
   expectEmptyScriptList,
   expectHostIndicatorVisible,
@@ -28,8 +28,8 @@ import {
   openProjectSettings,
   openProjects,
   removeProjectScript,
-  restorePaseoConfig,
-  unblockPaseoConfigWrites,
+  restoreSynapseConfig,
+  unblockSynapseConfigWrites,
 } from "./helpers/project-settings";
 
 const updatedSetup = ["npm install", "npm run build"];
@@ -44,7 +44,7 @@ interface ProjectsSettingsFixtures {
   gitlabRemoteProject: ProjectsSettingsProject;
 }
 
-const initialPaseoConfig = {
+const initialSynapseConfig = {
   worktree: {
     setup: ["echo initial setup"],
     teardown: "echo cleanup",
@@ -65,7 +65,7 @@ const test = base.extend<ProjectsSettingsFixtures>({
   editableProject: async ({ page: _page }, provide) => {
     const client = await connectNewWorkspaceDaemonClient();
     const repo = await createTempGitRepo("projects-settings-", {
-      paseoConfig: initialPaseoConfig,
+      synapseConfig: initialSynapseConfig,
     });
     const openedProject = await openProjectViaDaemon(client, repo.path);
 
@@ -83,7 +83,7 @@ const test = base.extend<ProjectsSettingsFixtures>({
   gitlabRemoteProject: async ({ page: _page }, provide) => {
     const client = await connectNewWorkspaceDaemonClient();
     const repo = await createTempGitRepo("projects-settings-gitlab-", {
-      paseoConfig: initialPaseoConfig,
+      synapseConfig: initialSynapseConfig,
       originUrl: "https://gitlab.com/acme/app.git",
     });
     const openedProject = await openProjectViaDaemon(client, repo.path);
@@ -112,18 +112,18 @@ async function expectProjectConfigSaved(project: ProjectsSettingsProject): Promi
     .toMatchObject({
       worktree: {
         setup: updatedSetup,
-        teardown: initialPaseoConfig.worktree.teardown,
-        customWorktreeField: initialPaseoConfig.worktree.customWorktreeField,
+        teardown: initialSynapseConfig.worktree.teardown,
+        customWorktreeField: initialSynapseConfig.worktree.customWorktreeField,
       },
       scripts: {
         dev: {
-          command: initialPaseoConfig.scripts.dev.command,
-          type: initialPaseoConfig.scripts.dev.type,
-          port: initialPaseoConfig.scripts.dev.port,
-          customScriptField: initialPaseoConfig.scripts.dev.customScriptField,
+          command: initialSynapseConfig.scripts.dev.command,
+          type: initialSynapseConfig.scripts.dev.type,
+          port: initialSynapseConfig.scripts.dev.port,
+          customScriptField: initialSynapseConfig.scripts.dev.customScriptField,
         },
       },
-      customTopLevelField: initialPaseoConfig.customTopLevelField,
+      customTopLevelField: initialSynapseConfig.customTopLevelField,
     });
 
   const savedConfig = await readProjectConfigFile(project);
@@ -131,7 +131,7 @@ async function expectProjectConfigSaved(project: ProjectsSettingsProject): Promi
 }
 
 async function readProjectConfigFile(project: ProjectsSettingsProject): Promise<string> {
-  return readFile(path.join(project.path, "paseo.json"), "utf8");
+  return readFile(path.join(project.path, "synapse.json"), "utf8");
 }
 
 test.describe("Projects settings", () => {
@@ -165,7 +165,7 @@ test.describe("Projects settings — error UX", () => {
     await openProjectSettings(page, editableProject.name);
 
     // Bump the file on disk so the daemon detects a revision mismatch on save.
-    await bumpPaseoConfigOnDisk(editableProject.path);
+    await bumpSynapseConfigOnDisk(editableProject.path);
 
     await clickSaveProjectSettings(page);
 
@@ -178,11 +178,11 @@ test.describe("Projects settings — error UX", () => {
     await expectProjectSettingsFormVisible(page);
   });
 
-  test("invalid paseo.json shows read-error callout, reload after fix shows form", async ({
+  test("invalid synapse.json shows read-error callout, reload after fix shows form", async ({
     page,
     editableProject,
   }) => {
-    await corruptPaseoConfig(editableProject.path);
+    await corruptSynapseConfig(editableProject.path);
 
     await openProjects(page);
     await navigateToProjectSettings(page, editableProject.name);
@@ -191,7 +191,7 @@ test.describe("Projects settings — error UX", () => {
     await expectProjectSettingsFormHidden(page);
 
     // Restore a valid config so the reload succeeds.
-    await restorePaseoConfig(editableProject.path, initialPaseoConfig);
+    await restoreSynapseConfig(editableProject.path, initialSynapseConfig);
 
     await clickReloadProjectSettings(page);
 
@@ -206,7 +206,7 @@ test.describe("Projects settings — error UX", () => {
     await openProjects(page);
     await openProjectSettings(page, editableProject.name);
 
-    await blockPaseoConfigWrites(editableProject.path);
+    await blockSynapseConfigWrites(editableProject.path);
 
     await clickSaveProjectSettings(page);
 
@@ -216,7 +216,7 @@ test.describe("Projects settings — error UX", () => {
     await clickRetryProjectSettingsSave(page);
     await expectProjectSettingsError(page, "write_failed");
 
-    await unblockPaseoConfigWrites(editableProject.path);
+    await unblockSynapseConfigWrites(editableProject.path);
     await clickReloadProjectSettings(page);
     await expectNoProjectSettingsError(page, "write_failed");
     await expectProjectSettingsFormVisible(page);

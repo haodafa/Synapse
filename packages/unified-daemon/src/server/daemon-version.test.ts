@@ -8,7 +8,7 @@ import { DaemonVersionResolutionError, resolveDaemonVersion } from "./daemon-ver
 const createdDirs: string[] = [];
 
 function createTempDir(): string {
-  const dir = mkdtempSync(path.join(tmpdir(), "paseo-daemon-version-"));
+  const dir = mkdtempSync(path.join(tmpdir(), "synapse-daemon-version-"));
   createdDirs.push(dir);
   return dir;
 }

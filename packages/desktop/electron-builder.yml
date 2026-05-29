@@ -33,7 +33,7 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.inherit.plist
   extraResources:
-    - from: bin/paseo
+    - from: bin/synapse
       to: bin/synapse
   target:
     - dmg
@@ -45,7 +45,7 @@ linux:
   maintainer: "Synapse Team"
   vendor: "Synapse"
   extraResources:
-    - from: bin/paseo
+    - from: bin/synapse
       to: bin/synapse
   target:
     - AppImage
@@ -56,7 +56,7 @@ win:
   artifactName: "Synapse-Setup-${version}-${arch}.${ext}"
   icon: assets/icon.ico
   extraResources:
-    - from: bin/paseo.cmd
+    - from: bin/synapse.cmd
       to: bin/synapse.cmd
   target:
     - target: nsis

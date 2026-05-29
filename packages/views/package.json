@@ -1,6 +1,6 @@
 {
   "name": "@synapse/views",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -120,7 +120,6 @@
     "@vitejs/plugin-react": "^4.2.1",
     "eslint-plugin-i18next": "^6.0.0",
     "jsdom": "^24.0.0",
-    "typescript": "^5.9.3",
     "vitest": "^4.1.6"
   }
 }

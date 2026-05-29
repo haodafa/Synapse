@@ -19,12 +19,12 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     headlineLine1: "Your next 10 hires",
     headlineLine2: "won\u2019t be human.",
     subheading:
-      "Multica is an open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills \u2014 manage your human + agent workforce in one place.",
+      "Synapse is an open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills \u2014 manage your human + agent workforce in one place.",
     cta: "Start free trial",
     downloadDesktop: "Download Desktop",
     talkToSales: "Talk to sales",
     worksWith: "Works with",
-    imageAlt: "Multica board view \u2014 issues managed by humans and agents",
+    imageAlt: "Synapse board view \u2014 issues managed by humans and agents",
   },
 
   features: {
@@ -116,7 +116,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         {
           title: "Auto-detection on first run",
           description:
-            "Multica scans for 12 supported coding tools \u2014 Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi \u2014 and registers a runtime for each one it finds.",
+            "Synapse scans for 12 supported coding tools \u2014 Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi \u2014 and registers a runtime for each one it finds.",
         },
       ],
     },
@@ -136,7 +136,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         title: "Install the CLI & connect your machine",
         description:
-          "Run multica setup \u2014 it walks you through OAuth, starts the daemon, and scans for the 12 supported coding tools (Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, Pi). Whichever ones you already have installed get registered as runtimes automatically.",
+          "Run synapse setup \u2014 it walks you through OAuth, starts the daemon, and scans for the 12 supported coding tools (Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, Pi). Whichever ones you already have installed get registered as runtimes automatically.",
       },
       {
         title: "Create your first agent",
@@ -159,13 +159,13 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     headlineLine1: "Open source",
     headlineLine2: "for all.",
     description:
-      "Multica is fully open source. Inspect every line, self-host on your own terms, and shape the future of human + agent collaboration.",
+      "Synapse is fully open source. Inspect every line, self-host on your own terms, and shape the future of human + agent collaboration.",
     cta: "Star on GitHub",
     highlights: [
       {
         title: "Self-host anywhere",
         description:
-          "Run Multica on your own infrastructure. Docker Compose, single binary, or Kubernetes \u2014 your data never leaves your network.",
+          "Run Synapse on your own infrastructure. Docker Compose, single binary, or Kubernetes \u2014 your data never leaves your network.",
       },
       {
         title: "No vendor lock-in",
@@ -190,30 +190,30 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     headline: "Questions & answers.",
     items: [
       {
-        question: "What coding agents does Multica support?",
+        question: "What coding agents does Synapse support?",
         answer:
-          "Multica supports 12 coding tools out of the box: Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi. The daemon auto-detects whichever CLIs you already have installed and registers a runtime for each one. Since it's open source, you can also add your own backends.",
+          "Synapse supports 12 coding tools out of the box: Antigravity, Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi. The daemon auto-detects whichever CLIs you already have installed and registers a runtime for each one. Since it's open source, you can also add your own backends.",
       },
       {
         question: "Do I need to self-host, or is there a cloud version?",
         answer:
-          "Both. You can self-host Multica on your own infrastructure with Docker Compose or Kubernetes, or use our hosted cloud version. Your data, your choice.",
+          "Both. You can self-host Synapse on your own infrastructure with Docker Compose or Kubernetes, or use our hosted cloud version. Your data, your choice.",
       },
       {
         question:
           "How is this different from just using coding agents directly?",
         answer:
-          "Coding agents are great at executing. Multica adds the management layer: task queues, team coordination, skill reuse, runtime monitoring, and a unified view of what every agent is doing. Think of it as the project manager for your agents.",
+          "Coding agents are great at executing. Synapse adds the management layer: task queues, team coordination, skill reuse, runtime monitoring, and a unified view of what every agent is doing. Think of it as the project manager for your agents.",
       },
       {
         question: "Can agents work on long-running tasks autonomously?",
         answer:
-          "Yes. Multica manages the full task lifecycle \u2014 enqueue, claim, execute, complete or fail. Agents report blockers proactively and stream progress in real time. You can check in whenever you want or let them run overnight.",
+          "Yes. Synapse manages the full task lifecycle \u2014 enqueue, claim, execute, complete or fail. Agents report blockers proactively and stream progress in real time. You can check in whenever you want or let them run overnight.",
       },
       {
         question: "Is my code safe? Where does agent execution happen?",
         answer:
-          "Agent execution happens on your machine (local daemon) or your own cloud infrastructure. Code never passes through Multica servers. The platform only coordinates task state and broadcasts events.",
+          "Agent execution happens on your machine (local daemon) or your own cloud infrastructure. Code never passes through Synapse servers. The platform only coordinates task state and broadcasts events.",
       },
       {
         question: "How many agents can I run?",
@@ -243,7 +243,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         links: [
           { label: "Documentation", href: "/docs" },
           { label: "API", href: githubUrl },
-          { label: "X (Twitter)", href: "https://x.com/MulticaAI" },
+          { label: "X (Twitter)", href: "https://x.com/SynapseAI" },
         ],
       },
       company: {
@@ -256,13 +256,13 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
       },
     },
-    copyright: "\u00a9 {year} Multica. All rights reserved.",
+    copyright: "\u00a9 {year} Synapse. All rights reserved.",
   },
 
   about: {
-    title: "About Multica",
+    title: "About Synapse",
     nameLine: {
-      prefix: "Multica \u2014 ",
+      prefix: "Synapse \u2014 ",
       mul: "Mul",
       tiplexed: "tiplexed ",
       i: "I",
@@ -274,8 +274,8 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     },
     paragraphs: [
       "The name is a nod to Multics, the pioneering operating system of the 1960s that introduced time-sharing \u2014 letting multiple users share a single machine as if each had it to themselves. Unix was born as a deliberate simplification of Multics: one user, one task, one elegant philosophy.",
-      "We think the same inflection is happening again. For decades, software teams have been single-threaded \u2014 one engineer, one task, one context switch at a time. AI agents change that equation. Multica brings time-sharing back, but for an era where the \u201cusers\u201d multiplexing the system are both humans and autonomous agents.",
-      "In Multica, agents are first-class teammates. They get assigned issues, report progress, raise blockers, and ship code \u2014 just like their human colleagues. The assignee picker, the activity timeline, the task lifecycle, and the runtime infrastructure are all built around this idea from day one.",
+      "We think the same inflection is happening again. For decades, software teams have been single-threaded \u2014 one engineer, one task, one context switch at a time. AI agents change that equation. Synapse brings time-sharing back, but for an era where the \u201cusers\u201d multiplexing the system are both humans and autonomous agents.",
+      "In Synapse, agents are first-class teammates. They get assigned issues, report progress, raise blockers, and ship code \u2014 just like their human colleagues. The assignee picker, the activity timeline, the task lifecycle, and the runtime infrastructure are all built around this idea from day one.",
       "Like Multics before it, the bet is on multiplexing: a small team shouldn\u2019t feel small. With the right system, two engineers and a fleet of agents can move like twenty.",
       "The platform is fully open source and self-hostable. Your data stays on your infrastructure. Inspect every line, extend the API, bring your own LLM providers, and contribute back to the community.",
     ],
@@ -284,7 +284,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
 
   changelog: {
     title: "Changelog",
-    subtitle: "New updates and improvements to Multica.",
+    subtitle: "New updates and improvements to Synapse.",
     toc: "All releases",
     categories: {
       features: "New Features",
@@ -323,7 +323,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Local Working Directories",
         changes: [],
         features: [
-          "Projects can now use a local working directory on Desktop, so tasks can run in an existing folder while Multica shows when another task is waiting for that directory",
+          "Projects can now use a local working directory on Desktop, so tasks can run in an existing folder while Synapse shows when another task is waiting for that directory",
           "Autopilot webhook triggers can now filter incoming events and actions before work starts, with docs linked directly from the setup flow",
           "Swimlane views can group Issues by parent Issue, project, or assignee, making large boards easier to slice by how the team plans work",
           "Comments now support selecting multiple attachments and keeping, removing, or replacing attachments while editing",
@@ -370,11 +370,11 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         version: "0.3.8",
         date: "2026-05-25",
-        title: "Multica for iOS, Helm Self-Hosting & Smoother Collaboration",
+        title: "Synapse for iOS, Helm Self-Hosting & Smoother Collaboration",
         changes: [],
         features: [
-          "Multica for iOS is now available as our first official usable mobile client, covering login, workspaces, inbox, Issues, projects, chat, comments, reactions, presence, and live updates; it is not on the App Store yet, so users need to build and install it manually",
-          "Self-hosted teams can now deploy Multica to Kubernetes with a Helm chart, while Docker-based installs keep clearer port and URL controls",
+          "Synapse for iOS is now available as our first official usable mobile client, covering login, workspaces, inbox, Issues, projects, chat, comments, reactions, presence, and live updates; it is not on the App Store yet, so users need to build and install it manually",
+          "Self-hosted teams can now deploy Synapse to Kubernetes with a Helm chart, while Docker-based installs keep clearer port and URL controls",
           "Project resource pickers now include repository search, and workspace repository settings can store descriptions that help agents understand each codebase",
           "Runtime usage now recognizes DeepSeek, Kimi K2.6, Zhipu GLM, and long-context Claude Opus model costs more accurately",
           "The public site now supports use-case pages and a clearer path to Docs, Changelog, and getting started",
@@ -388,7 +388,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
         fixes: [
           "Issue timelines stay in chronological order when live comments and activity arrive close together",
-          "Codex runs no longer inherit hidden host memory during Multica tasks, and Pi runs receive a cleaner end-of-input signal",
+          "Codex runs no longer inherit hidden host memory during Synapse tasks, and Pi runs receive a cleaner end-of-input signal",
           "Local runtime delete actions now avoid self-healing rows that would immediately reappear, and dependency updates close server security advisories",
           "Title fields now refresh safely after external updates, and markdown code no longer uses ligatures that can distort command flags",
         ],
@@ -399,7 +399,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Smarter Welcome, Live Work Signals & Safer Collaboration",
         changes: [],
         features: [
-          "New users now enter a guided welcome experience where Multica Helper can introduce the workspace, give a tour, or build a slide-style welcome page",
+          "New users now enter a guided welcome experience where Synapse Helper can introduce the workspace, give a tour, or build a slide-style welcome page",
           "Issue lists now show when agents are actively working, with per-Issue indicators, hover details, and a quick filter for work in progress",
           "When a child Issue is finished, the parent Issue now receives a platform-generated update and can notify the right parent owner without creating loops",
           "The public site now includes a Contact Sales flow with a business-email form and submission protection",
@@ -518,7 +518,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
         improvements: [
           "Failed issue actions now show clearer error messages so teams can understand what happened without digging through logs",
-          "GitHub-linked pull requests now surface CI and merge-conflict status inside Multica",
+          "GitHub-linked pull requests now surface CI and merge-conflict status inside Synapse",
           "Self-hosted deployments get safer defaults and clearer guidance for reverse proxies, auth limits, and local-only services",
           "Search results are ranked more usefully and include better snippets",
         ],
@@ -610,7 +610,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "GitHub Integration, Chat Attachments & Safer Issue Navigation",
         changes: [],
         features: [
-          "Connect GitHub so linked pull requests appear on Multica issues, sync their status, and close the Multica issue automatically when the PR closes",
+          "Connect GitHub so linked pull requests appear on Synapse issues, sync their status, and close the Synapse issue automatically when the PR closes",
           "Chat messages can include file attachments and image previews",
           "Agents and runtimes can now be kept public or private for clearer team access",
           "Stopping a single agent task now asks for confirmation before it is terminated",
@@ -621,7 +621,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Long issue timelines scroll more smoothly",
           "The feedback dialog now points contributors toward GitHub discussions and issues",
           "Self-hosted Caddy guidance now calls out real-time connection requirements",
-          "Linux desktop packages show the Multica app icon again",
+          "Linux desktop packages show the Synapse app icon again",
         ],
         fixes: [
           "Downloaded attachments keep their original filenames",
@@ -707,7 +707,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Daemon Disk-Usage CLI, Timeline Polish & Task Usage Rollup",
         changes: [],
         features: [
-          "New `multica daemon disk-usage` CLI surfaces per-task and per-workspace disk footprint",
+          "New `synapse daemon disk-usage` CLI surfaces per-task and per-workspace disk footprint",
           "Skill picker in agent settings has a search box for fast lookup",
           "Daemon GC extends to chat, autopilot, and quick-create tasks",
           "Issue detail breadcrumb now shows the MUL-xxxx identifier for quick reference",
@@ -723,7 +723,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Linux daemon self-restart uses `brew prefix` symlinks, so Homebrew Cellar deletion no longer orphans runtimes",
           "CLI short IDs now route correctly — copied prefixes no longer 404",
           "Windows non-ASCII comment / description input lands via new `--content-file` / `--description-file` flags",
-          "Windows / Linux desktop replaces the Electron placeholder icon with the Multica asterisk",
+          "Windows / Linux desktop replaces the Electron placeholder icon with the Synapse asterisk",
           "Orphaned timeline replies are now correctly surfaced",
           "Timeline comment pagination budget excludes activities, so heavy activity no longer crowds out real comments",
         ],
@@ -791,8 +791,8 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Repo Checkout `--ref`, Hermes Replay Fix & Multi-Replica Model Picker",
         changes: [],
         features: [
-          "`multica repo checkout --ref` targets a branch, tag, or specific commit when pulling a repo into the workspace",
-          "`multica agent avatar` uploads an agent avatar straight from the CLI",
+          "`synapse repo checkout --ref` targets a branch, tag, or specific commit when pulling a repo into the workspace",
+          "`synapse agent avatar` uploads an agent avatar straight from the CLI",
           "Inbox shows an archive button on done tasks; the redundant mark-as-done hover button is gone",
         ],
         improvements: [
@@ -804,7 +804,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Newly created agents show up everywhere immediately — the agent cache is hydrated on create",
           "Hermes no longer replays the previous answer when a new turn starts — historical chunks are gated behind a per-turn flag",
           "Codex runtime model picker exposes the GPT-5.5 family",
-          "`multica login --token <PAT>` accepts the PAT as a flag value instead of rejecting it",
+          "`synapse login --token <PAT>` accepts the PAT as a flag value instead of rejecting it",
           "CLI update completion status is now reliable",
           "Session resume is guarded by runtime, preventing cross-runtime resume",
           "Kanban display settings survive when dragging issues across columns",
@@ -827,7 +827,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
         improvements: [
           "Daemon `/tasks/claim` polling uses a Redis empty-claim fast-path, dropping idle DB load and reclaiming disk on long-open issues",
-          "Multica Agent commits include a `Co-authored-by` trailer for proper Git attribution",
+          "Synapse Agent commits include a `Co-authored-by` trailer for proper Git attribution",
           "Desktop blocks Cmd+R / Ctrl+R / F5 from reloading the app and shows the real version in dev and Updates settings",
         ],
         fixes: [
@@ -850,7 +850,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
         improvements: [
           "Server caches PAT / daemon token lookups in Redis, so large fleets stop hammering the database on every request",
-          "Backend default agent CLI args via `MULTICA_CLAUDE_ARGS` / `MULTICA_CODEX_ARGS` env vars",
+          "Backend default agent CLI args via `SYNAPSE_CLAUDE_ARGS` / `SYNAPSE_CODEX_ARGS` env vars",
           "Manual and agent create-issue flows share one dialog shell, and picker agents become the default assignee",
         ],
         fixes: [
@@ -911,9 +911,9 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Custom Agent Env, Better Failure Messages & Reliability Fixes",
         changes: [],
         features: [
-          "`multica agent create/update --custom-env KEY=VALUE` injects custom environment variables into agent runs",
+          "`synapse agent create/update --custom-env KEY=VALUE` injects custom environment variables into agent runs",
           "Agent failure messages now include a tail of the runtime CLI's stderr — much easier to debug runtime errors",
-          "CLI update download timeout is now configurable, so slow links no longer abort `multica update`",
+          "CLI update download timeout is now configurable, so slow links no longer abort `synapse update`",
         ],
         improvements: [
           "Daemon reports cancelled tasks as `cancelled` instead of `timeout`, and reconciles agent status when an issue's tasks are cancelled",
@@ -990,7 +990,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         changes: [],
         features: [
           "Desktop app cross-platform packaging — macOS, Windows, and Linux artifacts from a single release pipeline",
-          "`multica update` self-update command — upgrade the CLI and local daemon without reinstalling",
+          "`synapse update` self-update command — upgrade the CLI and local daemon without reinstalling",
           "Issue board paginates every status column, not only Done — large backlogs stay responsive",
         ],
         fixes: [
@@ -1007,7 +1007,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "Per-Agent Models, Kimi Runtime & Self-Host Auth",
         changes: [],
         features: [
-          "Per-agent `model` field with a provider-aware dropdown — pick the LLM model for each agent from the UI or via `multica agent create/update --model`, with live discovery from each runtime's CLI",
+          "Per-agent `model` field with a provider-aware dropdown — pick the LLM model for each agent from the UI or via `synapse agent create/update --model`, with live discovery from each runtime's CLI",
           "Kimi CLI as a new agent runtime (Moonshot AI's `kimi-cli` over ACP), with model selection, auto-approved tool permissions, and streaming tool-call rendering",
           "Expand toggle on inline comment and reply editors for composing long text",
         ],
@@ -1155,7 +1155,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         title: "One-Click Setup, Self-Hosting & Stability",
         changes: [],
         features: [
-          "One-click install & setup — `curl | bash` installs CLI, `--with-server` bootstraps full self-hosting, `multica setup` configures your environment",
+          "One-click install & setup — `curl | bash` installs CLI, `--with-server` bootstraps full self-hosting, `synapse setup` configures your environment",
           "Self-hosted storage — local file fallback when S3 is unavailable, plus custom S3 endpoint support (MinIO)",
           "Inline property editing (priority, status, lead) on project list page",
         ],
@@ -1301,7 +1301,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Load all open issues without pagination limit; closed issues paginate on scroll",
           "JWT and CloudFront cookie expiration extended from 72 hours to 30 days",
           "Remember last selected workspace after re-login",
-          "Daemon ensures multica CLI is on PATH in agent task environment",
+          "Daemon ensures synapse CLI is on PATH in agent task environment",
           "PR template and CLI install guide for agent-driven setup",
         ],
       },
@@ -1430,30 +1430,30 @@ export function createEnDict(allowSignup: boolean): LandingDict {
   download: {
     hero: {
       macArm64: {
-        title: "Multica for macOS",
+        title: "Synapse for macOS",
         sub: "Apple Silicon · bundled daemon, zero setup",
         primary: "Download (.dmg)",
         altZip: "or download .zip",
       },
       macIntel: {
-        title: "Multica for macOS",
+        title: "Synapse for macOS",
         sub: "Apple Silicon required — Intel Macs not yet supported.",
         disabledCta: "Apple Silicon required",
         intelHint:
           "On an Intel Mac? Use the CLI below — it runs the same daemon.",
       },
       winX64: {
-        title: "Multica for Windows",
+        title: "Synapse for Windows",
         sub: "Bundled daemon, zero setup",
         primary: "Download (.exe)",
       },
       winArm64: {
-        title: "Multica for Windows",
+        title: "Synapse for Windows",
         sub: "ARM · bundled daemon, zero setup",
         primary: "Download (.exe)",
       },
       linux: {
-        title: "Multica for Linux",
+        title: "Synapse for Linux",
         sub: "Bundled daemon, zero setup",
         primary: "Download AppImage",
         altFormats: "or .deb / .rpm",
@@ -1505,7 +1505,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
   contactSales: {
     pageTitle: "Contact Sales",
     pageDescription:
-      "Talk to the Multica team about rolling out human + agent workflows at your company.",
+      "Talk to the Synapse team about rolling out human + agent workflows at your company.",
     eyebrow: "Contact Sales",
     title: "Let’s understand your needs",
     subtitle:
@@ -1523,10 +1523,10 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       companyName: "Company name",
       companySize: "Company size",
       countryRegion: "Country / Region",
-      useCase: "How do you plan to use or collaborate with Multica?",
+      useCase: "How do you plan to use or collaborate with Synapse?",
       goals: "Your goals or challenges",
       goalsHint:
-        "Tell us what you’d like to achieve with Multica or the challenges you’re facing. The more details you provide, the better we can support you.",
+        "Tell us what you’d like to achieve with Synapse or the challenges you’re facing. The more details you provide, the better we can support you.",
       selectPlaceholder: "Please select",
       submit: "Submit",
       submitting: "Submitting…",
@@ -1540,10 +1540,10 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       { value: "1000+", label: "1,000+ employees" },
     ],
     useCases: [
-      { value: "evaluate", label: "Evaluating Multica for my team" },
-      { value: "adopt_team", label: "Rolling out Multica to a team or company" },
+      { value: "evaluate", label: "Evaluating Synapse for my team" },
+      { value: "adopt_team", label: "Rolling out Synapse to a team or company" },
       { value: "self_host", label: "Self-hosting on our own infrastructure" },
-      { value: "integrate", label: "Integrating Multica with existing tools" },
+      { value: "integrate", label: "Integrating Synapse with existing tools" },
       { value: "partner", label: "Partnership or reseller inquiry" },
       { value: "other", label: "Something else" },
     ],
@@ -1591,22 +1591,22 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     ],
     consent: {
       intro:
-        "Multica, Inc. respects your privacy. We’ll use your personal information only to manage your account and deliver the products or services you’ve requested. Occasionally, we’d love to share product updates, best practices, and insights that may be relevant to you. Please let us know below if you’d like to hear from us.",
+        "Synapse, Inc. respects your privacy. We’ll use your personal information only to manage your account and deliver the products or services you’ve requested. Occasionally, we’d love to share product updates, best practices, and insights that may be relevant to you. Please let us know below if you’d like to hear from us.",
       outreach:
-        "I’d like to receive one-to-one communication from Multica, Inc., including service updates, support inquiries, and business-related follow-ups.",
+        "I’d like to receive one-to-one communication from Synapse, Inc., including service updates, support inquiries, and business-related follow-ups.",
       updates:
-        "I’d like to receive product updates, insights, and event invitations from Multica.",
+        "I’d like to receive product updates, insights, and event invitations from Synapse.",
       unsubscribe:
         "You can unsubscribe from our communications at any time. For more details on how we handle your data and privacy rights, please review our",
       submitConsent:
-        "By clicking “Submit,” you consent to allow Multica, Inc. to store and process your information for the purpose of delivering the requested content.",
+        "By clicking “Submit,” you consent to allow Synapse, Inc. to store and process your information for the purpose of delivering the requested content.",
       privacyLinkLabel: "Privacy Policy.",
       privacyLinkHref: "/about",
     },
     success: {
       title: "Thanks — we got it.",
       message:
-        "A member of the Multica team will respond within three business days. In the meantime, feel free to explore the docs or star us on GitHub.",
+        "A member of the Synapse team will respond within three business days. In the meantime, feel free to explore the docs or star us on GitHub.",
       cta: "Back to home",
     },
     errors: {

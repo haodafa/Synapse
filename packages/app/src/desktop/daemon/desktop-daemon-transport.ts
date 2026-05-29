@@ -8,7 +8,7 @@ import {
   type LocalDaemonTransportRpc,
 } from "./local-daemon-transport-rpc";
 
-const LOCAL_TRANSPORT_SCHEME = "paseo+local:";
+const LOCAL_TRANSPORT_SCHEME = "synapse+local:";
 
 function encodeBinaryToBase64(data: Uint8Array | ArrayBuffer): string {
   const bytes = data instanceof ArrayBuffer ? new Uint8Array(data) : data;

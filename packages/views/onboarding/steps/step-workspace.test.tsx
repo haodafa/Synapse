@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { I18nProvider } from "@multica/core/i18n/react";
+import { I18nProvider } from "@synapse/core/i18n/react";
 import enCommon from "../../locales/en/common.json";
 import enOnboarding from "../../locales/en/onboarding.json";
 import enWorkspace from "../../locales/en/workspace.json";
-import type { Workspace } from "@multica/core/types";
+import type { Workspace } from "@synapse/core/types";
 
 const TEST_RESOURCES = {
   en: {
@@ -27,12 +27,12 @@ vi.mock("../../auth", () => ({
   useLogout: () => mockLogout,
 }));
 
-vi.mock("@multica/core/config", () => ({
+vi.mock("@synapse/core/config", () => ({
   useConfigStore: (selector: (state: { workspaceCreationDisabled: boolean }) => unknown) =>
     mockUseConfigStore(selector),
 }));
 
-vi.mock("@multica/core/workspace/mutations", () => ({
+vi.mock("@synapse/core/workspace/mutations", () => ({
   useCreateWorkspace: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
