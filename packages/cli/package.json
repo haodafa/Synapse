@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Synapse CLI - Unified AI Agent Orchestration Platform",
   "bin": {
-    "synapse": "bin/synapse"
+    "synapse": "./bin/synapse"
   },
   "files": [
     "bin",
@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run test:local",
     "test:local": "tsx tests/run-all.ts",
-    "test:e2e": "npm run test:local"
+    "test:e2e": "npm run test:local",
+    "link": "npm link"
   },
   "dependencies": {
     "@clack/prompts": "^1.0.0",

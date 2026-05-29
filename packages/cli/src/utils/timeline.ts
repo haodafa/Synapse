@@ -1,5 +1,5 @@
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
-import type { AgentTimelineItem } from "@getpaseo/protocol/agent-types";
+import type { DaemonClient } from "@synapse/client/internal/daemon-client";
+import type { AgentTimelineItem } from "@synapse/protocol/agent-types";
 
 interface FetchProjectedTimelineItemsInput {
   client: DaemonClient;

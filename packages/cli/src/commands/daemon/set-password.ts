@@ -6,7 +6,7 @@ import {
   loadPersistedConfig,
   savePersistedConfig,
   type PersistedConfig,
-} from "@getpaseo/server";
+} from "@synapse/unified-daemon/server";
 import type {
   CommandError,
   CommandOptions,

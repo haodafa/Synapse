@@ -1,5 +1,5 @@
 import { platform } from "node:os";
-import { execCommand } from "@getpaseo/server";
+import { execCommand } from "@synapse/unified-daemon/server";
 
 export interface NodePathFromPidResult {
   nodePath: string | null;

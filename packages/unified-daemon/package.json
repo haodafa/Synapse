@@ -22,6 +22,11 @@
       "types": "./dist/server/utils/tool-call-parsers.d.ts",
       "source": "./src/utils/tool-call-parsers.ts",
       "default": "./dist/server/utils/tool-call-parsers.js"
+    },
+    "./server": {
+      "types": "./dist/server/server/exports.d.ts",
+      "source": "./src/server/exports.ts",
+      "default": "./dist/server/server/exports.js"
     }
   },
   "publishConfig": {
