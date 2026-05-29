@@ -1,5 +1,5 @@
 {
-  "name": "@multica/core",
+  "name": "@synapse/core",
   "version": "0.0.0",
   "private": true,
   "type": "module",

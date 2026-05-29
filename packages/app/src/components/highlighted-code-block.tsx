@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native-unistyles";
 import { MarkdownTextSpan } from "@/components/markdown-text";
 import * as Clipboard from "expo-clipboard";
 import { Check, Copy } from "lucide-react-native";
-import { highlightCode, type HighlightToken } from "@getpaseo/highlight";
+import { highlightCode, type HighlightToken } from "@synapse/highlight";
 import { isNative, isWeb } from "@/constants/platform";
 import { useIsCompactFormFactor } from "@/constants/layout";
 import { syntaxTokenStyleFor } from "@/styles/syntax-token-styles";
@@ -17,7 +17,7 @@ interface HighlightedCodeBlockProps {
 }
 
 // Fence info strings ("```ts", "```typescript", "```ts {1,3}") map to the
-// extension-based parser table in @getpaseo/highlight. Aliases here only
+// extension-based parser table in @synapse/highlight. Aliases here only
 // cover names that don't already match an extension key in parsers.ts.
 const LANGUAGE_ALIASES: Record<string, string> = {
   typescript: "ts",

@@ -1,4 +1,4 @@
-import type { SubscribeTerminalRequest, TerminalState } from "@getpaseo/protocol/messages";
+import type { SubscribeTerminalRequest, TerminalState } from "@synapse/protocol/messages";
 import type { TerminalOutputData } from "./terminal-emulator-runtime";
 
 export interface TerminalStreamControllerClient {

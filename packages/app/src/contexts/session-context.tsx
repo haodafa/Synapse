@@ -15,18 +15,18 @@ import {
 } from "@/timeline/session-stream-reducers";
 import { useCreateFlowStore } from "@/stores/create-flow-store";
 import { TIMELINE_FETCH_PAGE_SIZE } from "@/timeline/timeline-fetch-policy";
-import type { AgentAttachment, SessionOutboundMessage } from "@getpaseo/protocol/messages";
-import { parseServerInfoStatusPayload } from "@getpaseo/protocol/messages";
+import type { AgentAttachment, SessionOutboundMessage } from "@synapse/protocol/messages";
+import { parseServerInfoStatusPayload } from "@synapse/protocol/messages";
 import {
   buildAgentAttentionNotificationPayload,
   type AgentAttentionNotificationPayload,
   type NotificationPermissionRequest,
-} from "@getpaseo/protocol/agent-attention-notification";
-import type { AgentLifecycleStatus } from "@getpaseo/protocol/agent-lifecycle";
-import type { DaemonClient } from "@getpaseo/client/internal/daemon-client";
-import type { AgentSessionConfig } from "@getpaseo/protocol/agent-types";
-import type { GitSetupOptions } from "@getpaseo/protocol/messages";
-import type { AgentPermissionResponse } from "@getpaseo/protocol/agent-types";
+} from "@synapse/protocol/agent-attention-notification";
+import type { AgentLifecycleStatus } from "@synapse/protocol/agent-lifecycle";
+import type { DaemonClient } from "@synapse/client/internal/daemon-client";
+import type { AgentSessionConfig } from "@synapse/protocol/agent-types";
+import type { GitSetupOptions } from "@synapse/protocol/messages";
+import type { AgentPermissionResponse } from "@synapse/protocol/agent-types";
 import { getHostRuntimeStore, useHostRuntimeIsConnected } from "@/runtime/host-runtime";
 import { useVoiceAudioEngineOptional, useVoiceRuntimeOptional } from "@/contexts/voice-context";
 import type { AudioPlaybackSource } from "@/voice/audio-engine-types";

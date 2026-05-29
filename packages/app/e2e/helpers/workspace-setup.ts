@@ -6,7 +6,7 @@ import { gotoAppShell } from "./app";
 import { loadDaemonClientConstructor } from "./daemon-client-loader";
 import { createNodeWebSocketFactory, type NodeWebSocketFactory } from "./node-ws-factory";
 import { switchWorkspaceViaSidebar } from "./workspace-ui";
-import type { SessionOutboundMessage } from "@getpaseo/protocol/messages";
+import type { SessionOutboundMessage } from "@synapse/protocol/messages";
 
 interface WorkspaceSetupDaemonClient {
   connect(): Promise<void>;

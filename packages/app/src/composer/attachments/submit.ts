@@ -4,7 +4,7 @@ import {
   isWorkspaceAttachment,
   workspaceAttachmentToSubmitAttachment,
 } from "@/attachments/workspace-attachment-utils";
-import type { AgentAttachment } from "@getpaseo/protocol/messages";
+import type { AgentAttachment } from "@synapse/protocol/messages";
 import { buildGitHubAttachmentFromSearchItem } from "@/utils/review-attachments";
 
 export function splitComposerAttachmentsForSubmit(attachments: ComposerAttachment[]): {

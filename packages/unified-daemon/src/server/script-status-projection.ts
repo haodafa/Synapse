@@ -3,8 +3,8 @@ import type {
   ScriptStatusUpdateMessage,
   SessionOutboundMessage,
   WorkspaceScriptPayload,
-} from "@getpaseo/protocol/messages";
-import type { PaseoConfig } from "@getpaseo/protocol/paseo-config-schema";
+} from "@synapse/protocol/messages";
+import type { PaseoConfig } from "@synapse/protocol/paseo-config-schema";
 import { buildScriptHostname } from "../utils/script-hostname.js";
 import { getScriptConfigs, isServiceScript, readPaseoConfig } from "../utils/worktree.js";
 import { deriveProjectSlug } from "./workspace-git-metadata.js";

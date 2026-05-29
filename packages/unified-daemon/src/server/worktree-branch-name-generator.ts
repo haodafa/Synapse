@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { FirstAgentContext } from "@getpaseo/protocol/messages";
+import type { FirstAgentContext } from "@synapse/protocol/messages";
 import type { AgentManager } from "./agent/agent-manager.js";
 import {
   DEFAULT_STRUCTURED_GENERATION_PROVIDERS,

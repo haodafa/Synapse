@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import { CLIENT_CAPS } from "@getpaseo/protocol/client-capabilities";
+import { CLIENT_CAPS } from "@synapse/protocol/client-capabilities";
 import {
   AgentCreateFailedStatusPayloadSchema,
   AgentCreatedStatusPayloadSchema,
@@ -13,7 +13,7 @@ import {
   SessionInboundMessageSchema,
   type ServerInfoStatusPayload,
   WSOutboundMessageSchema,
-} from "@getpaseo/protocol/messages";
+} from "@synapse/protocol/messages";
 import type {
   AgentStreamEventPayload,
   AgentSnapshotPayload,
@@ -79,16 +79,16 @@ import type {
   EditorTargetId,
   PaseoConfigRaw,
   PaseoConfigRevision,
-} from "@getpaseo/protocol/messages";
+} from "@synapse/protocol/messages";
 import type {
   AgentPermissionRequest,
   AgentPermissionResponse,
   AgentPersistenceHandle,
   AgentProvider,
   AgentSessionConfig,
-} from "@getpaseo/protocol/agent-types";
-import type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@getpaseo/protocol/messages";
-import { isRelayClientWebSocketUrl } from "@getpaseo/protocol/daemon-endpoints";
+} from "@synapse/protocol/agent-types";
+import type { MutableDaemonConfig, MutableDaemonConfigPatch } from "@synapse/protocol/messages";
+import { isRelayClientWebSocketUrl } from "@synapse/protocol/daemon-endpoints";
 import {
   asUint8Array,
   decodeFileTransferFrame,
@@ -96,7 +96,7 @@ import {
   FileTransferOpcode,
   TerminalStreamOpcode,
   type FileTransferFrame,
-} from "@getpaseo/protocol/binary-frames/index";
+} from "@synapse/protocol/binary-frames/index";
 import {
   createRelayE2eeTransportFactory,
   createWebSocketTransportFactory,

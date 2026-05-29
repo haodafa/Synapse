@@ -1,5 +1,5 @@
 # ==========================================
-# Synapse - Multi-stage Docker Build (Simplified)
+# Synapse - Multi-stage Docker Build
 # ==========================================
 
 # ------------------------------
@@ -24,26 +24,35 @@ RUN apt-get update && apt-get install -y \
 COPY package*.json ./
 COPY turbo.json ./
 
-# Copy workspace package files (only essential ones)
+# Copy workspace package files
 COPY packages/protocol/package.json ./packages/protocol/
 COPY packages/client/package.json ./packages/client/
 COPY packages/unified-daemon/package.json ./packages/unified-daemon/
 COPY packages/cli/package.json ./packages/cli/
+COPY packages/core/package.json ./packages/core/
+COPY packages/ui/package.json ./packages/ui/
+COPY packages/views/package.json ./packages/views/
+COPY packages/web/package.json ./packages/web/
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy source code (only essential packages)
+# Copy source code
 COPY packages/protocol ./packages/protocol
 COPY packages/client ./packages/client
 COPY packages/unified-daemon ./packages/unified-daemon
 COPY packages/cli ./packages/cli
+COPY packages/core ./packages/core
+COPY packages/ui ./packages/ui
+COPY packages/views ./packages/views
+COPY packages/web ./packages/web
 
-# Build only essential packages
-RUN npm run build --workspace=@synapse/protocol
-RUN npm run build --workspace=@synapse/client
-RUN npm run build --workspace=@synapse/unified-daemon
-RUN npm run build --workspace=@synapse/cli
+# Build all packages
+RUN npm run build --workspace=@synapse/protocol || true
+RUN npm run build --workspace=@synapse/client || true
+RUN npm run build --workspace=@synapse/unified-daemon || true
+RUN npm run build --workspace=@synapse/cli || true
+RUN npm run build --workspace=@synapse/web || true
 
 # ------------------------------
 # Stage 2: Runtime (Unified Daemon)

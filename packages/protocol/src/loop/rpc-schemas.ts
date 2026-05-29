@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { AgentProviderSchema } from "@getpaseo/protocol/provider-manifest";
+import { AgentProviderSchema } from "@synapse/protocol/provider-manifest";
 
 export const LoopLogEntrySchema = z.object({
   seq: z.number().int().positive(),

@@ -17,7 +17,7 @@ env:
 
 jobs:
   # ==========================================
-  # Build & Push Docker Images (Simplified)
+  # Build Docker Images
   # ==========================================
   build-images:
     name: Build Docker Images
@@ -25,20 +25,20 @@ jobs:
     permissions:
       contents: read
       packages: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Determine image tag
         id: image_tag
         run: |
@@ -49,10 +49,10 @@ jobs:
           else
             echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build and push Unified Daemon
         uses: docker/build-push-action@v5
         with:
@@ -79,36 +79,36 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Create Release Notes
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
-          
+
           echo "## What's Changed" > RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
-          
+
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
-          
+
           if [ -z "$PREVIOUS_TAG" ]; then
             git log --pretty=format:"- %s" | head -20 >> RELEASE_NOTES.md || true
           else
             git log --pretty=format:"- %s" $PREVIOUS_TAG..HEAD | head -20 >> RELEASE_NOTES.md || true
           fi
-          
+
           echo "" >> RELEASE_NOTES.md
-          
+
           if [ -z "$PREVIOUS_TAG" ]; then
             echo "**Initial Release**" >> RELEASE_NOTES.md || true
           else
             echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$VERSION" >> RELEASE_NOTES.md || true
           fi
-      
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

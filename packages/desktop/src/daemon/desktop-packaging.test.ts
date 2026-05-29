@@ -21,9 +21,9 @@ describe("desktop packaging", () => {
     const config = readFileSync(join(packageRoot, "electron-builder.yml"), "utf8");
 
     expect(config).toContain("!**/*.map");
-    expect(config).toContain("!node_modules/@getpaseo/*/src/**");
-    expect(config).toContain("!node_modules/@getpaseo/**/*.test.*");
-    expect(config).toContain("!node_modules/@getpaseo/**/*.spec.*");
+    expect(config).toContain("!node_modules/@synapse/*/src/**");
+    expect(config).toContain("!node_modules/@synapse/**/*.test.*");
+    expect(config).toContain("!node_modules/@synapse/**/*.spec.*");
   });
 
   // electron-builder packs production dependencies declared in package.json into
@@ -38,7 +38,7 @@ describe("desktop packaging", () => {
     };
     const deps = pkg.dependencies ?? {};
 
-    for (const required of ["@getpaseo/cli", "@synapse/unified-daemon"]) {
+    for (const required of ["@synapse/cli", "@synapse/unified-daemon"]) {
       expect(deps[required], `${required} must be declared in dependencies`).toBe("*");
     }
   });

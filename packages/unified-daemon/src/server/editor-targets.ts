@@ -5,7 +5,7 @@ import type {
   EditorTargetDescriptorPayload,
   EditorTargetId,
   KnownEditorTargetId,
-} from "@getpaseo/protocol/messages";
+} from "@synapse/protocol/messages";
 import { createExternalProcessEnv } from "./paseo-env.js";
 import { findExecutable } from "../utils/executable.js";
 import { spawnProcess } from "../utils/spawn.js";

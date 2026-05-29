@@ -16,8 +16,8 @@ import {
   decodeTerminalStreamFrame,
   encodeTerminalStreamFrame,
   TerminalStreamOpcode,
-} from "@getpaseo/protocol/terminal-stream-protocol";
-import { CLIENT_CAPS } from "@getpaseo/protocol/client-capabilities";
+} from "@synapse/protocol/terminal-stream-protocol";
+import { CLIENT_CAPS } from "@synapse/protocol/client-capabilities";
 
 type SocketListener = (...args: unknown[]) => void;
 

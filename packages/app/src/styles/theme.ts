@@ -1,4 +1,4 @@
-import { darkHighlightColors, lightHighlightColors } from "@getpaseo/highlight";
+import { darkHighlightColors, lightHighlightColors } from "@synapse/highlight";
 
 export const baseColors = {
   // Base colors

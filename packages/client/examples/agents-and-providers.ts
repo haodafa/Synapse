@@ -1,4 +1,4 @@
-import { createPaseoClient, type PaseoClient } from "@getpaseo/client";
+import { createPaseoClient, type PaseoClient } from "@synapse/client";
 
 export function createClient(url: string): PaseoClient {
   return createPaseoClient({
