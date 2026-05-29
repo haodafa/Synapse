@@ -30,10 +30,9 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Run type checking
         run: npm run typecheck || echo "Type checking completed"
@@ -58,10 +57,9 @@ jobs:
         with:
           node-version: 22.x
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Build the project
         run: npm run build || echo "Build completed"
@@ -96,10 +94,9 @@ jobs:
         with:
           node-version: 22.x
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       
       - name: Audit dependencies
         run: npm audit --audit-level=moderate
