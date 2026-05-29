@@ -15,13 +15,13 @@ const dateString = z.preprocess(
   z.string(),
 );
 
-const useCaseFrontmatterSchema = z.looseObject({
+const useCaseFrontmatterSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   hero_image: z.string(),
   updated_at: dateString,
   category: z.string().optional(),
-});
+}).passthrough();
 
 export const useCases = defineDocs({
   dir: "content/use-cases",
