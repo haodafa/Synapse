@@ -69,17 +69,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build server stack
-        run: npm run build:server
+      - name: Build unified daemon stack
+        run: npm run build:unified
 
       - name: Typecheck all packages
         run: npm run typecheck
 
       - name: Verify public package contents
         run: |
-          npm pack --dry-run --ignore-scripts --workspace=@getsynapse/protocol
-          npm pack --dry-run --ignore-scripts --workspace=@getsynapse/client
-          npm pack --dry-run --ignore-scripts --workspace=@getsynapse/server
+          npm pack --dry-run --ignore-scripts --workspace=@synapse/protocol
+          npm pack --dry-run --ignore-scripts --workspace=@synapse/client
+          npm pack --dry-run --ignore-scripts --workspace=@synapse/unified-daemon
 
   server-tests:
     strategy:
@@ -107,11 +107,11 @@ jobs:
       - name: Install agent CLIs for provider tests
         run: npm install -g @anthropic-ai/claude-code opencode-ai
 
-      - name: Build server dependencies
-        run: npm run build:server-deps
+      - name: Build unified daemon dependencies
+        run: npm run build:unified-deps
 
       - name: Run server tests
-        run: npm run test --workspace=@getsynapse/server
+        run: npm run test --workspace=@synapse/unified-daemon
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -134,11 +134,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build server stack
-        run: npm run build:server
+      - name: Build unified daemon stack
+        run: npm run build:unified
 
       - name: Run desktop tests
-        run: npm run test --workspace=@getsynapse/desktop
+        run: npm run test --workspace=@synapse/desktop
 
   app-tests:
     runs-on: ubuntu-latest
@@ -160,7 +160,7 @@ jobs:
         run: npm run build:app-deps
 
       - name: Run app unit tests
-        run: npm run test --workspace=@getsynapse/app
+        run: npm run test --workspace=@synapse/app
 
   sdk-tests:
     runs-on: ubuntu-latest
@@ -179,13 +179,13 @@ jobs:
         run: npm run build:client
 
       - name: Run protocol tests
-        run: npm run test --workspace=@getsynapse/protocol
+        run: npm run test --workspace=@synapse/protocol
 
       - name: Run client tests
-        run: npm run test --workspace=@getsynapse/client
+        run: npm run test --workspace=@synapse/client
 
       - name: Typecheck client examples
-        run: npm run typecheck:examples --workspace=@getsynapse/client
+        run: npm run typecheck:examples --workspace=@synapse/client
 
   playwright:
     runs-on: ubuntu-latest
@@ -206,14 +206,14 @@ jobs:
       - name: Build app dependencies
         run: npm run build:app-deps
 
-      - name: Build server stack
-        run: npm run build:server
+      - name: Build unified daemon stack
+        run: npm run build:unified
 
       - name: Install agent CLIs for provider tests
         run: npm install -g @anthropic-ai/claude-code @openai/codex@0.105.0 opencode-ai
 
       - name: Run Playwright E2E tests
-        run: npm run test:e2e --workspace=@getsynapse/app
+        run: npm run test:e2e --workspace=@synapse/app
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -244,7 +244,7 @@ jobs:
         run: npm run build:relay
 
       - name: Run relay tests
-        run: npm run test --workspace=@getsynapse/relay
+        run: npm run test --workspace=@synapse/relay
 
   cli-tests:
     strategy:
@@ -268,7 +268,7 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code @openai/codex@0.105.0 opencode-ai
 
       - name: Run CLI tests
-        run: npm run test --workspace=@getsynapse/cli
+        run: npm run test --workspace=@synapse/cli
         env:
           SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD: "0"
           SYNAPSE_DICTATION_ENABLED: "0"
