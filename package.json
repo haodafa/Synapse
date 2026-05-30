@@ -37,7 +37,7 @@
   "scripts": {
     "dev": "./scripts/dev.sh",
     "dev:win": "powershell ./scripts/dev.ps1",
-    "dev:server": "npm run build:deps && concurrently --kill-others --names protocol,client,unified --prefix-colors yellow,blue,cyan \"npm run watch:protocol\" \"npm run watch:client\" \"npm run dev:unified:raw\"",
+    "dev:server": "npm run build:unified-deps && concurrently --kill-others --names protocol,client,unified --prefix-colors yellow,blue,cyan \"npm run watch:protocol\" \"npm run watch:client\" \"npm run dev:unified:raw\"",
     "dev:unified:raw": "npm run dev --workspace=@synapse/unified-daemon",
     "dev:web": "npm run dev --workspace=@synapse/web",
     "dev:app": "npm run start --workspace=@synapse/app",
