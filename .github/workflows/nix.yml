@@ -12,7 +12,7 @@ on:
       - "packages/highlight/**"
       - "packages/protocol/**"
       - "packages/client/**"
-      - "packages/server/**"
+      - "packages/unified-daemon/**"
       - "packages/relay/**"
       - "packages/cli/**"
       - "scripts/update-nix.sh"

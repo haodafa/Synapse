@@ -104,7 +104,7 @@ export function normalizeClaudeAskUserQuestionUpdatedInput(
 ): AgentMetadata {
   const fallback = isMetadata(fallbackInput) ? fallbackInput : {};
   const base = isMetadata(updatedInput) ? updatedInput : {};
-  // Paseo's shared question UI serializes answers by question header, but Claude's
+  // Synapse's shared question UI serializes answers by question header, but Claude's
   // AskUserQuestion tool expects answer keys to match the full question text. Merge
   // the original request payload back in so provider callbacks that only return
   // `{ answers }` still satisfy Claude's full tool input schema.
@@ -3950,7 +3950,7 @@ class ClaudeAgentSession implements AgentSession {
     }
 
     const items: AgentTimelineItem[] = [];
-    // User SDK entries can arrive as multiple text blocks, but Paseo treats them as one message.
+    // User SDK entries can arrive as multiple text blocks, but Synapse treats them as one message.
     const userTextParts: string[] = [];
     for (const block of content) {
       if (!isClaudeContentChunk(block)) {

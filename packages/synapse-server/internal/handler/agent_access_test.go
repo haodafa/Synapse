@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/multica-ai/multica/server/internal/middleware"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/internal/middleware"
+	"github.com/haodafa/Synapse/server/internal/util"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
 )
 
 // TestMemberAllowedForPrivateAgent_Pure exercises the pure predicate that

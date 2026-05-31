@@ -701,7 +701,7 @@ describe("PiRpcAgentClient", () => {
     const session = await client.createSession(
       createConfig({
         mcpServers: {
-          paseo: {
+          synapse: {
             type: "http",
             url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=agent-1",
           },
@@ -742,7 +742,7 @@ describe("PiRpcAgentClient", () => {
     };
     expect(injectedConfig).toEqual({
       mcpServers: {
-        paseo: {
+        synapse: {
           url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=agent-1",
           auth: false,
           oauth: false,
@@ -767,7 +767,7 @@ describe("PiRpcAgentClient", () => {
     const session = await client.createSession(
       createConfig({
         mcpServers: {
-          paseo: {
+          synapse: {
             type: "http",
             url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=agent-1",
           },

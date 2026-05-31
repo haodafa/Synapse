@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 // buildMetadataFilterQueryParam converts repeated `--metadata key=value`
@@ -53,7 +53,7 @@ func buildMetadataFilterQueryParam(pairs []string) (string, error) {
 	return string(buf), nil
 }
 
-// multica issue metadata {list|get|set|delete} — KV map attached to each issue
+// synapse issue metadata {list|get|set|delete} — KV map attached to each issue
 // for agent pipeline state. See server/internal/handler/issue_metadata.go for
 // the constraints (key regex, 50-key cap, primitive-only values, 8KB blob).
 

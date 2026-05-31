@@ -12,7 +12,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 var autopilotCmd = &cobra.Command{
@@ -727,7 +727,7 @@ func resolveAgent(ctx context.Context, client *cli.APIClient, nameOrID string) (
 		return nameOrID, nil
 	}
 	if client.WorkspaceID == "" {
-		return "", fmt.Errorf("workspace ID is required to resolve agents; use --workspace-id or set MULTICA_WORKSPACE_ID")
+		return "", fmt.Errorf("workspace ID is required to resolve agents; use --workspace-id or set SYNAPSE_WORKSPACE_ID")
 	}
 
 	var agents []map[string]any

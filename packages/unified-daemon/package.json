@@ -57,9 +57,9 @@
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.17.1",
     "@anthropic-ai/claude-agent-sdk": "^0.2.133",
-    "@synapse/client": "0.1.0",
-    "@synapse/highlight": "0.1.0",
-    "@synapse/protocol": "0.1.0",
+    "@synapse/client": "*",
+    "@synapse/highlight": "*",
+    "@synapse/protocol": "*",
     "@isaacs/ttlcache": "^2.1.4",
     "@modelcontextprotocol/sdk": "^1.20.1",
     "@opencode-ai/sdk": "1.14.46",
@@ -99,7 +99,7 @@
     "@vitest/ui": "^4.1.6",
     "cross-env": "^10.1.0",
     "tsx": "^4.6.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.6"
   },
   "overrides": {

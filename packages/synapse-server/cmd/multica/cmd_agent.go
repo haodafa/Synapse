@@ -13,8 +13,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
-	"github.com/multica-ai/multica/server/internal/daemon"
+	"github.com/haodafa/Synapse/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/daemon"
 )
 
 var agentCmd = &cobra.Command{
@@ -85,7 +85,7 @@ var agentSkillsCmd = &cobra.Command{
 
 // Agent env subcommands. Live behind a dedicated `agent env` group because
 // they're the ONLY post-creation path for reading or writing
-// custom_env values — `multica agent list / get / update` no longer
+// custom_env values — `synapse agent list / get / update` no longer
 // expose env on the wire. Each call hits the audited
 // `/api/agents/{id}/env` endpoint. See MUL-2600.
 
@@ -177,7 +177,7 @@ func init() {
 	agentUpdateCmd.Flags().String("model", "", "New model identifier. Pass an empty string to clear and fall back to the runtime default.")
 	agentUpdateCmd.Flags().String("custom-args", "", "New custom CLI arguments as JSON array. For model selection prefer --model; some providers (codex app-server, openclaw) reject --model in custom_args.")
 	// custom_env is intentionally NOT part of `agent update`. Use
-	// `multica agent env set <id>` — that path is owner/admin-only,
+	// `synapse agent env set <id>` — that path is owner/admin-only,
 	// denies agent actors, and writes a persisted audit trail.
 	agentUpdateCmd.Flags().String("visibility", "", "New visibility: private or workspace")
 	agentUpdateCmd.Flags().String("status", "", "New status")
@@ -228,22 +228,22 @@ func newAPIClient(cmd *cobra.Command) (*cli.APIClient, error) {
 	token := resolveToken(cmd)
 
 	if serverURL == "" {
-		return nil, fmt.Errorf("server URL not set: use --server-url flag, MULTICA_SERVER_URL env, or 'multica config set server_url <url>'")
+		return nil, fmt.Errorf("server URL not set: use --server-url flag, SYNAPSE_SERVER_URL env, or 'synapse config set server_url <url>'")
 	}
 
 	client := cli.NewAPIClient(serverURL, workspaceID, token)
 	// When running inside a daemon task, attribute actions to the agent.
-	if agentID := os.Getenv("MULTICA_AGENT_ID"); agentID != "" {
+	if agentID := os.Getenv("SYNAPSE_AGENT_ID"); agentID != "" {
 		client.AgentID = agentID
 	}
-	if taskID := os.Getenv("MULTICA_TASK_ID"); taskID != "" {
+	if taskID := os.Getenv("SYNAPSE_TASK_ID"); taskID != "" {
 		client.TaskID = taskID
 	}
 	return client, nil
 }
 
 func resolveServerURL(cmd *cobra.Command) string {
-	val := cli.FlagOrEnv(cmd, "server-url", "MULTICA_SERVER_URL", "")
+	val := cli.FlagOrEnv(cmd, "server-url", "SYNAPSE_SERVER_URL", "")
 	if val != "" {
 		return normalizeAPIBaseURL(val)
 	}
@@ -252,7 +252,7 @@ func resolveServerURL(cmd *cobra.Command) string {
 	if err == nil && cfg.ServerURL != "" {
 		return normalizeAPIBaseURL(cfg.ServerURL)
 	}
-	fmt.Fprintln(os.Stderr, "No server configured. Run 'multica setup' first.")
+	fmt.Fprintln(os.Stderr, "No server configured. Run 'synapse setup' first.")
 	os.Exit(1)
 	return "" // unreachable
 }
@@ -266,18 +266,18 @@ func normalizeAPIBaseURL(raw string) string {
 }
 
 // inAgentExecutionContext reports whether the CLI is being invoked from
-// inside a daemon-managed agent task (daemon sets MULTICA_AGENT_ID and
-// MULTICA_TASK_ID in the agent env). In that context the workspace must be
+// inside a daemon-managed agent task (daemon sets SYNAPSE_AGENT_ID and
+// SYNAPSE_TASK_ID in the agent env). In that context the workspace must be
 // provided explicitly by the daemon — falling back to user-global
-// ~/.multica/config.json would let the agent act on whatever workspace the
+// ~/.synapse/config.json would let the agent act on whatever workspace the
 // user last configured, which is how cross-workspace contamination happens
 // when multiple workspaces share a host.
 func inAgentExecutionContext() bool {
-	return os.Getenv("MULTICA_AGENT_ID") != "" || os.Getenv("MULTICA_TASK_ID") != ""
+	return os.Getenv("SYNAPSE_AGENT_ID") != "" || os.Getenv("SYNAPSE_TASK_ID") != ""
 }
 
 func resolveWorkspaceID(cmd *cobra.Command) string {
-	val := cli.FlagOrEnv(cmd, "workspace-id", "MULTICA_WORKSPACE_ID", "")
+	val := cli.FlagOrEnv(cmd, "workspace-id", "SYNAPSE_WORKSPACE_ID", "")
 	if val != "" {
 		return val
 	}
@@ -298,9 +298,9 @@ func requireWorkspaceID(cmd *cobra.Command) (string, error) {
 	id := resolveWorkspaceID(cmd)
 	if id == "" {
 		if inAgentExecutionContext() {
-			return "", fmt.Errorf("workspace_id is required: MULTICA_WORKSPACE_ID must be set by the daemon in agent execution context (no fallback to user config)")
+			return "", fmt.Errorf("workspace_id is required: SYNAPSE_WORKSPACE_ID must be set by the daemon in agent execution context (no fallback to user config)")
 		}
-		return "", fmt.Errorf("workspace_id is required: use --workspace-id flag, set MULTICA_WORKSPACE_ID env, or run 'multica config set workspace_id <id>'")
+		return "", fmt.Errorf("workspace_id is required: use --workspace-id flag, set SYNAPSE_WORKSPACE_ID env, or run 'synapse config set workspace_id <id>'")
 	}
 	return id, nil
 }
@@ -503,7 +503,7 @@ func runAgentCreateFromTemplate(cmd *cobra.Command, client *cli.APIClient, name,
 	}
 
 	// 60s ceiling: templates fan out N HTTP fetches to GitHub, each ~200-500ms.
-	// Matches the timeout used by `multica skill import` (cmd_skill.go).
+	// Matches the timeout used by `synapse skill import` (cmd_skill.go).
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -584,7 +584,7 @@ func runAgentUpdate(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(body) == 0 {
-		return fmt.Errorf("no fields to update; use --name, --description, --instructions, --runtime-id, --runtime-config, --model, --custom-args, --visibility, --status, or --max-concurrent-tasks (env vars now live behind `multica agent env set <id>`)")
+		return fmt.Errorf("no fields to update; use --name, --description, --instructions, --runtime-id, --runtime-config, --model, --custom-args, --visibility, --status, or --max-concurrent-tasks (env vars now live behind `synapse agent env set <id>`)")
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)

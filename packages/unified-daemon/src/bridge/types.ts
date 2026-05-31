@@ -30,7 +30,7 @@ export const PrioritySchema = z.enum(["low", "medium", "high", "urgent"]);
 
 export type Priority = z.infer<typeof PrioritySchema>;
 
-// ============ AGENT TYPES (from Paseo) ============
+// ============ AGENT TYPES (from Synapse) ============
 
 export const ProviderTypeSchema = z.enum([
   "claude_code",
@@ -294,14 +294,14 @@ export const CommandSchema = z.object({
   id: z.string(),
   type: z.enum([
     // Synapse commands
-    "paseo.agent.start",
-    "paseo.agent.stop",
-    "paseo.agent.send",
-    "paseo.agent.attach",
-    "paseo.agent.logs",
-    "paseo.agent.import",
-    "paseo.worktree.create",
-    "paseo.worktree.delete",
+    "synapse.agent.start",
+    "synapse.agent.stop",
+    "synapse.agent.send",
+    "synapse.agent.attach",
+    "synapse.agent.logs",
+    "synapse.agent.import",
+    "synapse.worktree.create",
+    "synapse.worktree.delete",
     // Synapse commands
     "synapse.issue.create",
     "synapse.issue.update",
@@ -333,7 +333,7 @@ export const EventSchema = z.object({
 
 export type Event = z.infer<typeof EventSchema>;
 
-// ============ WORKTREE TYPES (from Paseo) ============
+// ============ WORKTREE TYPES (from Synapse) ============
 
 export const WorktreeSchema = z.object({
   id: z.string(),

@@ -167,13 +167,13 @@ export interface CreateWorktreeOptions {
   worktreeSlug: string;
   source: WorktreeSource;
   runSetup: boolean;
-  paseoHome?: string;
+  synapseHome?: string;
 }
 
 interface ResolveExistingWorktreeForSlugOptions {
   slug: string;
   repoRoot: string;
-  paseoHome?: string;
+  synapseHome?: string;
 }
 
 export class BranchAlreadyCheckedOutError extends Error {
@@ -216,7 +216,7 @@ export function readSynapseConfig(repoRoot: string): ReadSynapseConfigResult {
 
 export function paseoConfigParseError(failure: { configPath: string; error: unknown }): Error {
   const detail = failure.error instanceof Error ? failure.error.message : String(failure.error);
-  return new Error(`Failed to parse paseo.json at ${failure.configPath}: ${detail}`, {
+  return new Error(`Failed to parse synapse.json at ${failure.configPath}: ${detail}`, {
     cause: failure.error,
   });
 }
@@ -575,7 +575,7 @@ export async function runWorktreeSetupCommands(options: {
   runtimeEnv?: WorktreeRuntimeEnv;
   onEvent?: (event: WorktreeSetupCommandProgressEvent) => void;
 }): Promise<WorktreeSetupCommandResult[]> {
-  // Read paseo.json from the worktree (it will have the same content as the source repo)
+  // Read synapse.json from the worktree (it will have the same content as the source repo)
   const setupCommands = getWorktreeSetupCommands(options.worktreePath);
   if (setupCommands.length === 0) {
     return [];
@@ -684,7 +684,7 @@ export async function runWorktreeTeardownCommands(options: {
   branchName?: string;
   repoRootPath?: string;
 }): Promise<WorktreeTeardownCommandResult[]> {
-  // Read paseo.json from the worktree (it will have the same content as the source repo)
+  // Read synapse.json from the worktree (it will have the same content as the source repo)
   const teardownCommands = getWorktreeTeardownCommands(options.worktreePath);
   if (teardownCommands.length === 0) {
     return [];
@@ -766,8 +766,8 @@ export async function deriveWorktreeProjectHash(cwd: string): Promise<string> {
   }
 }
 
-export async function getSynapseWorktreesRoot(cwd: string, paseoHome?: string): Promise<string> {
-  const home = paseoHome ? resolve(paseoHome) : resolveSynapseHome();
+export async function getSynapseWorktreesRoot(cwd: string, synapseHome?: string): Promise<string> {
+  const home = synapseHome ? resolve(synapseHome) : resolveSynapseHome();
   const projectHash = await deriveWorktreeProjectHash(cwd);
   return join(home, "worktrees", projectHash);
 }
@@ -775,9 +775,9 @@ export async function getSynapseWorktreesRoot(cwd: string, paseoHome?: string): 
 export async function computeWorktreePath(
   cwd: string,
   slug: string,
-  paseoHome?: string,
+  synapseHome?: string,
 ): Promise<string> {
-  const worktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, synapseHome);
   return join(worktreesRoot, slug);
 }
 
@@ -798,7 +798,7 @@ function resolveRepoRootFromGitCommonDir(commonDir: string): string {
 
 export async function isPaseoOwnedWorktreeCwd(
   cwd: string,
-  options?: { paseoHome?: string },
+  options?: { synapseHome?: string },
 ): Promise<SynapseWorktreeOwnership> {
   const resolvedCwd = normalizePathForOwnership(cwd);
 
@@ -813,11 +813,11 @@ export async function isPaseoOwnedWorktreeCwd(
     // ignore
   }
 
-  const paseoHome = options?.paseoHome ? resolve(options.paseoHome) : resolveSynapseHome();
-  const paseoWorktreesPrefix = normalizePathForOwnership(join(paseoHome, "worktrees")) + sep;
+  const synapseHome = options?.synapseHome ? resolve(options.synapseHome) : resolveSynapseHome();
+  const paseoWorktreesPrefix = normalizePathForOwnership(join(synapseHome, "worktrees")) + sep;
 
   // Ownership is defined by the path living under $SYNAPSE_HOME/worktrees/<hash>/<slug>[/...].
-  // The <hash>/<slug> prefix is Paseo-private — nothing else writes there — so the
+  // The <hash>/<slug> prefix is Synapse-private — nothing else writes there — so the
   // path shape alone is sufficient proof of ownership, even when git has already
   // forgotten about the worktree.
   if (!resolvedCwd.startsWith(paseoWorktreesPrefix)) {
@@ -838,7 +838,7 @@ export async function isPaseoOwnedWorktreeCwd(
     };
   }
 
-  const worktreesRoot = join(paseoHome, "worktrees", parts[0]);
+  const worktreesRoot = join(synapseHome, "worktrees", parts[0]);
   return {
     allowed: true,
     ...(repoRoot !== undefined ? { repoRoot } : {}),
@@ -900,12 +900,12 @@ function resolveWorktreeCreatedAtIso(worktreePath: string): string {
 
 export async function listSynapseWorktrees({
   cwd,
-  paseoHome,
+  synapseHome,
 }: {
   cwd: string;
-  paseoHome?: string;
+  synapseHome?: string;
 }): Promise<SynapseWorktreeInfo[]> {
-  const worktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, synapseHome);
   const { stdout } = await runGitCommand(["worktree", "list", "--porcelain"], {
     cwd,
     envOverlay: READ_ONLY_GIT_ENV,
@@ -923,11 +923,11 @@ export async function listSynapseWorktrees({
 export async function resolveExistingWorktreeForSlug({
   slug,
   repoRoot,
-  paseoHome,
+  synapseHome,
 }: ResolveExistingWorktreeForSlugOptions): Promise<WorktreeConfig | null> {
   const worktrees = await listSynapseWorktrees({
     cwd: repoRoot,
-    paseoHome,
+    synapseHome,
   });
   const slugSuffix = `${sep}${slug}`;
   const existingWorktree = worktrees.find((worktree) => worktree.path.endsWith(slugSuffix));
@@ -952,7 +952,7 @@ export async function resolveExistingWorktreeForSlug({
 
 export async function resolveSynapseWorktreeRootForCwd(
   cwd: string,
-  options?: { paseoHome?: string },
+  options?: { synapseHome?: string },
 ): Promise<{ repoRoot: string; worktreeRoot: string; worktreePath: string } | null> {
   let gitCommonDir: string;
   try {
@@ -961,7 +961,7 @@ export async function resolveSynapseWorktreeRootForCwd(
     return null;
   }
 
-  const worktreesRoot = await getSynapseWorktreesRoot(cwd, options?.paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(cwd, options?.synapseHome);
   const resolvedRoot = normalizePathForOwnership(worktreesRoot) + sep;
 
   let worktreeRoot: string | null = null;
@@ -986,7 +986,7 @@ export async function resolveSynapseWorktreeRootForCwd(
 
   const knownWorktrees = await listSynapseWorktrees({
     cwd,
-    paseoHome: options?.paseoHome,
+    synapseHome: options?.synapseHome,
   });
   const match = knownWorktrees.find((entry) => entry.path === resolvedWorktreeRoot);
   if (!match) {
@@ -1005,13 +1005,13 @@ export async function deleteSynapseWorktree({
   worktreePath,
   worktreeSlug,
   worktreesRoot,
-  paseoHome,
+  synapseHome,
 }: {
   cwd: string | null;
   worktreePath?: string;
   worktreeSlug?: string;
   worktreesRoot?: string;
-  paseoHome?: string;
+  synapseHome?: string;
 }): Promise<void> {
   if (!worktreePath && !worktreeSlug) {
     throw new Error("worktreePath or worktreeSlug is required");
@@ -1024,20 +1024,20 @@ export async function deleteSynapseWorktree({
   if (worktreesRoot) {
     resolvedWorktreesRoot = worktreesRoot;
   } else if (cwd) {
-    resolvedWorktreesRoot = await getSynapseWorktreesRoot(cwd, paseoHome);
+    resolvedWorktreesRoot = await getSynapseWorktreesRoot(cwd, synapseHome);
   } else {
-    throw new Error("cwd or worktreesRoot is required to delete a Paseo worktree");
+    throw new Error("cwd or worktreesRoot is required to delete a Synapse worktree");
   }
 
   const resolvedRoot = normalizePathForOwnership(resolvedWorktreesRoot) + sep;
   const requestedPath = worktreePath ?? join(resolvedWorktreesRoot, worktreeSlug!);
   const resolvedRequested = normalizePathForOwnership(requestedPath);
   const resolvedWorktree =
-    (await resolveSynapseWorktreeRootForCwd(requestedPath, { paseoHome }))?.worktreePath ??
+    (await resolveSynapseWorktreeRootForCwd(requestedPath, { synapseHome }))?.worktreePath ??
     resolvedRequested;
 
   if (!resolvedWorktree.startsWith(resolvedRoot)) {
-    throw new Error("Refusing to delete non-Paseo worktree");
+    throw new Error("Refusing to delete non-Synapse worktree");
   }
 
   if (await pathExists(resolvedWorktree)) {
@@ -1120,10 +1120,10 @@ export const createWorktree = async ({
   source,
   worktreeSlug,
   runSetup,
-  paseoHome,
+  synapseHome,
 }: CreateWorktreeOptions): Promise<WorktreeConfig> => {
   const sourcePlan = await resolveWorktreeSourcePlan({ cwd, source, desiredSlug: worktreeSlug });
-  let worktreePath = join(await getSynapseWorktreesRoot(cwd, paseoHome), worktreeSlug);
+  let worktreePath = join(await getSynapseWorktreesRoot(cwd, synapseHome), worktreeSlug);
   mkdirSync(dirname(worktreePath), { recursive: true });
 
   // Also handle worktree path collision
@@ -1151,11 +1151,11 @@ export const createWorktree = async ({
 
   writeSynapseWorktreeMetadata(worktreePath, { baseRefName: sourcePlan.metadataBaseRefName });
 
-  // If paseo.json exists in the main repo but wasn't checked into the worktree
+  // If synapse.json exists in the main repo but wasn't checked into the worktree
   // (e.g. uncommitted on first-time setup), seed the worktree with it so setup
   // commands and scripts pick up the user's intended config.
-  const mainConfigPath = join(cwd, "paseo.json");
-  const worktreeConfigPath = join(worktreePath, "paseo.json");
+  const mainConfigPath = join(cwd, "synapse.json");
+  const worktreeConfigPath = join(worktreePath, "synapse.json");
   try {
     await stat(worktreeConfigPath);
   } catch {
@@ -1264,7 +1264,7 @@ async function resolveWorktreeSourcePlan({
         ...(source.pushRemoteUrl
           ? {
               pushRemote: {
-                name: `paseo-pr-${source.githubPrNumber}`,
+                name: `synapse-pr-${source.githubPrNumber}`,
                 url: source.pushRemoteUrl,
                 headRef: source.headRef,
               },
@@ -1310,10 +1310,10 @@ function validateWorktreeBranchName(branchName: string): void {
 function normalizeRequiredBaseBranch(baseBranch: string): string {
   const normalizedBaseBranch = normalizeBaseRefName(baseBranch);
   if (!normalizedBaseBranch) {
-    throw new Error("Base branch is required when creating a Paseo worktree");
+    throw new Error("Base branch is required when creating a Synapse worktree");
   }
   if (normalizedBaseBranch === "HEAD") {
-    throw new Error("Base branch cannot be HEAD when creating a Paseo worktree");
+    throw new Error("Base branch cannot be HEAD when creating a Synapse worktree");
   }
   return normalizedBaseBranch;
 }

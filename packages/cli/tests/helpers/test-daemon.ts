@@ -1,13 +1,13 @@
 /**
  * Test Daemon Helper
  *
- * Provides utilities for launching real Paseo daemons in E2E tests.
- * Each test gets an isolated daemon on an available local port with its own PASEO_HOME.
+ * Provides utilities for launching real Synapse daemons in E2E tests.
+ * Each test gets an isolated daemon on an available local port with its own SYNAPSE_HOME.
  *
  * CRITICAL RULES (from design doc):
  * 1. Port: Use an available ephemeral local port - NEVER use 6767 (production)
  * 2. Protocol: WebSocket ONLY - daemon has no HTTP endpoints
- * 3. Temp dirs: Create temp directories for PASEO_HOME and agent --cwd
+ * 3. Temp dirs: Create temp directories for SYNAPSE_HOME and agent --cwd
  * 4. Model: Always use claude provider with haiku model for fast, cheap tests
  * 5. Cleanup: Kill daemon and remove temp dirs after each test
  */
@@ -24,8 +24,8 @@ export interface TestDaemonContext {
   port: number;
   /** WebSocket URL for connecting to daemon */
   wsUrl: string;
-  /** Temp directory for PASEO_HOME */
-  paseoHome: string;
+  /** Temp directory for SYNAPSE_HOME */
+  synapseHome: string;
   /** Temp directory for agent working directory */
   workDir: string;
   /** Running daemon process */
@@ -37,16 +37,16 @@ export interface TestDaemonContext {
 }
 
 const TEST_DAEMON_ENV_DEFAULTS: Record<string, string> = {
-  PASEO_RELAY_ENABLED: "false",
-  PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
-  PASEO_DICTATION_ENABLED: process.env.PASEO_DICTATION_ENABLED ?? "0",
-  PASEO_VOICE_MODE_ENABLED: process.env.PASEO_VOICE_MODE_ENABLED ?? "0",
+  SYNAPSE_RELAY_ENABLED: "false",
+  SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
+  SYNAPSE_DICTATION_ENABLED: process.env.SYNAPSE_DICTATION_ENABLED ?? "0",
+  SYNAPSE_VOICE_MODE_ENABLED: process.env.SYNAPSE_VOICE_MODE_ENABLED ?? "0",
 };
 const TEST_DAEMON_HOST = "127.0.0.1";
 
 const DEFAULT_OUTPUT_CAPTURE_LIMIT = 256 * 1024;
 const TEST_OUTPUT_CAPTURE_LIMIT = Number.parseInt(
-  process.env.PASEO_TEST_OUTPUT_CAPTURE_BYTES ?? `${DEFAULT_OUTPUT_CAPTURE_LIMIT}`,
+  process.env.SYNAPSE_TEST_OUTPUT_CAPTURE_BYTES ?? `${DEFAULT_OUTPUT_CAPTURE_LIMIT}`,
   10,
 );
 
@@ -152,19 +152,19 @@ export function getRandomPort(): number {
 /**
  * Create isolated temp directories for testing
  */
-export async function createTempDirs(): Promise<{ paseoHome: string; workDir: string }> {
-  const paseoHome = await mkdtemp(join(tmpdir(), "paseo-e2e-home-"));
-  const workDir = await mkdtemp(join(tmpdir(), "paseo-e2e-work-"));
+export async function createTempDirs(): Promise<{ synapseHome: string; workDir: string }> {
+  const synapseHome = await mkdtemp(join(tmpdir(), "synapse-e2e-home-"));
+  const workDir = await mkdtemp(join(tmpdir(), "synapse-e2e-work-"));
 
   // Create the agents directory that the daemon expects
-  const agentsDir = join(paseoHome, "agents");
+  const agentsDir = join(synapseHome, "agents");
   await mkdir(agentsDir, { recursive: true });
 
-  return { paseoHome, workDir };
+  return { synapseHome, workDir };
 }
 
 /**
- * Wait for daemon to be ready by running `paseo agent ls`
+ * Wait for daemon to be ready by running `synapse agent ls`
  * This connects via WebSocket and ensures the daemon is responsive
  */
 async function probeDaemonReady(port: number): Promise<boolean> {
@@ -173,7 +173,7 @@ async function probeDaemonReady(port: number): Promise<boolean> {
       {
         port,
         wsUrl: `ws://${TEST_DAEMON_HOST}:${port}`,
-        paseoHome: "",
+        synapseHome: "",
         workDir: "",
         process: null,
         isReady: false,
@@ -210,19 +210,19 @@ function sleep(ms: number): Promise<void> {
  * Start a test daemon programmatically using the server's bootstrap API
  *
  * This starts the daemon in a separate process using the CLI's daemon start command
- * with isolated PASEO_HOME and PASEO_LISTEN environment variables.
+ * with isolated SYNAPSE_HOME and SYNAPSE_LISTEN environment variables.
  */
 export async function startTestDaemon(options?: {
   port?: number;
-  paseoHome?: string;
+  synapseHome?: string;
   workDir?: string;
   timeout?: number;
   env?: NodeJS.ProcessEnv;
 }): Promise<TestDaemonContext> {
   const port = options?.port ?? (await getAvailablePort());
-  const { paseoHome, workDir } =
-    options?.paseoHome && options?.workDir
-      ? { paseoHome: options.paseoHome, workDir: options.workDir }
+  const { synapseHome, workDir } =
+    options?.synapseHome && options?.workDir
+      ? { synapseHome: options.synapseHome, workDir: options.workDir }
       : await createTempDirs();
   const timeout = options?.timeout ?? 30000;
 
@@ -237,8 +237,8 @@ export async function startTestDaemon(options?: {
     env: {
       ...process.env,
       ...TEST_DAEMON_ENV_DEFAULTS,
-      PASEO_HOME: paseoHome,
-      PASEO_LISTEN: `${TEST_DAEMON_HOST}:${port}`,
+      SYNAPSE_HOME: synapseHome,
+      SYNAPSE_LISTEN: `${TEST_DAEMON_HOST}:${port}`,
       // Force no TTY to prevent QR code output
       CI: "true",
       ...options?.env,
@@ -265,8 +265,8 @@ export async function startTestDaemon(options?: {
 
     // Clean up temp directories
     try {
-      if (existsSync(paseoHome)) {
-        await rm(paseoHome, { recursive: true, force: true });
+      if (existsSync(synapseHome)) {
+        await rm(synapseHome, { recursive: true, force: true });
       }
     } catch {
       // Ignore cleanup errors
@@ -299,7 +299,7 @@ export async function startTestDaemon(options?: {
   const ctx: TestDaemonContext = {
     port,
     wsUrl,
-    paseoHome,
+    synapseHome,
     workDir,
     process: daemonProcess,
     isReady: false,
@@ -349,8 +349,8 @@ export async function runSynapse CLI(
       env: {
         ...process.env,
         ...TEST_DAEMON_ENV_DEFAULTS,
-        PASEO_HOST: `${TEST_DAEMON_HOST}:${ctx.port}`,
-        PASEO_HOME: ctx.paseoHome,
+        SYNAPSE_HOST: `${TEST_DAEMON_HOST}:${ctx.port}`,
+        SYNAPSE_HOME: ctx.synapseHome,
         ...options?.env,
       },
       cwd,
@@ -404,7 +404,7 @@ export async function createE2ETestContext(options?: {
 }): Promise<
   TestDaemonContext & {
     /** Run a Synapse CLI command against this daemon */
-    paseo: (
+    synapse: (
       args: string[],
       opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
     ) => Promise<{
@@ -416,13 +416,13 @@ export async function createE2ETestContext(options?: {
 > {
   const ctx = await startTestDaemon({ timeout: options?.timeout, env: options?.env });
 
-  const paseo = (
+  const synapse = (
     args: string[],
     opts?: { timeout?: number; cwd?: string; env?: NodeJS.ProcessEnv },
   ) => runSynapse CLI(ctx, args, opts);
 
   return {
     ...ctx,
-    paseo,
+    synapse,
   };
 }

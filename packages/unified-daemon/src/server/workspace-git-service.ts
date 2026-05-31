@@ -1909,7 +1909,7 @@ function parseWorkspaceGitStashList(
     }
 
     const index = Number(indexMatch[1]);
-    const prefix = "paseo-auto-stash:";
+    const prefix = "synapse-auto-stash:";
     const prefixIdx = subject.indexOf(prefix);
     const isPaseo = prefixIdx >= 0;
     const branch = isPaseo ? subject.slice(prefixIdx + prefix.length).trim() || null : null;

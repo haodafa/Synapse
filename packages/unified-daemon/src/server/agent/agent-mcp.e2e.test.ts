@@ -109,8 +109,8 @@ async function waitForAgentCompletion(options: {
 describe("agent MCP end-to-end (offline)", () => {
   test("create_agent runs initial prompt and affects filesystem", async () => {
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
+    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-"));
     const port = await getAvailablePort();
 
     const daemonConfig: SynapseDaemonConfig = {
@@ -177,10 +177,10 @@ describe("agent MCP end-to-end (offline)", () => {
     }
   }, 30_000);
 
-  test("create_agent auto-injects paseo MCP by default and can be disabled", async () => {
+  test("create_agent auto-injects synapse MCP by default and can be disabled", async () => {
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
+    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-"));
     const port = await getAvailablePort();
 
     const daemonConfig: SynapseDaemonConfig = {
@@ -201,8 +201,8 @@ describe("agent MCP end-to-end (offline)", () => {
     const client = await createMcpClient(`http://127.0.0.1:${port}/mcp/agents`);
 
     const disabledSynapseHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-disabled-"));
-    const disabledStaticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-disabled-"));
-    const disabledAgentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-disabled-"));
+    const disabledStaticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-disabled-"));
+    const disabledAgentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-disabled-"));
     const disabledPort = await getAvailablePort();
     const disabledDaemonConfig: SynapseDaemonConfig = {
       listen: `127.0.0.1:${disabledPort}`,
@@ -241,7 +241,7 @@ describe("agent MCP end-to-end (offline)", () => {
 
       const injectedAgent = daemon.agentManager.getAgent(agentId!);
       expect(injectedAgent?.config.mcpServers).toMatchObject({
-        paseo: {
+        synapse: {
           type: "http",
           url: `http://127.0.0.1:${port}/mcp/agents?callerAgentId=${agentId!}`,
         },
@@ -287,8 +287,8 @@ describe("agent MCP end-to-end (offline)", () => {
 
   test("create_agent injects a loopback MCP URL when the daemon listens on all interfaces", async () => {
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
+    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-"));
     const port = await getAvailablePort();
 
     const daemonConfig: SynapseDaemonConfig = {
@@ -327,7 +327,7 @@ describe("agent MCP end-to-end (offline)", () => {
 
       const injectedAgent = daemon.agentManager.getAgent(agentId!);
       expect(injectedAgent?.config.mcpServers).toMatchObject({
-        paseo: {
+        synapse: {
           type: "http",
           url: `http://127.0.0.1:${port}/mcp/agents?callerAgentId=${agentId!}`,
         },
@@ -346,8 +346,8 @@ describe("agent MCP end-to-end (offline)", () => {
 
   test("create_agent with background initialPrompt reflects running state once the first turn starts", async () => {
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
+    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-"));
     const port = await getAvailablePort();
 
     const daemonConfig: SynapseDaemonConfig = {
@@ -507,8 +507,8 @@ describe("agent MCP end-to-end (offline)", () => {
     }
 
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
-    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "paseo-agent-cwd-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
+    const agentCwd = await mkdtemp(path.join(os.tmpdir(), "synapse-agent-cwd-"));
     const port = await getAvailablePort();
 
     const daemonConfig: SynapseDaemonConfig = {
@@ -562,7 +562,7 @@ describe("agent MCP end-to-end (offline)", () => {
 
   test("create_agent with worktree is async and boots terminals only after setup success", async () => {
     const paseoHome = await mkdtemp(path.join(os.tmpdir(), "synapse-home-"));
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
     const repoRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-worktree-repo-"));
     const port = await getAvailablePort();
 

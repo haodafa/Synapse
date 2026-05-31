@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/haodafa/Synapse/server/internal/util"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/pkg/protocol"
 )
 
 type RuntimeLocalSkillRequestStatus string

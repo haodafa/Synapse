@@ -286,7 +286,7 @@ describe("Suite A: Core Fixes", () => {
     }
   });
 
-  test("agentManager.createAgent injects paseo MCP using the daemon listen target", async () => {
+  test("agentManager.createAgent injects synapse MCP using the daemon listen target", async () => {
     let agentId: string | null = null;
     try {
       const listenTarget = daemonHandle.daemon.getListenTarget();
@@ -307,7 +307,7 @@ describe("Suite A: Core Fixes", () => {
       });
 
       expect(snapshot.config.mcpServers).toMatchObject({
-        paseo: {
+        synapse: {
           type: "http",
           url: expectedUrl,
         },
@@ -315,7 +315,7 @@ describe("Suite A: Core Fixes", () => {
 
       const liveAgent = daemonHandle.daemon.agentManager.getAgent(agentId);
       expect(liveAgent?.config.mcpServers).toMatchObject({
-        paseo: {
+        synapse: {
           type: "http",
           url: expectedUrl,
         },

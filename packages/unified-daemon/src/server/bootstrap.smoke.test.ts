@@ -90,7 +90,7 @@ describe("paseo daemon bootstrap", () => {
   test("fails fast when OpenAI speech provider is configured without credentials", async () => {
     const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-openai-config-"));
     const paseoHome = path.join(paseoHomeRoot, ".paseo");
-    const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
+    const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
     await mkdir(paseoHome, { recursive: true });
 
     const config: SynapseDaemonConfig = {
@@ -205,7 +205,7 @@ describe("paseo daemon bootstrap", () => {
     async () => {
       const paseoHomeRoot = await mkdtemp(path.join(os.tmpdir(), "paseo-socket-relay-"));
       const paseoHome = path.join(paseoHomeRoot, ".paseo");
-      const staticDir = await mkdtemp(path.join(os.tmpdir(), "paseo-static-"));
+      const staticDir = await mkdtemp(path.join(os.tmpdir(), "synapse-static-"));
       const socketPath = path.join(paseoHomeRoot, "run", "paseo.sock");
       await mkdir(path.dirname(socketPath), { recursive: true });
       await mkdir(paseoHome, { recursive: true });

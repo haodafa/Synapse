@@ -80,7 +80,7 @@ describe("curateAgentActivity", () => {
         name: "terminal",
         detail: {
           type: "plain_text",
-          label: `skills/paseo-chat/bin/chat.sh post --room storage-revamp --body $'first line
+          label: `skills/synapse-chat/bin/chat.sh post --room storage-revamp --body $'first line
 
 second line'`,
           icon: "square_terminal",
@@ -91,7 +91,7 @@ second line'`,
     const result = curateAgentActivity(timeline);
 
     expect(result).toContain(
-      "[Terminal] skills/paseo-chat/bin/chat.sh post --room storage-revamp --body $'first line second line'",
+      "[Terminal] skills/synapse-chat/bin/chat.sh post --room storage-revamp --body $'first line second line'",
     );
     expect(result).not.toContain("[Interacted with terminal]");
   });

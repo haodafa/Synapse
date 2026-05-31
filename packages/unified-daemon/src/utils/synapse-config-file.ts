@@ -14,7 +14,7 @@ export {
   type ProjectConfigRpcError,
 } from "@synapse/protocol/synapse-config-schema";
 
-export const SYNAPSE_CONFIG_FILE_NAME = "paseo.json";
+export const SYNAPSE_CONFIG_FILE_NAME = "synapse.json";
 
 export type ReadSynapseConfigForEditResult =
   | { ok: true; config: SynapseConfigRaw | null; revision: SynapseConfigRevision | null }

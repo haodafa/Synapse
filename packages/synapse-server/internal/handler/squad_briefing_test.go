@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/internal/util"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
 )
 
 // TestSquadOperatingProtocolWarnsAgainstDualTrigger locks in the rule

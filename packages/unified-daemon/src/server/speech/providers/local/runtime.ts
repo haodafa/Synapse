@@ -51,7 +51,7 @@ export interface InitializedLocalSpeech {
 }
 
 function buildModelDownloadHint(modelId: LocalSpeechModelId): string {
-  return `Use 'paseo speech download --model ${modelId}' to download this model.`;
+  return `Use 'synapse speech download --model ${modelId}' to download this model.`;
 }
 
 function resolveConfiguredLocalModels(speechConfig: PaseoSpeechConfig | null): ResolvedLocalModels {

@@ -15,8 +15,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
-	"github.com/multica-ai/multica/server/internal/util"
+	"github.com/haodafa/Synapse/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/util"
 )
 
 // resolveTextFlag picks between a `--<name>` inline value, a `--<name>-stdin`
@@ -315,8 +315,8 @@ func init() {
 	issueCommentListCmd.Flags().String("thread", "", "Comment UUID — return the thread containing this comment (root + every descendant). May be a root or a reply id.")
 	issueCommentListCmd.Flags().Int("tail", 0, "Only valid with --thread. Cap reply count to the N most recent replies; the thread root is always included (even with --tail 0). Use --before/--before-id to scroll to older replies.")
 	issueCommentListCmd.Flags().Int("recent", 0, "Return the N most recently active threads (root + descendants per thread). Use --before/--before-id from the previous response to scroll to older threads.")
-	issueCommentListCmd.Flags().String("before", "", "Cursor (RFC3339Nano timestamp). With --recent: thread cursor (last_activity_at). With --thread + --tail: reply cursor (reply created_at). Read from the X-Multica-Next-Before response header; must be paired with --before-id.")
-	issueCommentListCmd.Flags().String("before-id", "", "Cursor UUID. With --recent: thread root UUID. With --thread + --tail: oldest reply UUID. Read from the X-Multica-Next-Before-Id response header; must be paired with --before.")
+	issueCommentListCmd.Flags().String("before", "", "Cursor (RFC3339Nano timestamp). With --recent: thread cursor (last_activity_at). With --thread + --tail: reply cursor (reply created_at). Read from the X-Synapse-Next-Before response header; must be paired with --before-id.")
+	issueCommentListCmd.Flags().String("before-id", "", "Cursor UUID. With --recent: thread root UUID. With --thread + --tail: oldest reply UUID. Read from the X-Synapse-Next-Before-Id response header; must be paired with --before.")
 
 	// issue runs
 	issueRunsCmd.Flags().String("output", "table", "Output format: table or json")
@@ -614,14 +614,14 @@ func runIssueCreate(cmd *cobra.Command, _ []string) error {
 		body["assignee_id"] = aID
 	}
 
-	// Quick-create stamp: when the daemon sets MULTICA_QUICK_CREATE_TASK_ID
-	// before invoking the agent, the agent's `multica issue create` call
+	// Quick-create stamp: when the daemon sets SYNAPSE_QUICK_CREATE_TASK_ID
+	// before invoking the agent, the agent's `synapse issue create` call
 	// inherits the env var and tags the new issue with origin_type=
 	// quick_create + origin_id=<task_id>. The completion handler then
 	// locates the issue deterministically by origin instead of "most
 	// recent issue by this agent", which is racy when max_concurrent_tasks
 	// > 1 and the agent is creating other issues in parallel.
-	if taskID := os.Getenv("MULTICA_QUICK_CREATE_TASK_ID"); taskID != "" {
+	if taskID := os.Getenv("SYNAPSE_QUICK_CREATE_TASK_ID"); taskID != "" {
 		body["origin_type"] = "quick_create"
 		body["origin_id"] = taskID
 	}
@@ -1008,8 +1008,8 @@ func runIssueCommentList(cmd *cobra.Command, args []string) error {
 	// to dig into the raw HTTP response. Label depends on which paging mode
 	// the caller is in — under --recent the cursor is a thread cursor;
 	// under --thread + --tail it is a reply cursor inside that thread.
-	if nb := respHeaders.Get("X-Multica-Next-Before"); nb != "" {
-		if nbid := respHeaders.Get("X-Multica-Next-Before-Id"); nbid != "" {
+	if nb := respHeaders.Get("X-Synapse-Next-Before"); nb != "" {
+		if nbid := respHeaders.Get("X-Synapse-Next-Before-Id"); nbid != "" {
 			label := "Next thread cursor"
 			if thread != "" && tailSet {
 				label = "Next reply cursor"
@@ -1558,7 +1558,7 @@ func (k assigneeKinds) describe() string {
 
 func resolveAssignee(ctx context.Context, client *cli.APIClient, name string, kinds assigneeKinds) (string, string, error) {
 	if client.WorkspaceID == "" {
-		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set MULTICA_WORKSPACE_ID")
+		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set SYNAPSE_WORKSPACE_ID")
 	}
 
 	input := normalizeAssigneeLookupInput(name)
@@ -1689,12 +1689,12 @@ func ambiguousAssigneeError(input string, matches []assigneeMatch) error {
 // assignee_id) by looking it up against the workspace's members, agents, and
 // (when allowed) squads. It is the deterministic counterpart to
 // resolveAssignee: callers that already hold a UUID (e.g. agents reading IDs
-// from `multica workspace member list --output json`) should use this instead of
+// from `synapse workspace member list --output json`) should use this instead of
 // round-tripping through name matching, which can be ambiguous in workspaces
 // with overlapping names.
 func resolveAssigneeByID(ctx context.Context, client *cli.APIClient, id string, kinds assigneeKinds) (string, string, error) {
 	if client.WorkspaceID == "" {
-		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set MULTICA_WORKSPACE_ID")
+		return "", "", fmt.Errorf("workspace ID is required to resolve assignees; use --workspace-id or set SYNAPSE_WORKSPACE_ID")
 	}
 	input := strings.TrimSpace(id)
 	if !uuidRegexp.MatchString(input) {

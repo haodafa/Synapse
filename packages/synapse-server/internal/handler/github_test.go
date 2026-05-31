@@ -16,8 +16,8 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/multica-ai/multica/server/internal/middleware"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/internal/middleware"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
 )
 
 func TestExtractIdentifiers(t *testing.T) {
@@ -785,7 +785,7 @@ func fireBareWebhook(t *testing.T, secret string, installationID int64, prNumber
 }
 
 // TestWebhook_MergedPR_OnlyClosesIdentifiersWithClosingKeyword is the repro
-// from GitHub issue multica-ai/multica#3264: a PR that mentions three issues
+// from GitHub issue synapse.ai/synapse#3264: a PR that mentions three issues
 // must only auto-complete the one declared with a closing keyword. Follow-up
 // / unblocks references are linked but stay in their previous status.
 func TestWebhook_MergedPR_OnlyClosesIdentifiersWithClosingKeyword(t *testing.T) {

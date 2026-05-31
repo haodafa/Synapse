@@ -15,12 +15,12 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/realtime"
-	"github.com/multica-ai/multica/server/internal/service"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/haodafa/Synapse/server/internal/analytics"
+	"github.com/haodafa/Synapse/server/internal/events"
+	"github.com/haodafa/Synapse/server/internal/realtime"
+	"github.com/haodafa/Synapse/server/internal/service"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/pkg/protocol"
 )
 
 var testHandler *Handler
@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 	ctx := context.Background()
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://multica:multica@localhost:5432/multica?sslmode=disable"
+		dbURL = "postgres://synapse:synapse@localhost:5432/synapse?sslmode=disable"
 	}
 
 	pool, err := pgxpool.New(ctx, dbURL)

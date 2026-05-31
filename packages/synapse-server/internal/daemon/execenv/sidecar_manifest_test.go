@@ -161,7 +161,7 @@ var allFileBasedProviders = []string{
 // invariant the issue (MUL-2784) calls out: a user repo that contained
 // nothing related to Synapse before a task ran must contain nothing
 // related to Synapse after the task finishes — no .agent_context/,
-// no .claude/skills/, no .multica/, no stub directories. The test
+// no .claude/skills/, no .synapse/, no stub directories. The test
 // runs the full Prepare → Inject → Cleanup cycle for every file-based
 // provider against a fresh empty workdir and asserts the directory is
 // byte-exactly empty again.
@@ -361,7 +361,7 @@ func TestPrepareThenCleanupSidecarsRepeatedCycles(t *testing.T) {
 }
 
 // TestPrepareThenCleanupSidecarsWithProjectResources extends the
-// round-trip to the .multica/project/resources.json branch — a separate
+// round-trip to the .synapse/project/resources.json branch — a separate
 // sidecar write that creates its own intermediate directory tree.
 func TestPrepareThenCleanupSidecarsWithProjectResources(t *testing.T) {
 	t.Parallel()
@@ -418,10 +418,10 @@ func TestCleanupSidecarsLeavesUserContentInTrackedDirIntact(t *testing.T) {
 	workDir := t.TempDir()
 	envRoot := t.TempDir()
 
-	// Imagine Prepare wrote .multica/sidecar.txt and created
-	// .multica/ + .multica/project/, then exited. Between Prepare
-	// and Cleanup the user dropped their own file under .multica/.
-	managedDir := filepath.Join(workDir, ".multica")
+	// Imagine Prepare wrote .synapse/sidecar.txt and created
+	// .synapse/ + .synapse/project/, then exited. Between Prepare
+	// and Cleanup the user dropped their own file under .synapse/.
+	managedDir := filepath.Join(workDir, ".synapse")
 	managedProject := filepath.Join(managedDir, "project")
 	managedFile := filepath.Join(managedProject, "resources.json")
 	if err := os.MkdirAll(managedProject, 0o755); err != nil {
@@ -453,7 +453,7 @@ func TestCleanupSidecarsLeavesUserContentInTrackedDirIntact(t *testing.T) {
 	if _, err := os.Stat(managedProject); !os.IsNotExist(err) {
 		t.Errorf("inner managed dir %s should be empty and removed, stat err=%v", managedProject, err)
 	}
-	// .multica still holds user-notes.txt, so rmdir must have been
+	// .synapse still holds user-notes.txt, so rmdir must have been
 	// skipped silently — the directory must survive.
 	got, err := os.ReadFile(userFile)
 	if err != nil {
@@ -604,7 +604,7 @@ func TestSidecarManifestRoundTripJSON(t *testing.T) {
 // matrix below replays the user-skill-already-present scenario per
 // provider and asserts byte-exact round-trip — including that the
 // user's SKILL.md bytes survive the task untouched and our
-// collision-free sibling (which lives under .../issue-review-multica/)
+// collision-free sibling (which lives under .../issue-review.synapse/)
 // is fully cleaned up.
 //
 // Codex skills live under codex-home (not workdir), so the per-skill
@@ -634,7 +634,7 @@ var sameSlugSkillProviderCases = []struct {
 // Prepare → Inject → Cleanup cycle with a Synapse skill of the same
 // name, and assert the workdir snapshot is byte-identical to the
 // seed. The user's SKILL.md must not be touched, and the Synapse
-// sibling (which lives at `<slug>-multica`) must be fully removed by
+// sibling (which lives at `<slug>-synapse`) must be fully removed by
 // CleanupSidecars.
 func TestPrepareThenCleanupSidecarsSameSlugCollisionPerProvider(t *testing.T) {
 	t.Parallel()
@@ -750,7 +750,7 @@ func TestPrepareThenCleanupSidecarsIssueContextCollisionPerProvider(t *testing.T
 }
 
 // TestPrepareThenCleanupSidecarsProjectResourcesCollisionPerProvider
-// is the matching byte-exact matrix for `.multica/project/
+// is the matching byte-exact matrix for `.synapse/project/
 // resources.json` — the other Synapse-only namespace file. Same
 // invariant: pre-existing user content survives the round-trip
 // untouched even when the task ships project resources of its own.
@@ -763,11 +763,11 @@ func TestPrepareThenCleanupSidecarsProjectResourcesCollisionPerProvider(t *testi
 			workDir := t.TempDir()
 			envRoot := t.TempDir()
 
-			if err := os.MkdirAll(filepath.Join(workDir, ".multica", "project"), 0o755); err != nil {
+			if err := os.MkdirAll(filepath.Join(workDir, ".synapse", "project"), 0o755); err != nil {
 				t.Fatalf("seed dir: %v", err)
 			}
 			userBody := `{"user":"owns this file"}`
-			userPath := filepath.Join(workDir, ".multica", "project", "resources.json")
+			userPath := filepath.Join(workDir, ".synapse", "project", "resources.json")
 			if err := os.WriteFile(userPath, []byte(userBody), 0o644); err != nil {
 				t.Fatalf("seed user file: %v", err)
 			}
@@ -803,8 +803,8 @@ func TestPrepareThenCleanupSidecarsProjectResourcesCollisionPerProvider(t *testi
 }
 
 // TestAllocateCollisionFreeSkillDir pins the slug-suffix policy:
-// first try the natural slug, then `-multica`, then `-multica-2`,
-// `-multica-3`, … The PR-review concern is "Synapse skill must still
+// first try the natural slug, then `-synapse`, then `-synapse-2`,
+// `-synapse-3`, … The PR-review concern is "Synapse skill must still
 // be discoverable" — this test demonstrates that we pick a sibling
 // path under the same skillsParent rather than dropping the skill or
 // nesting it under the user's directory.
@@ -824,7 +824,7 @@ func TestAllocateCollisionFreeSkillDir(t *testing.T) {
 		t.Errorf("first allocation path = %q, want under parent", dir)
 	}
 
-	// 2) Pre-existing user dir at the base slug → bump to `-multica`.
+	// 2) Pre-existing user dir at the base slug → bump to `-synapse`.
 	if err := os.MkdirAll(filepath.Join(parent, "issue-review"), 0o755); err != nil {
 		t.Fatalf("seed user dir: %v", err)
 	}
@@ -832,25 +832,25 @@ func TestAllocateCollisionFreeSkillDir(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if slug != "issue-review-multica" {
-		t.Errorf("second allocation should bump to `-multica`; got %q", slug)
+	if slug != "issue-review-synapse" {
+		t.Errorf("second allocation should bump to `-synapse`; got %q", slug)
 	}
-	if dir != filepath.Join(parent, "issue-review-multica") {
+	if dir != filepath.Join(parent, "issue-review-synapse") {
 		t.Errorf("second allocation path = %q, want under parent", dir)
 	}
 
 	// 3) Pre-existing collision at the bumped slug too → bump again.
-	if err := os.MkdirAll(filepath.Join(parent, "issue-review-multica"), 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Join(parent, "issue-review-synapse"), 0o755); err != nil {
 		t.Fatalf("seed bumped dir: %v", err)
 	}
 	slug, dir, err = allocateCollisionFreeSkillDir(parent, "issue-review")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if slug != "issue-review-multica-2" {
-		t.Errorf("third allocation should be `-multica-2`; got %q", slug)
+	if slug != "issue-review-synapse-2" {
+		t.Errorf("third allocation should be `-synapse-2`; got %q", slug)
 	}
-	if dir != filepath.Join(parent, "issue-review-multica-2") {
+	if dir != filepath.Join(parent, "issue-review-synapse-2") {
 		t.Errorf("third allocation path = %q, want under parent", dir)
 	}
 }
@@ -889,9 +889,9 @@ func TestPrepareThenCleanupSidecarsMultiSkillCollisionFreeAllocation(t *testing.
 		t.Fatalf("writeContextFiles: %v", err)
 	}
 
-	multicaDir := filepath.Join(workDir, ".claude", "skills", "issue-review-multica")
-	if _, err := os.Stat(filepath.Join(multicaDir, "SKILL.md")); err != nil {
-		t.Errorf("Synapse sibling skill should exist at %s: %v", multicaDir, err)
+	synapseDir := filepath.Join(workDir, ".claude", "skills", "issue-review-synapse")
+	if _, err := os.Stat(filepath.Join(synapseDir, "SKILL.md")); err != nil {
+		t.Errorf("Synapse sibling skill should exist at %s: %v", synapseDir, err)
 	}
 	got, err := os.ReadFile(userFile)
 	if err != nil {
@@ -909,7 +909,7 @@ func TestPrepareThenCleanupSidecarsMultiSkillCollisionFreeAllocation(t *testing.
 	if err := CleanupSidecars(envRoot); err != nil {
 		t.Fatalf("CleanupSidecars: %v", err)
 	}
-	if _, err := os.Stat(multicaDir); !os.IsNotExist(err) {
+	if _, err := os.Stat(synapseDir); !os.IsNotExist(err) {
 		t.Errorf("Synapse sibling should be removed by Cleanup; stat err=%v", err)
 	}
 	got, err = os.ReadFile(userFile)

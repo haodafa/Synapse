@@ -55,7 +55,7 @@ export function createCli(): Command {
 
   program
     .name("synapse")
-    .description("Synapse CLI - Unified AI Agent Orchestration Platform\n\nCombining the best of Paseo (cross-device control, multi-agent orchestration) and Synapse (team collaboration, skill compounding)")
+    .description("Synapse CLI - Unified AI Agent Orchestration Platform\n\nCombining cross-device control, multi-agent orchestration, team collaboration, and skill compounding")
     .version(VERSION, "-v, --version", "output the version number")
     .option("-o, --format <format>", "output format: table, json, yaml", "table")
     .option("--json", "output in JSON format (alias for --format json)")
@@ -63,7 +63,7 @@ export function createCli(): Command {
     .option("--no-headers", "omit table headers")
     .option("--no-color", "disable colored output");
 
-  // ============ PASEO-STYLE AGENT COMMANDS ============
+  // ============ SYNAPSE AGENT COMMANDS ============
   
   program.command("ls", { isDefault: true })
     .description("List running agents")

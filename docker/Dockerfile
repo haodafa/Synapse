@@ -25,7 +25,10 @@ COPY package*.json ./
 COPY turbo.json ./
 
 # Copy workspace package files
+COPY packages/tsconfig/package.json ./packages/tsconfig/
 COPY packages/protocol/package.json ./packages/protocol/
+COPY packages/highlight/package.json ./packages/highlight/
+COPY packages/relay/package.json ./packages/relay/
 COPY packages/client/package.json ./packages/client/
 COPY packages/unified-daemon/package.json ./packages/unified-daemon/
 COPY packages/cli/package.json ./packages/cli/
@@ -38,7 +41,10 @@ COPY packages/web/package.json ./packages/web/
 RUN npm install --legacy-peer-deps
 
 # Copy source code
+COPY packages/tsconfig ./packages/tsconfig
 COPY packages/protocol ./packages/protocol
+COPY packages/highlight ./packages/highlight
+COPY packages/relay ./packages/relay
 COPY packages/client ./packages/client
 COPY packages/unified-daemon ./packages/unified-daemon
 COPY packages/cli ./packages/cli
@@ -47,12 +53,14 @@ COPY packages/ui ./packages/ui
 COPY packages/views ./packages/views
 COPY packages/web ./packages/web
 
-# Build all packages
-RUN npm run build --workspace=@synapse/protocol || true
-RUN npm run build --workspace=@synapse/client || true
-RUN npm run build --workspace=@synapse/unified-daemon || true
-RUN npm run build --workspace=@synapse/cli || true
-RUN npm run build --workspace=@synapse/web || true
+# Build all packages in dependency order
+RUN npm run build --workspace=@synapse/protocol
+RUN npm run build --workspace=@synapse/highlight
+RUN npm run build --workspace=@synapse/relay
+RUN npm run build --workspace=@synapse/client
+RUN npm run build --workspace=@synapse/unified-daemon
+RUN npm run build --workspace=@synapse/cli
+RUN npm run build --workspace=@synapse/web
 
 # ------------------------------
 # Stage 2: Runtime (Unified Daemon)
@@ -102,4 +110,4 @@ EXPOSE 8080
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 # Default command
-CMD ["node", "packages/unified-daemon/dist/index.js"]
+CMD ["node", "packages/unified-daemon/dist/scripts/supervisor-entrypoint.js"]

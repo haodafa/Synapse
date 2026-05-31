@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 
 /**
- * Regression: `paseo daemon stop` must stop supervised dev daemons
+ * Regression: `synapse daemon stop` must stop supervised dev daemons
  * without allowing the supervisor entrypoint to respawn a new worker process.
  */
 
@@ -17,9 +17,9 @@ $.verbose = false;
 
 const pollIntervalMs = 100;
 const testEnv = {
-  PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
-  PASEO_DICTATION_ENABLED: process.env.PASEO_DICTATION_ENABLED ?? "0",
-  PASEO_VOICE_MODE_ENABLED: process.env.PASEO_VOICE_MODE_ENABLED ?? "0",
+  SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD: process.env.SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD ?? "0",
+  SYNAPSE_DICTATION_ENABLED: process.env.SYNAPSE_DICTATION_ENABLED ?? "0",
+  SYNAPSE_VOICE_MODE_ENABLED: process.env.SYNAPSE_VOICE_MODE_ENABLED ?? "0",
 };
 
 function sleep(ms: number): Promise<void> {
@@ -43,8 +43,8 @@ interface PidLockState {
   pid: number | null;
 }
 
-async function readPidLockState(paseoHome: string): Promise<PidLockState> {
-  const pidPath = join(paseoHome, "paseo.pid");
+async function readPidLockState(synapseHome: string): Promise<PidLockState> {
+  const pidPath = join(synapseHome, "synapse.pid");
 
   try {
     const content = await readFile(pidPath, "utf-8");
@@ -73,9 +73,9 @@ interface DaemonStatus {
   pid: number | null;
 }
 
-async function readDaemonStatus(paseoHome: string): Promise<DaemonStatus> {
+async function readDaemonStatus(synapseHome: string): Promise<DaemonStatus> {
   const result =
-    await $`PASEO_HOME=${paseoHome} PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD} PASEO_DICTATION_ENABLED=${testEnv.PASEO_DICTATION_ENABLED} PASEO_VOICE_MODE_ENABLED=${testEnv.PASEO_VOICE_MODE_ENABLED} npx paseo daemon status --home ${paseoHome} --json`.nothrow();
+    await $`SYNAPSE_HOME=${synapseHome} SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD} SYNAPSE_DICTATION_ENABLED=${testEnv.SYNAPSE_DICTATION_ENABLED} SYNAPSE_VOICE_MODE_ENABLED=${testEnv.SYNAPSE_VOICE_MODE_ENABLED} npx synapse daemon status --home ${synapseHome} --json`.nothrow();
   if (result.exitCode !== 0) {
     return { localDaemon: null, pid: null };
   }
@@ -113,14 +113,14 @@ async function waitFor(
 console.log("=== Daemon Stop (supervisor regression) ===\n");
 
 const port = await getAvailablePort();
-const paseoHome = await mkdtemp(join(tmpdir(), "paseo-stop-supervisor-"));
+const synapseHome = await mkdtemp(join(tmpdir(), "synapse-stop-supervisor-"));
 const cliRoot = join(import.meta.dirname, "..");
 
 let supervisorProcess: ChildProcess | null = null;
 let recentSupervisorLogs = "";
 
 try {
-  console.log("Test 1: start supervisor-entrypoint in dev mode with isolated PASEO_HOME");
+  console.log("Test 1: start supervisor-entrypoint in dev mode with isolated SYNAPSE_HOME");
 
   supervisorProcess = spawn(
     process.execPath,
@@ -130,9 +130,9 @@ try {
       env: {
         ...process.env,
         ...testEnv,
-        PASEO_HOME: paseoHome,
-        PASEO_LISTEN: `127.0.0.1:${port}`,
-        PASEO_RELAY_ENABLED: "false",
+        SYNAPSE_HOME: synapseHome,
+        SYNAPSE_LISTEN: `127.0.0.1:${port}`,
+        SYNAPSE_RELAY_ENABLED: "false",
         CI: "true",
       },
       stdio: ["ignore", "pipe", "pipe"],
@@ -148,7 +148,7 @@ try {
 
   await waitFor(
     async () => {
-      const status = await readDaemonStatus(paseoHome);
+      const status = await readDaemonStatus(synapseHome);
       return (
         status.localDaemon === "running" && status.pid !== null && isProcessRunning(status.pid)
       );
@@ -157,7 +157,7 @@ try {
     "daemon did not become running in time",
   );
 
-  const statusBeforeStop = await readDaemonStatus(paseoHome);
+  const statusBeforeStop = await readDaemonStatus(synapseHome);
   const daemonPid = statusBeforeStop.pid;
   assert.strictEqual(
     statusBeforeStop.localDaemon,
@@ -166,7 +166,7 @@ try {
   );
   assert(daemonPid !== null, "daemon pid should exist once daemon starts");
   assert(isProcessRunning(daemonPid), "daemon process should be running");
-  const pidLockBeforeStop = await readPidLockState(paseoHome);
+  const pidLockBeforeStop = await readPidLockState(synapseHome);
   assert.strictEqual(pidLockBeforeStop.pid, daemonPid, "pid lock should match status pid");
   const command = readProcessCommand(daemonPid);
   assert(command !== null, "pid lock pid should resolve to a running process command");
@@ -176,16 +176,16 @@ try {
   );
   console.log(`✓ dev daemon started with daemon pid ${daemonPid}\n`);
 
-  console.log("Test 2: `paseo daemon stop` should stop without respawn");
+  console.log("Test 2: `synapse daemon stop` should stop without respawn");
   const stopResult =
-    await $`PASEO_HOME=${paseoHome} PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD} PASEO_DICTATION_ENABLED=${testEnv.PASEO_DICTATION_ENABLED} PASEO_VOICE_MODE_ENABLED=${testEnv.PASEO_VOICE_MODE_ENABLED} npx paseo daemon stop --home ${paseoHome} --json`.nothrow();
+    await $`SYNAPSE_HOME=${synapseHome} SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD} SYNAPSE_DICTATION_ENABLED=${testEnv.SYNAPSE_DICTATION_ENABLED} SYNAPSE_VOICE_MODE_ENABLED=${testEnv.SYNAPSE_VOICE_MODE_ENABLED} npx synapse daemon stop --home ${synapseHome} --json`.nothrow();
   assert.strictEqual(stopResult.exitCode, 0, `stop should succeed: ${stopResult.stderr}`);
   const stopJson = JSON.parse(stopResult.stdout) as { action?: unknown };
   assert.strictEqual(stopJson.action, "stopped", "stop should report stopped action");
 
   await waitFor(
     async () => {
-      const status = await readDaemonStatus(paseoHome);
+      const status = await readDaemonStatus(synapseHome);
       return status.localDaemon === "stopped";
     },
     15000,
@@ -202,7 +202,7 @@ try {
 
   await sleep(1000);
 
-  const pidAfterStop = await readPidLockState(paseoHome);
+  const pidAfterStop = await readPidLockState(synapseHome);
   const respawned = pidAfterStop.pid !== null && isProcessRunning(pidAfterStop.pid);
   assert.strictEqual(
     respawned,
@@ -210,7 +210,7 @@ try {
     `daemon respawned after stop (pid: ${pidAfterStop.pid ?? "unknown"})`,
   );
 
-  const statusAfterStop = await readDaemonStatus(paseoHome);
+  const statusAfterStop = await readDaemonStatus(synapseHome);
   assert.strictEqual(
     statusAfterStop.localDaemon,
     "stopped",
@@ -237,8 +237,8 @@ try {
     });
   }
 
-  await $`PASEO_HOME=${paseoHome} PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.PASEO_LOCAL_SPEECH_AUTO_DOWNLOAD} PASEO_DICTATION_ENABLED=${testEnv.PASEO_DICTATION_ENABLED} PASEO_VOICE_MODE_ENABLED=${testEnv.PASEO_VOICE_MODE_ENABLED} npx paseo daemon stop --home ${paseoHome} --force`.nothrow();
-  await rm(paseoHome, { recursive: true, force: true });
+  await $`SYNAPSE_HOME=${synapseHome} SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD=${testEnv.SYNAPSE_LOCAL_SPEECH_AUTO_DOWNLOAD} SYNAPSE_DICTATION_ENABLED=${testEnv.SYNAPSE_DICTATION_ENABLED} SYNAPSE_VOICE_MODE_ENABLED=${testEnv.SYNAPSE_VOICE_MODE_ENABLED} npx synapse daemon stop --home ${synapseHome} --force`.nothrow();
+  await rm(synapseHome, { recursive: true, force: true });
 }
 
 if (recentSupervisorLogs.trim().length === 0) {

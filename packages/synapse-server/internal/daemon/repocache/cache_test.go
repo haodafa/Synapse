@@ -1281,7 +1281,7 @@ func TestCreateWorktreeRemovesCoAuthoredByHookWhenDisabled(t *testing.T) {
 
 // TestCreateWorktreeRemovesLegacyCoAuthoredByHook verifies the migration
 // path: bare clones already on disk from previous daemon versions carry a
-// prepare-commit-msg hook that does NOT include the multicaHookMarker
+// prepare-commit-msg hook that does NOT include the synapseHookMarker
 // sentinel — only the older `# Installed by the Synapse daemon.` comment.
 // Toggling the workspace setting off must still remove those legacy hooks,
 // otherwise users who flip the toggle in production keep seeing the trailer
@@ -1297,7 +1297,7 @@ func TestCreateWorktreeRemovesLegacyCoAuthoredByHook(t *testing.T) {
 	}
 
 	// Seed the bare cache with the exact hook content shipped by the
-	// previous daemon release (no multicaHookMarker line). Keeping a
+	// previous daemon release (no synapseHookMarker line). Keeping a
 	// verbatim copy here means the test fails if recognition logic ever
 	// drifts away from what production hosts actually have on disk.
 	const legacyHook = `#!/bin/sh

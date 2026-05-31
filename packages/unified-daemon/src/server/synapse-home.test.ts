@@ -15,10 +15,10 @@ function modeOf(filePath: string): number {
 describe.skipIf(process.platform === "win32")("resolveSynapseHome permissions", () => {
   test("creates SYNAPSE_HOME with private permissions", () => {
     const parent = mkdtempSync(path.join(tmpdir(), "synapse-home-parent-"));
-    const paseoHome = path.join(parent, "home");
+    const synapseHome = path.join(parent, "home");
     try {
-      expect(resolveSynapseHome({ SYNAPSE_HOME: paseoHome })).toBe(paseoHome);
-      expect(modeOf(paseoHome)).toBe(PRIVATE_DIRECTORY_MODE);
+      expect(resolveSynapseHome({ SYNAPSE_HOME: synapseHome })).toBe(synapseHome);
+      expect(modeOf(synapseHome)).toBe(PRIVATE_DIRECTORY_MODE);
     } finally {
       rmSync(parent, { recursive: true, force: true });
     }

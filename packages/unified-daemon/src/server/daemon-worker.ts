@@ -6,29 +6,29 @@ import type { DaemonLifecycleIntent } from "./bootstrap.js";
 
 type SupervisorLifecycleMessage =
   | {
-      type: "paseo:shutdown";
+      type: "synapse:shutdown";
     }
   | {
-      type: "paseo:ready";
+      type: "synapse:ready";
       listen: string;
     }
   | {
-      type: "paseo:restart";
+      type: "synapse:restart";
       reason?: string;
     };
 
 interface BootstrapResult {
-  paseoHome: string;
+  synapseHome: string;
   logger: ReturnType<typeof createRootLogger>;
   config: ReturnType<typeof loadConfig>;
 }
 
 function bootstrapFromEnvironment(): BootstrapResult {
   try {
-    const paseoHome = resolveSynapseHome();
-    const config = loadConfig(paseoHome);
-    const logger = createRootLogger({ log: config.log }, { paseoHome, file: false });
-    return { paseoHome, logger, config };
+    const synapseHome = resolveSynapseHome();
+    const config = loadConfig(synapseHome);
+    const logger = createRootLogger({ log: config.log }, { synapseHome, file: false });
+    return { synapseHome, logger, config };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     process.stderr.write(`${message}\n`);
@@ -126,7 +126,7 @@ async function main() {
         { clientId: intent.clientId, requestId: intent.requestId },
         "Shutdown requested via websocket",
       );
-      if (sendSupervisorLifecycleMessage({ type: "paseo:shutdown" })) {
+      if (sendSupervisorLifecycleMessage({ type: "synapse:shutdown" })) {
         return;
       }
       beginShutdown("shutdown lifecycle intent");
@@ -139,7 +139,7 @@ async function main() {
     );
     if (
       sendSupervisorLifecycleMessage({
-        type: "paseo:restart",
+        type: "synapse:restart",
         ...(intent.reason ? { reason: intent.reason } : {}),
       })
     ) {
@@ -171,7 +171,7 @@ async function main() {
     if (!listen) {
       throw new Error("Daemon did not expose a listen target after startup");
     }
-    sendSupervisorLifecycleMessage({ type: "paseo:ready", listen });
+    sendSupervisorLifecycleMessage({ type: "synapse:ready", listen });
   } catch (err) {
     logger.fatal({ err }, "Daemon failed to start listening");
     throw err;

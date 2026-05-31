@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 func newAutopilotCreateTestCmd() *cobra.Command {
@@ -154,9 +154,9 @@ func TestRunAutopilotCreateSendsProjectID(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	cmd := newAutopilotCreateTestCmd()
 	_ = cmd.Flags().Set("title", "Daily planner")
@@ -200,9 +200,9 @@ func TestRunAutopilotUpdateSendsProjectIDChanges(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	t.Run("set project", func(t *testing.T) {
 		cmd := newAutopilotUpdateTestCmd()

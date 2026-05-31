@@ -156,7 +156,7 @@ func TestPrepareWithProjectResources(t *testing.T) {
 			{
 				ID:           "33333333-4444-5555-6666-777777777777",
 				ResourceType: "github_repo",
-				ResourceRef:  json.RawMessage(`{"url":"https://github.com/multica-ai/multica","default_branch_hint":"main"}`),
+				ResourceRef:  json.RawMessage(`{"url":"https://github.com/haodafa/Synapse","default_branch_hint":"main"}`),
 			},
 		},
 	}
@@ -174,7 +174,7 @@ func TestPrepareWithProjectResources(t *testing.T) {
 	defer env.Cleanup(true)
 
 	// resources.json should exist and decode back to what we wrote.
-	resourcesPath := filepath.Join(env.WorkDir, ".multica", "project", "resources.json")
+	resourcesPath := filepath.Join(env.WorkDir, ".synapse", "project", "resources.json")
 	raw, err := os.ReadFile(resourcesPath)
 	if err != nil {
 		t.Fatalf("failed to read resources.json: %v", err)
@@ -214,9 +214,9 @@ func TestPrepareWithProjectResources(t *testing.T) {
 		"## Project Context",
 		"Agent UX 2026",
 		"GitHub repo",
-		"https://github.com/multica-ai/multica",
+		"https://github.com/haodafa/Synapse",
 		"default branch: `main`",
-		".multica/project/resources.json",
+		".synapse/project/resources.json",
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("CLAUDE.md missing %q", want)
@@ -272,7 +272,7 @@ func TestWriteProjectResourcesSkippedWhenNone(t *testing.T) {
 	if err := writeProjectResources(dir, TaskContextForEnv{}, nil); err != nil {
 		t.Fatalf("writeProjectResources: %v", err)
 	}
-	if _, err := os.Stat(filepath.Join(dir, ".multica", "project", "resources.json")); !os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(dir, ".synapse", "project", "resources.json")); !os.IsNotExist(err) {
 		t.Errorf("expected no resources.json to be written when project context is empty")
 	}
 }
@@ -325,7 +325,7 @@ func TestPrepareWithRepoContext(t *testing.T) {
 	}
 	s := string(content)
 	for _, want := range []string{
-		"multica repo checkout",
+		"synapse repo checkout",
 		"https://github.com/org/backend",
 		"https://github.com/org/frontend",
 	} {
@@ -450,14 +450,14 @@ func TestWriteContextFilesAutopilotRunOnly(t *testing.T) {
 		"run-1",
 		"autopilot-1",
 		"Check dependencies and report outdated packages.",
-		"multica autopilot get autopilot-1 --output json",
+		"synapse autopilot get autopilot-1 --output json",
 		"no assigned issue",
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("autopilot context missing %q\n---\n%s", want, s)
 		}
 	}
-	if strings.Contains(s, "Run `multica issue get") {
+	if strings.Contains(s, "Run `synapse issue get") {
 		t.Errorf("autopilot context should not contain issue get workflow\n---\n%s", s)
 	}
 }
@@ -573,8 +573,8 @@ func TestInjectRuntimeConfigClaude(t *testing.T) {
 	s := string(content)
 	for _, want := range []string{
 		"Synapse Agent Runtime",
-		"multica issue get",
-		"multica issue comment list",
+		"synapse issue get",
+		"synapse issue comment list",
 		"Go Conventions",
 		"PR Review",
 		"discovered automatically",
@@ -602,17 +602,17 @@ func TestInjectRuntimeConfigAvailableCommandsCoreOnly(t *testing.T) {
 	for _, want := range []string{
 		"## Available Commands",
 		"core agent loop and common issue create/update tasks",
-		"`multica <command> --help`",
-		"multica issue get <id> --output json",
-		"multica issue comment list <issue-id>",
-		"multica issue create --title",
-		"multica issue update <id>",
+		"`synapse <command> --help`",
+		"synapse issue get <id> --output json",
+		"synapse issue comment list <issue-id>",
+		"synapse issue create --title",
+		"synapse issue update <id>",
 		"--description-file <path>",
 		"--parent \"\"",
-		"multica repo checkout <url>",
-		"multica issue status <id> <status>",
-		"multica issue comment add <issue-id>",
-		"multica issue comment add --help",
+		"synapse repo checkout <url>",
+		"synapse issue status <id> <status>",
+		"synapse issue comment add <issue-id>",
+		"synapse issue comment add --help",
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("AGENTS.md missing core command/help text %q\n---\n%s", want, s)
@@ -620,30 +620,30 @@ func TestInjectRuntimeConfigAvailableCommandsCoreOnly(t *testing.T) {
 	}
 
 	for _, banned := range []string{
-		"multica issue list [--status",
-		"multica issue label list",
-		"multica issue subscriber list",
-		"multica label list",
-		"multica workspace member list",
-		"multica agent list",
-		"multica squad list",
-		"multica issue runs",
-		"multica issue run-messages",
-		"multica attachment download",
-		"multica autopilot list",
-		"multica autopilot create",
-		"multica autopilot update",
-		"multica autopilot trigger",
-		"multica autopilot delete",
-		"multica project get",
-		"multica project resource list",
-		"multica issue assign",
-		"multica issue label add",
-		"multica issue label remove",
-		"multica issue subscriber add",
-		"multica issue subscriber remove",
-		"multica issue comment delete",
-		"multica label create",
+		"synapse issue list [--status",
+		"synapse issue label list",
+		"synapse issue subscriber list",
+		"synapse label list",
+		"synapse workspace member list",
+		"synapse agent list",
+		"synapse squad list",
+		"synapse issue runs",
+		"synapse issue run-messages",
+		"synapse attachment download",
+		"synapse autopilot list",
+		"synapse autopilot create",
+		"synapse autopilot update",
+		"synapse autopilot trigger",
+		"synapse autopilot delete",
+		"synapse project get",
+		"synapse project resource list",
+		"synapse issue assign",
+		"synapse issue label add",
+		"synapse issue label remove",
+		"synapse issue subscriber add",
+		"synapse issue subscriber remove",
+		"synapse issue comment delete",
+		"synapse label create",
 	} {
 		if strings.Contains(s, banned) {
 			t.Errorf("AGENTS.md should not inject non-core command %q\n---\n%s", banned, s)
@@ -672,7 +672,7 @@ func TestInjectRuntimeConfigGemini(t *testing.T) {
 	s := string(content)
 	for _, want := range []string{
 		"Synapse Agent Runtime",
-		"multica issue get",
+		"synapse issue get",
 		"Writing",
 	} {
 		if !strings.Contains(s, want) {
@@ -732,8 +732,8 @@ func TestInjectRuntimeConfigNoSkills(t *testing.T) {
 	}
 
 	s := string(content)
-	if !strings.Contains(s, "multica issue get") {
-		t.Error("should reference multica CLI even without skills")
+	if !strings.Contains(s, "synapse issue get") {
+		t.Error("should reference synapse CLI even without skills")
 	}
 	if strings.Contains(s, "## Skills") {
 		t.Error("should not have Skills section when there are no skills")
@@ -1189,7 +1189,7 @@ func TestPrepareWithRepoContextOpencode(t *testing.T) {
 	}
 	s := string(content)
 	for _, want := range []string{
-		"multica repo checkout",
+		"synapse repo checkout",
 		"https://github.com/org/backend",
 	} {
 		if !strings.Contains(s, want) {
@@ -1231,10 +1231,10 @@ func TestInjectRuntimeConfigRequiresExplicitCommentPost(t *testing.T) {
 			}
 			s := string(data)
 
-			// The workflow must contain an explicit `multica issue comment add`
+			// The workflow must contain an explicit `synapse issue comment add`
 			// invocation for this issue — not just a prose mention of posting.
 			mustContain := []string{
-				"multica issue comment add issue-1",
+				"synapse issue comment add issue-1",
 				"mandatory",
 			}
 			for _, want := range mustContain {
@@ -1247,7 +1247,7 @@ func TestInjectRuntimeConfigRequiresExplicitCommentPost(t *testing.T) {
 			// output is not user-visible. This is the second line of defense
 			// in case the agent skips past the workflow steps.
 			for _, want := range []string{
-				"Final results MUST be delivered via `multica issue comment add`",
+				"Final results MUST be delivered via `synapse issue comment add`",
 				"does NOT see your terminal output",
 			} {
 				if !strings.Contains(s, want) {
@@ -1369,7 +1369,7 @@ func TestInjectRuntimeConfigCodexLinuxEmphasizesStdin(t *testing.T) {
 // the Codex-Specific section directs the agent at `--content-file` instead
 // of `--content-stdin`. PowerShell 5.1 / cmd.exe re-encode piped HEREDOC
 // bytes through the active console codepage and silently drop non-ASCII
-// as `?` before reaching `multica.exe` (#2198 / #2236 / #2376).
+// as `?` before reaching `synapse.exe` (#2198 / #2236 / #2376).
 //
 // Not parallel: mutates the package-level runtimeGOOS.
 func TestInjectRuntimeConfigCodexWindowsUsesContentFile(t *testing.T) {
@@ -1463,7 +1463,7 @@ func TestInjectRuntimeConfigAutopilotRunOnlyNoIssueWorkflow(t *testing.T) {
 		"Autopilot in run-only mode",
 		"Autopilot run ID: `run-1`",
 		"Check dependencies and report outdated packages.",
-		"multica autopilot get autopilot-1 --output json",
+		"synapse autopilot get autopilot-1 --output json",
 		"Your final assistant output is captured automatically as the autopilot run result",
 	} {
 		if !strings.Contains(s, want) {
@@ -1472,8 +1472,8 @@ func TestInjectRuntimeConfigAutopilotRunOnlyNoIssueWorkflow(t *testing.T) {
 	}
 
 	for _, absent := range []string{
-		"Run `multica issue get",
-		"Final results MUST be delivered via `multica issue comment add`",
+		"Run `synapse issue get",
+		"Final results MUST be delivered via `synapse issue comment add`",
 	} {
 		if strings.Contains(s, absent) {
 			t.Errorf("autopilot runtime config should not contain %q\n---\n%s", absent, s)
@@ -1896,10 +1896,10 @@ env_key = "NEW_API_KEY"
 	// Daemon-managed sandbox / multi-agent / memory blocks must all be
 	// re-applied on top of the fresh copy — PR correctness depends on it.
 	for _, marker := range []string{
-		multicaManagedBeginMarker,
-		multicaMultiAgentBeginMarker,
-		multicaMemoryFeatureBeginMarker,
-		multicaMemoryConfigBeginMarker,
+		synapseManagedBeginMarker,
+		synapseMultiAgentBeginMarker,
+		synapseMemoryFeatureBeginMarker,
+		synapseMemoryConfigBeginMarker,
 	} {
 		if !strings.Contains(s, marker) {
 			t.Errorf("daemon-managed marker %q missing after refresh, got:\n%s", marker, s)
@@ -2002,10 +2002,10 @@ env_key = "OLD_API_KEY"
 		}
 	}
 	for _, marker := range []string{
-		multicaManagedBeginMarker,
-		multicaMultiAgentBeginMarker,
-		multicaMemoryFeatureBeginMarker,
-		multicaMemoryConfigBeginMarker,
+		synapseManagedBeginMarker,
+		synapseMultiAgentBeginMarker,
+		synapseMemoryFeatureBeginMarker,
+		synapseMemoryConfigBeginMarker,
 	} {
 		if !strings.Contains(s, marker) {
 			t.Errorf("daemon-managed marker %q missing after shared source removed, got:\n%s", marker, s)
@@ -2028,7 +2028,7 @@ func TestEnsureCodexSandboxConfigCreatesDefaultLinux(t *testing.T) {
 		t.Fatalf("failed to read config.toml: %v", err)
 	}
 	s := string(data)
-	if !strings.Contains(s, multicaManagedBeginMarker) || !strings.Contains(s, multicaManagedEndMarker) {
+	if !strings.Contains(s, synapseManagedBeginMarker) || !strings.Contains(s, synapseManagedEndMarker) {
 		t.Errorf("missing managed block markers, got:\n%s", s)
 	}
 	if !strings.Contains(s, `sandbox_mode = "workspace-write"`) {
@@ -2078,7 +2078,7 @@ func TestEnsureCodexSandboxConfigIsIdempotent(t *testing.T) {
 	}
 	data, _ := os.ReadFile(configPath)
 	// The managed block should appear exactly once.
-	if n := strings.Count(string(data), multicaManagedBeginMarker); n != 1 {
+	if n := strings.Count(string(data), synapseManagedBeginMarker); n != 1 {
 		t.Errorf("expected exactly 1 managed block, got %d in:\n%s", n, data)
 	}
 }
@@ -2175,8 +2175,8 @@ trust = "always"
 	data, _ := os.ReadFile(configPath)
 	s := string(data)
 
-	beginIdx := strings.Index(s, multicaManagedBeginMarker)
-	endIdx := strings.Index(s, multicaManagedEndMarker)
+	beginIdx := strings.Index(s, synapseManagedBeginMarker)
+	endIdx := strings.Index(s, synapseManagedEndMarker)
 	tableIdx := strings.Index(s, "[permissions.multica]")
 	if beginIdx < 0 || endIdx < 0 || tableIdx < 0 {
 		t.Fatalf("expected managed block and user table to both be present, got:\n%s", s)
@@ -2204,7 +2204,7 @@ trust = "always"
 	if string(data2) != s {
 		t.Errorf("second pass should be idempotent:\n--- first ---\n%s\n--- second ---\n%s", s, data2)
 	}
-	if n := strings.Count(string(data2), multicaManagedBeginMarker); n != 1 {
+	if n := strings.Count(string(data2), synapseManagedBeginMarker); n != 1 {
 		t.Errorf("expected exactly one managed block after idempotent rewrite, got %d", n)
 	}
 }
@@ -2223,12 +2223,12 @@ func TestEnsureCodexSandboxConfigMovesLegacyTrailingBlockToTop(t *testing.T) {
 [permissions.multica]
 trust = "always"
 
-` + multicaManagedBeginMarker + `
+` + synapseManagedBeginMarker + `
 sandbox_mode = "workspace-write"
 
 [sandbox_workspace_write]
 network_access = true
-` + multicaManagedEndMarker + `
+` + synapseManagedEndMarker + `
 `
 	os.WriteFile(configPath, []byte(legacy), 0o644)
 
@@ -2239,12 +2239,12 @@ network_access = true
 	data, _ := os.ReadFile(configPath)
 	s := string(data)
 
-	beginIdx := strings.Index(s, multicaManagedBeginMarker)
+	beginIdx := strings.Index(s, synapseManagedBeginMarker)
 	tableIdx := strings.Index(s, "[permissions.multica]")
 	if beginIdx < 0 || tableIdx < 0 || beginIdx > tableIdx {
 		t.Errorf("expected managed block to be hoisted above [permissions.multica], got:\n%s", s)
 	}
-	if strings.Count(s, multicaManagedBeginMarker) != 1 {
+	if strings.Count(s, synapseManagedBeginMarker) != 1 {
 		t.Errorf("expected exactly one managed block, got:\n%s", s)
 	}
 	// The old inline `[sandbox_workspace_write]` header must be gone — the
@@ -2352,8 +2352,8 @@ func TestReuseRestoresCodexHome(t *testing.T) {
 	if err != nil {
 		t.Fatalf("config.toml not found in reused CodexHome: %v", err)
 	}
-	if !strings.Contains(string(data), multicaManagedBeginMarker) {
-		t.Error("reused config.toml missing multica-managed block")
+	if !strings.Contains(string(data), synapseManagedBeginMarker) {
+		t.Error("reused config.toml missing synapse-managed block")
 	}
 }
 
@@ -3128,7 +3128,7 @@ func TestInjectRuntimeConfigSquadLeaderCommentTriggeredNoAction(t *testing.T) {
 	for _, want := range []string{
 		"Squad leader rule",
 		"DO NOT post any comment",
-		"multica squad activity",
+		"synapse squad activity",
 	} {
 		if !strings.Contains(s, want) {
 			t.Errorf("squad leader comment-triggered CLAUDE.md missing %q", want)
@@ -3378,12 +3378,12 @@ func TestInjectRuntimeConfigCommentTriggerThreadFirstReads(t *testing.T) {
 	for _, want := range []string{
 		"--thread " + triggerID,
 		"--tail 30",
-		"multica issue comment list " + issueID + " --thread " + triggerID + " --tail 30 --output json",
+		"synapse issue comment list " + issueID + " --thread " + triggerID + " --tail 30 --output json",
 		// Reply cursor walks older replies inside the same thread.
 		"Next reply cursor:",
 		"--before-id <reply-id>",
 		// --recent fallback at the documented default N=20 for cross-thread context.
-		"multica issue comment list " + issueID + " --recent 20 --output json",
+		"synapse issue comment list " + issueID + " --recent 20 --output json",
 		// Cursor walks via the stderr line the CLI emits, not invented flags.
 		"Next thread cursor",
 		"--before",
@@ -3422,7 +3422,7 @@ func TestInjectRuntimeConfigCommentTriggerThreadFirstReads(t *testing.T) {
 	}
 	// The pre-MUL-2421 unbounded `--thread` recipe (no --tail) is also a
 	// regression target: it dumps the entire thread on long threads.
-	if strings.Contains(s, "multica issue comment list "+issueID+" --thread "+triggerID+" --output json") {
+	if strings.Contains(s, "synapse issue comment list "+issueID+" --thread "+triggerID+" --output json") {
 		t.Errorf("comment-triggered Workflow regressed to unbounded --thread recipe (no --tail) — long threads will overflow context\n---\n%s", s)
 	}
 }
@@ -3448,7 +3448,7 @@ func TestInjectRuntimeConfigAssignmentTriggerMentionsRecent(t *testing.T) {
 
 	// Mandatory full-history rule (MUL-1124) must stay.
 	for _, want := range []string{
-		"multica issue comment list issue-1 --output json",
+		"synapse issue comment list issue-1 --output json",
 		"this is mandatory, not optional",
 		"Skipping this step is the most common cause",
 	} {
@@ -3496,9 +3496,9 @@ func TestInjectRuntimeConfigIssueMetadataSectionScope(t *testing.T) {
 	// discovery point for the CLI when an agent decides to read or write
 	// metadata outside the numbered workflow.
 	coreDiscoveryLines := []string{
-		"multica issue metadata list <issue-id>",
-		"multica issue metadata set <issue-id> --key <k> --value <v> [--type string|number|bool]",
-		"multica issue metadata delete <issue-id> --key <k>",
+		"synapse issue metadata list <issue-id>",
+		"synapse issue metadata set <issue-id> --key <k> --value <v> [--type string|number|bool]",
+		"synapse issue metadata delete <issue-id> --key <k>",
 	}
 
 	type wantSection struct {
@@ -3540,7 +3540,7 @@ func TestInjectRuntimeConfigIssueMetadataSectionScope(t *testing.T) {
 		},
 	}
 	withoutSection := wantSection{
-		// We can't simply require `multica issue metadata list` absent
+		// We can't simply require `synapse issue metadata list` absent
 		// because the Available Commands → Core discovery line is
 		// global (it uses `<issue-id>` placeholder text). What MUST be
 		// absent is the semantic section itself plus the workflow-step
@@ -3578,13 +3578,13 @@ func TestInjectRuntimeConfigIssueMetadataSectionScope(t *testing.T) {
 			provider: "claude",
 			filename: "CLAUDE.md",
 			workflowStepPresent: []string{
-				"multica issue metadata list issue-md-1 --output json",
+				"synapse issue metadata list issue-md-1 --output json",
 				"See the `## Issue Metadata` section above",
 				// Exit step must show both write and delete, not just
 				// "set" — stale-key cleanup is the half that keeps
 				// metadata from rotting.
-				"multica issue metadata set",
-				"multica issue metadata delete",
+				"synapse issue metadata set",
+				"synapse issue metadata delete",
 				"Before exiting",
 			},
 			want: withSection,
@@ -3595,10 +3595,10 @@ func TestInjectRuntimeConfigIssueMetadataSectionScope(t *testing.T) {
 			provider:            "claude",
 			filename:            "CLAUDE.md",
 			workflowStepPresent: []string{
-				"multica issue metadata list issue-md-2 --output json",
+				"synapse issue metadata list issue-md-2 --output json",
 				"See the `## Issue Metadata` section above",
-				"multica issue metadata set",
-				"multica issue metadata delete",
+				"synapse issue metadata set",
+				"synapse issue metadata delete",
 				"Before exiting",
 			},
 			want: withSection,
@@ -3710,7 +3710,7 @@ func TestInjectRuntimeConfigIssueMetadataCodexFormattingUnchanged(t *testing.T) 
 		if !strings.Contains(s, "## Issue Metadata") {
 			t.Fatalf("Issue Metadata section missing\n---\n%s", s)
 		}
-		if !strings.Contains(s, "multica issue metadata list issue-md-codex --output json") {
+		if !strings.Contains(s, "synapse issue metadata list issue-md-codex --output json") {
 			t.Fatalf("metadata list step missing\n---\n%s", s)
 		}
 		// ...AND the codex-specific stdin-only rule is still emitted.

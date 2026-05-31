@@ -402,7 +402,7 @@ function toPiMcpConfig(config: McpServerConfig): PiMcpServerConfig {
 }
 
 function createPiMcpConfigFile(servers: Record<string, McpServerConfig>): PiMcpConfigFile {
-  const dir = mkdtempSync(join(tmpdir(), "paseo-pi-mcp-"));
+  const dir = mkdtempSync(join(tmpdir(), "synapse-pi-mcp-"));
   const filePath = join(dir, "mcp.json");
   const mcpServers: Record<string, PiMcpServerConfig> = {};
   for (const [name, serverConfig] of Object.entries(servers)) {
@@ -416,7 +416,7 @@ function createPiMcpConfigFile(servers: Record<string, McpServerConfig>): PiMcpC
 }
 
 function createPiPaseoExtensionFile(): PiTempFile {
-  const dir = mkdtempSync(join(tmpdir(), "paseo-pi-extension-"));
+  const dir = mkdtempSync(join(tmpdir(), "synapse-pi-extension-"));
   const filePath = join(dir, "synapse-integration.mjs");
   writeFileSync(
     filePath,
@@ -474,7 +474,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 	  });
 
 	  pi.registerCommand("${SYNAPSE_PI_CAPTURE_EXTENSION_COMMAND}", {
-	    description: "Internal Paseo entry capture bridge",
+	    description: "Internal Synapse entry capture bridge",
 	    handler: async (args, ctx) => {
 	      const payload = decodePayload(args.trim());
 	      emitEntryCapture(ctx, "command", payload.requestId);
@@ -482,7 +482,7 @@ function createPiPaseoExtensionFile(): PiTempFile {
 	  });
 
 	  pi.registerCommand("${SYNAPSE_PI_TREE_EXTENSION_COMMAND}", {
-	    description: "Internal Paseo tree navigation bridge",
+	    description: "Internal Synapse tree navigation bridge",
 	    handler: async (args, ctx) => {
 	      const payload = decodePayload(args.trim());
 	      try {
@@ -1784,7 +1784,7 @@ export class PiRpcAgentClient implements AgentClient {
             value: existsSync(authConfigPath) ? "found" : "not found",
           },
           { label: "Models", value: modelsValue },
-          { label: "Paseo MCP tools", value: mcpToolsValue },
+          { label: "Synapse MCP tools", value: mcpToolsValue },
           { label: "Status", value: status },
         ]),
       };

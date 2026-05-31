@@ -66,7 +66,7 @@ type CachedRepo struct {
 
 // Cache manages bare git clones for workspace repositories.
 type Cache struct {
-	root   string // base directory for all caches (e.g. ~/multica_workspaces/.repos)
+	root   string // base directory for all caches (e.g. ~/synapse_workspaces/.repos)
 	logger *slog.Logger
 	// repoLocks maps bare repo path → dedicated mutex. Any mutating operation
 	// on a given bare repo (clone, fetch, worktree add, ref update) must
@@ -771,9 +771,9 @@ func bareHeadBranch(barePath string) string {
 // tool. Do not change without bumping the recognition logic.
 const synapseHookMarker = "# synapse:prepare-commit-msg:co-authored-by"
 
-// multicaHookMarker is the legacy hook marker used before rebranding.
+// synapseHookMarker is the legacy hook marker used before rebranding.
 // Kept for compatibility with existing installations.
-const multicaHookMarker = "# multica:prepare-commit-msg:co-authored-by"
+const synapseHookMarker = "# synapse:prepare-commit-msg:co-authored-by"
 
 // daemonInstalledHookSignatures lists substrings that identify a
 // prepare-commit-msg hook as one the daemon installed. removeCoAuthoredByHook
@@ -785,9 +785,9 @@ const multicaHookMarker = "# multica:prepare-commit-msg:co-authored-by"
 // prepareCommitMsgHook keep recognizing every previously-shipped variant.
 var daemonInstalledHookSignatures = []string{
 	synapseHookMarker,
-	multicaHookMarker, // 保留旧的标记以识别旧的钩子
+	synapseHookMarker, // 保留旧的标记以识别旧的钩子
 	"# Installed by the Synapse daemon.",
-	"# Installed by the Multica daemon.",
+	"# Installed by the Synapse daemon.",
 }
 
 // prepareCommitMsgHook is the prepare-commit-msg hook script that appends a
@@ -845,7 +845,7 @@ func installCoAuthoredByHook(worktreePath string) error {
 }
 
 // isDaemonInstalledHook reports whether a prepare-commit-msg hook on disk was
-// installed by the Multica daemon (current or any previously released
+// installed by the Synapse daemon (current or any previously released
 // version). It returns false for hooks that don't carry any known daemon
 // signature, so a user-installed hook at the same path is left alone.
 func isDaemonInstalledHook(contents []byte) bool {

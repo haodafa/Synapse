@@ -361,11 +361,11 @@ export class UnifiedDaemon {
   }
 
   private setupWebSocketHandlers(): void {
-    this.wsServer.on("paseo:agent:start", ({ clientId, payload }) => {
+    this.wsServer.on("synapse.agent:start", ({ clientId, payload }) => {
       this.handleAgentStart(clientId, payload);
     });
 
-    this.wsServer.on("paseo:agent:stop", ({ clientId, payload }) => {
+    this.wsServer.on("synapse.agent:stop", ({ clientId, payload }) => {
       this.handleAgentStop(clientId, payload);
     });
 

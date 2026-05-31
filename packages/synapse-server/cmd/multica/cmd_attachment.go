@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 var attachmentCmd = &cobra.Command{
@@ -22,10 +22,10 @@ var attachmentDownloadCmd = &cobra.Command{
 	Short: "Download an attachment to a local file",
 	Long:  "Download an attachment by its ID to a local file.",
 	Example: `  # Download an image attachment to the current directory
-  $ multica attachment download abc123
+  $ synapse attachment download abc123
 
   # Download to a specific directory
-  $ multica attachment download abc123 -o /tmp/images`,
+  $ synapse attachment download abc123 -o /tmp/images`,
 	Args:  exactArgs(1),
 	RunE:  runAttachmentDownload,
 }

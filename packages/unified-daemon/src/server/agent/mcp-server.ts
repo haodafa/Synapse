@@ -1986,7 +1986,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
     "list_worktrees",
     {
       title: "List worktrees",
-      description: "List Paseo-managed git worktrees for a repository.",
+      description: "List Synapse-managed git worktrees for a repository.",
       inputSchema: {
         cwd: z
           .string()
@@ -2022,7 +2022,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
     {
       title: "Create worktree",
       description:
-        "Create a Paseo-managed git worktree. Branch off a new branch, check out an existing branch, or check out a GitHub PR.",
+        "Create a Synapse-managed git worktree. Branch off a new branch, check out an existing branch, or check out a GitHub PR.",
       inputSchema: {
         cwd: z.string().optional().describe("Repository directory. Defaults to the agent's cwd."),
         target: z
@@ -2090,7 +2090,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
     "archive_worktree",
     {
       title: "Archive worktree",
-      description: "Delete a Paseo-managed git worktree.",
+      description: "Delete a Synapse-managed git worktree.",
       inputSchema: {
         cwd: z
           .string()

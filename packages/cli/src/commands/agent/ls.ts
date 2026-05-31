@@ -161,8 +161,8 @@ export function buildAgentLsFetchOptions(
 
 /**
  * Agent ls command semantics:
- * - `paseo agent ls`    → active non-archived agents
- * - `paseo agent ls -a` → include archived agents
+ * - `synapse agent ls`    → active non-archived agents
+ * - `synapse agent ls -a` → include archived agents
  */
 export async function runLsCommand(
   options: AgentLsOptions,
@@ -179,7 +179,7 @@ export async function runLsCommand(
       code: "DAEMON_NOT_RUNNING",
       message: `Cannot connect to daemon at ${host}: ${message}`,
       details:
-        "Start the daemon with: paseo daemon start\nFor a remote daemon, pass --host <host:port> or set PASEO_HOST.",
+        "Start the daemon with: synapse daemon start\nFor a remote daemon, pass --host <host:port> or set SYNAPSE_HOST.",
     };
     throw error;
   }

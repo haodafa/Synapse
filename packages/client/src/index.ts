@@ -41,7 +41,7 @@ export type ConnectionState =
   | { status: "disconnected"; reason?: string }
   | { status: "disposed" };
 
-export interface PaseoLogger {
+export interface SynapseLogger {
   debug(obj: object, msg?: string): void;
   info(obj: object, msg?: string): void;
   warn(obj: object, msg?: string): void;
@@ -56,7 +56,7 @@ export interface SynapseClientConfig {
   password?: string;
   authHeader?: string;
   suppressSendErrors?: boolean;
-  logger?: PaseoLogger;
+  logger?: SynapseLogger;
   connectTimeoutMs?: number;
   e2ee?: {
     enabled?: boolean;
@@ -71,98 +71,98 @@ export interface SynapseClientConfig {
   runtimeMetricsWindowMs?: number;
 }
 
-export type PaseoWorkspace = WorkspaceDescriptorPayload;
-export type PaseoAgent = AgentSnapshotPayload;
-export type PaseoWorkspaceListOptions = Omit<
+export type SynapseWorkspace = WorkspaceDescriptorPayload;
+export type SynapseAgent = AgentSnapshotPayload;
+export type SynapseWorkspaceListOptions = Omit<
   FetchWorkspacesRequestMessage,
   "type" | "requestId"
 > & {
   requestId?: string;
 };
 
-export interface PaseoWorkspaceListResult {
+export interface SynapseWorkspaceListResult {
   requestId: string;
   subscriptionId?: string | null;
-  entries: PaseoWorkspace[];
+  entries: SynapseWorkspace[];
   pageInfo: FetchWorkspacesResponseMessage["payload"]["pageInfo"];
 }
 
-export interface PaseoWorkspaceOpenOptions {
+export interface SynapseWorkspaceOpenOptions {
   cwd: string;
   requestId?: string;
 }
 
-export interface PaseoWorkspaceOpenResult {
+export interface SynapseWorkspaceOpenResult {
   requestId: string;
-  workspace: PaseoWorkspaceHandle | null;
+  workspace: SynapseWorkspaceHandle | null;
   error: string | null;
 }
 
-export interface PaseoWorkspaceArchiveResult {
+export interface SynapseWorkspaceArchiveResult {
   requestId: string;
   workspaceId: string;
   archivedAt: string | null;
   error: string | null;
 }
 
-export type PaseoWorkspaceUpdate = Extract<
+export type SynapseWorkspaceUpdate = Extract<
   SessionOutboundMessage,
   { type: "workspace_update" }
 >["payload"];
 
-export type PaseoWorkspaceUpdateHandler = (update: PaseoWorkspaceUpdate) => void;
+export type SynapseWorkspaceUpdateHandler = (update: SynapseWorkspaceUpdate) => void;
 
 /**
  * A handle is a stable typed reference to a daemon resource. Its identity is the
  * daemon id, and `latest()` only returns the most recent snapshot this handle has
  * seen through construction, `refetch()`, or this handle's local subscription.
  */
-export interface PaseoWorkspaceHandle {
+export interface SynapseWorkspaceHandle {
   readonly id: string;
-  latest(): PaseoWorkspace | null;
+  latest(): SynapseWorkspace | null;
   /**
    * Fetches a fresh workspace snapshot through the existing workspace list RPC,
    * exact-matches this handle id from the result, and updates `latest()`.
    */
-  refetch(options?: { requestId?: string }): Promise<PaseoWorkspace | null>;
-  archive(requestId?: string): Promise<PaseoWorkspaceArchiveResult>;
+  refetch(options?: { requestId?: string }): Promise<SynapseWorkspace | null>;
+  archive(requestId?: string): Promise<SynapseWorkspaceArchiveResult>;
   /**
    * Subscribes to already-emitted daemon workspace_update events for this id.
    * This returns a local unsubscribe function; it does not own app cache state or
    * send a daemon unsubscribe RPC. Call `workspaces.list({ subscribe: {} })` when
    * the daemon should start streaming workspace directory updates.
    */
-  subscribe(handler: (update: PaseoWorkspaceUpdate) => void): () => void;
+  subscribe(handler: (update: SynapseWorkspaceUpdate) => void): () => void;
 }
 
-export interface PaseoWorkspaceActions {
-  list(options?: PaseoWorkspaceListOptions): Promise<PaseoWorkspaceListResult>;
-  ref(workspace: string | PaseoWorkspace): PaseoWorkspaceHandle;
+export interface SynapseWorkspaceActions {
+  list(options?: SynapseWorkspaceListOptions): Promise<SynapseWorkspaceListResult>;
+  ref(workspace: string | SynapseWorkspace): SynapseWorkspaceHandle;
   open(
-    input: string | PaseoWorkspaceOpenOptions,
+    input: string | SynapseWorkspaceOpenOptions,
     requestId?: string,
-  ): Promise<PaseoWorkspaceOpenResult>;
+  ): Promise<SynapseWorkspaceOpenResult>;
   create(
-    input: string | PaseoWorkspaceOpenOptions,
+    input: string | SynapseWorkspaceOpenOptions,
     requestId?: string,
-  ): Promise<PaseoWorkspaceOpenResult>;
+  ): Promise<SynapseWorkspaceOpenResult>;
   archive(
-    workspace: string | PaseoWorkspaceHandle,
+    workspace: string | SynapseWorkspaceHandle,
     requestId?: string,
-  ): Promise<PaseoWorkspaceArchiveResult>;
+  ): Promise<SynapseWorkspaceArchiveResult>;
   /**
    * Local event subscription over the low-level driver's workspace_update stream.
    * The returned function only removes this SDK listener.
    */
-  subscribe(handler: PaseoWorkspaceUpdateHandler): () => void;
+  subscribe(handler: SynapseWorkspaceUpdateHandler): () => void;
 }
 
-type PaseoAgentSessionConfig = CreateAgentRequestMessage["config"];
-type PaseoAgentProvider = PaseoAgentSessionConfig["provider"];
-type PaseoAgentConfigOverrides = Partial<Omit<PaseoAgentSessionConfig, "provider" | "cwd">>;
+type SynapseAgentSessionConfig = CreateAgentRequestMessage["config"];
+type SynapseAgentProvider = SynapseAgentSessionConfig["provider"];
+type SynapseAgentConfigOverrides = Partial<Omit<SynapseAgentSessionConfig, "provider" | "cwd">>;
 
-export interface PaseoAgentCreateOptions extends PaseoAgentConfigOverrides {
-  config?: PaseoAgentSessionConfig;
+export interface SynapseAgentCreateOptions extends SynapseAgentConfigOverrides {
+  config?: SynapseAgentSessionConfig;
   provider?: CreateAgentRequestMessage["config"]["provider"];
   cwd?: string;
   workspaceId?: string;
@@ -177,12 +177,12 @@ export interface PaseoAgentCreateOptions extends PaseoAgentConfigOverrides {
   labels?: Record<string, string>;
 }
 
-export interface PaseoAgentRefetchResult {
-  agent: PaseoAgent;
+export interface SynapseAgentRefetchResult {
+  agent: SynapseAgent;
   project: ProjectPlacementPayload | null;
 }
 
-export interface PaseoAgentTimelineRefetchOptions {
+export interface SynapseAgentTimelineRefetchOptions {
   direction?: FetchAgentTimelineDirection;
   cursor?: FetchAgentTimelineCursor;
   limit?: number;
@@ -190,30 +190,30 @@ export interface PaseoAgentTimelineRefetchOptions {
   requestId?: string;
 }
 
-export interface PaseoAgentSendOptions {
+export interface SynapseAgentSendOptions {
   messageId?: string;
   images?: Array<{ data: string; mimeType: string }>;
   attachments?: SendAgentMessageRequest["attachments"];
 }
 
-export type PaseoAgentUpdate = Extract<SessionOutboundMessage, { type: "agent_update" }>["payload"];
+export type SynapseAgentUpdate = Extract<SessionOutboundMessage, { type: "agent_update" }>["payload"];
 
-export type PaseoAgentStream = Extract<SessionOutboundMessage, { type: "agent_stream" }>["payload"];
+export type SynapseAgentStream = Extract<SessionOutboundMessage, { type: "agent_stream" }>["payload"];
 
-export type PaseoAgentUpdateHandler = (update: PaseoAgentUpdate) => void;
+export type SynapseAgentUpdateHandler = (update: SynapseAgentUpdate) => void;
 
-export interface PaseoAgentTimelineHandle {
+export interface SynapseAgentTimelineHandle {
   /**
    * Fetches a fresh timeline page through the existing daemon RPC. If the daemon
    * includes an agent snapshot in the response, the parent handle's `latest()`
    * is updated to that snapshot.
    */
-  refetch(options?: PaseoAgentTimelineRefetchOptions): Promise<FetchAgentTimelinePayload>;
+  refetch(options?: SynapseAgentTimelineRefetchOptions): Promise<FetchAgentTimelinePayload>;
   /**
    * Local listener for agent_stream events matching this handle id. It does not
    * retain timeline entries or own application cache state.
    */
-  subscribe(handler: (event: PaseoAgentStream) => void): () => void;
+  subscribe(handler: (event: SynapseAgentStream) => void): () => void;
 }
 
 /**
@@ -222,88 +222,88 @@ export interface PaseoAgentTimelineHandle {
  * handle through construction, `refetch()`, timeline refetch, archive, or local
  * agent_update subscription.
  */
-export interface PaseoAgentHandle {
+export interface SynapseAgentHandle {
   readonly id: string;
-  readonly timeline: PaseoAgentTimelineHandle;
-  latest(): PaseoAgent | null;
-  refetch(requestId?: string): Promise<PaseoAgentRefetchResult | null>;
-  send(text: string, options?: PaseoAgentSendOptions): Promise<void>;
+  readonly timeline: SynapseAgentTimelineHandle;
+  latest(): SynapseAgent | null;
+  refetch(requestId?: string): Promise<SynapseAgentRefetchResult | null>;
+  send(text: string, options?: SynapseAgentSendOptions): Promise<void>;
   archive(): Promise<{ archivedAt: string }>;
-  subscribe(handler: (update: PaseoAgentUpdate) => void): () => void;
+  subscribe(handler: (update: SynapseAgentUpdate) => void): () => void;
 }
 
-export interface PaseoAgentActions {
-  ref(agent: string | PaseoAgent): PaseoAgentHandle;
-  create(options: PaseoAgentCreateOptions): Promise<PaseoAgentHandle>;
+export interface SynapseAgentActions {
+  ref(agent: string | SynapseAgent): SynapseAgentHandle;
+  create(options: SynapseAgentCreateOptions): Promise<SynapseAgentHandle>;
   /**
    * Local event subscription over the low-level driver's agent_update stream.
    * The returned function only removes this SDK listener.
    */
-  subscribe(handler: PaseoAgentUpdateHandler): () => void;
+  subscribe(handler: SynapseAgentUpdateHandler): () => void;
 }
 
-export interface PaseoProviderConfig extends PaseoProviderConfigInput {
-  provider: PaseoAgentProvider;
+export interface SynapseProviderConfig extends SynapseProviderConfigInput {
+  provider: SynapseAgentProvider;
 }
-export type PaseoProviderFeatureValues = Record<string, unknown>;
+export type SynapseProviderFeatureValues = Record<string, unknown>;
 
-export interface PaseoProviderConfigInput {
+export interface SynapseProviderConfigInput {
   model?: string;
   modeId?: string;
   thinkingOptionId?: string;
-  featureValues?: PaseoProviderFeatureValues;
+  featureValues?: SynapseProviderFeatureValues;
 }
 
-export type PaseoProviderModelsResult = ListProviderModelsResponseMessage["payload"];
-export type PaseoProviderModesResult = ListProviderModesResponseMessage["payload"];
-export type PaseoProviderFeaturesInput = ListProviderFeaturesRequestMessage["draftConfig"];
-export type PaseoProviderFeaturesResult = ListProviderFeaturesResponseMessage["payload"];
-export type PaseoProviderAvailabilityResult = ListAvailableProvidersResponse["payload"];
-export type PaseoProviderSnapshotResult = GetProvidersSnapshotResponseMessage["payload"];
-export type PaseoProviderSnapshotUpdate = Extract<
+export type SynapseProviderModelsResult = ListProviderModelsResponseMessage["payload"];
+export type SynapseProviderModesResult = ListProviderModesResponseMessage["payload"];
+export type SynapseProviderFeaturesInput = ListProviderFeaturesRequestMessage["draftConfig"];
+export type SynapseProviderFeaturesResult = ListProviderFeaturesResponseMessage["payload"];
+export type SynapseProviderAvailabilityResult = ListAvailableProvidersResponse["payload"];
+export type SynapseProviderSnapshotResult = GetProvidersSnapshotResponseMessage["payload"];
+export type SynapseProviderSnapshotUpdate = Extract<
   SessionOutboundMessage,
   { type: "providers_snapshot_update" }
 >["payload"];
-export type PaseoProviderRefreshResult = RefreshProvidersSnapshotResponseMessage["payload"];
-export type PaseoProviderDiagnosticResult = ProviderDiagnosticResponseMessage["payload"];
+export type SynapseProviderRefreshResult = RefreshProvidersSnapshotResponseMessage["payload"];
+export type SynapseProviderDiagnosticResult = ProviderDiagnosticResponseMessage["payload"];
 
-export interface PaseoProviderListOptions {
+export interface SynapseProviderListOptions {
   cwd?: string;
   requestId?: string;
 }
 
-export interface PaseoProviderRefreshOptions {
+export interface SynapseProviderRefreshOptions {
   cwd?: string;
-  providers?: PaseoAgentProvider[];
+  providers?: SynapseAgentProvider[];
   requestId?: string;
 }
 
-export interface PaseoProviderActions {
-  codex(input?: PaseoProviderConfigInput): PaseoProviderConfig;
-  claude(input?: PaseoProviderConfigInput): PaseoProviderConfig;
-  opencode(input?: PaseoProviderConfigInput): PaseoProviderConfig;
-  copilot(input?: PaseoProviderConfigInput): PaseoProviderConfig;
-  config(provider: PaseoAgentProvider, input?: PaseoProviderConfigInput): PaseoProviderConfig;
+export interface SynapseProviderActions {
+  codex(input?: SynapseProviderConfigInput): SynapseProviderConfig;
+  claude(input?: SynapseProviderConfigInput): SynapseProviderConfig;
+  opencode(input?: SynapseProviderConfigInput): SynapseProviderConfig;
+  copilot(input?: SynapseProviderConfigInput): SynapseProviderConfig;
+  config(provider: SynapseAgentProvider, input?: SynapseProviderConfigInput): SynapseProviderConfig;
   listModels(
-    provider: PaseoAgentProvider,
-    options?: PaseoProviderListOptions,
-  ): Promise<PaseoProviderModelsResult>;
+    provider: SynapseAgentProvider,
+    options?: SynapseProviderListOptions,
+  ): Promise<SynapseProviderModelsResult>;
   listModes(
-    provider: PaseoAgentProvider,
-    options?: PaseoProviderListOptions,
-  ): Promise<PaseoProviderModesResult>;
+    provider: SynapseAgentProvider,
+    options?: SynapseProviderListOptions,
+  ): Promise<SynapseProviderModesResult>;
   listFeatures(
-    draftConfig: PaseoProviderFeaturesInput,
+    draftConfig: SynapseProviderFeaturesInput,
     options?: { requestId?: string },
-  ): Promise<PaseoProviderFeaturesResult>;
-  listAvailable(options?: { requestId?: string }): Promise<PaseoProviderAvailabilityResult>;
-  snapshot(options?: PaseoProviderListOptions): Promise<PaseoProviderSnapshotResult>;
-  refresh(options?: PaseoProviderRefreshOptions): Promise<PaseoProviderRefreshResult>;
+  ): Promise<SynapseProviderFeaturesResult>;
+  listAvailable(options?: { requestId?: string }): Promise<SynapseProviderAvailabilityResult>;
+  snapshot(options?: SynapseProviderListOptions): Promise<SynapseProviderSnapshotResult>;
+  refresh(options?: SynapseProviderRefreshOptions): Promise<SynapseProviderRefreshResult>;
   diagnostic(
-    provider: PaseoAgentProvider,
+    provider: SynapseAgentProvider,
     options?: { requestId?: string },
-  ): Promise<PaseoProviderDiagnosticResult>;
-  subscribe(handler: (update: PaseoProviderSnapshotUpdate) => void): () => void;
+  ): Promise<SynapseProviderDiagnosticResult>;
+  subscribe(handler: (update: SynapseProviderSnapshotUpdate) => void): () => void;
 }
 
 export interface SynapseConfigActions {
@@ -327,9 +327,9 @@ export interface SynapseConfigActions {
 }
 
 export interface SynapseClient {
-  readonly workspaces: PaseoWorkspaceActions;
-  readonly agents: PaseoAgentActions;
-  readonly providers: PaseoProviderActions;
+  readonly workspaces: SynapseWorkspaceActions;
+  readonly agents: SynapseAgentActions;
+  readonly providers: SynapseProviderActions;
   readonly config: SynapseConfigActions;
   connect(): Promise<void>;
   close(): Promise<void>;
@@ -402,8 +402,8 @@ export function createSynapseClient(config: SynapseClientConfig): SynapseClient 
   };
 }
 
-type WorkspaceHandleFactory = (workspace: string | PaseoWorkspace) => PaseoWorkspaceHandle;
-type AgentHandleFactory = (agent: string | PaseoAgent) => PaseoAgentHandle;
+type WorkspaceHandleFactory = (workspace: string | SynapseWorkspace) => SynapseWorkspaceHandle;
+type AgentHandleFactory = (agent: string | SynapseAgent) => SynapseAgentHandle;
 
 function createWorkspaceHandleFactory(daemonClient: DaemonClient): WorkspaceHandleFactory {
   return (workspace) => {
@@ -450,7 +450,7 @@ function createAgentHandleFactory(daemonClient: DaemonClient): AgentHandleFactor
     const id = typeof agent === "string" ? agent : agent.id;
     let latest = typeof agent === "string" ? null : agent;
 
-    const handle: PaseoAgentHandle = {
+    const handle: SynapseAgentHandle = {
       id,
       timeline: {
         refetch: async (options) => {
@@ -502,9 +502,9 @@ function createAgentHandleFactory(daemonClient: DaemonClient): AgentHandleFactor
 async function openWorkspace(
   daemonClient: DaemonClient,
   createWorkspaceHandle: WorkspaceHandleFactory,
-  input: string | PaseoWorkspaceOpenOptions,
+  input: string | SynapseWorkspaceOpenOptions,
   requestId?: string,
-): Promise<PaseoWorkspaceOpenResult> {
+): Promise<SynapseWorkspaceOpenResult> {
   const options = typeof input === "string" ? { cwd: input, requestId } : input;
   const result = await daemonClient.openProject(options.cwd, options.requestId);
   return {
@@ -513,14 +513,14 @@ async function openWorkspace(
   };
 }
 
-function resolveWorkspaceId(workspace: string | PaseoWorkspaceHandle): string {
+function resolveWorkspaceId(workspace: string | SynapseWorkspaceHandle): string {
   return typeof workspace === "string" ? workspace : workspace.id;
 }
 
 function providerConfig(
-  provider: PaseoAgentProvider,
-  input: PaseoProviderConfigInput = {},
-): PaseoProviderConfig {
+  provider: SynapseAgentProvider,
+  input: SynapseProviderConfigInput = {},
+): SynapseProviderConfig {
   return {
     provider,
     ...(input.model !== undefined ? { model: input.model } : {}),
@@ -535,5 +535,5 @@ function createGeneratedClientId(): string {
     typeof globalThis.crypto?.randomUUID === "function"
       ? globalThis.crypto.randomUUID()
       : Math.random().toString(36).slice(2);
-  return `paseo-sdk-${randomId}`;
+  return `synapse-sdk-${randomId}`;
 }

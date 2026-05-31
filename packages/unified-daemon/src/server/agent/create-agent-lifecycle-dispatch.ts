@@ -193,7 +193,7 @@ export class CreateAgentLifecycleDispatch {
       paseoHome: this.dependencies.paseoHome,
     });
     if (!ownership.allowed) {
-      throw new Error("Auto-created worktree is not a Paseo-owned worktree");
+      throw new Error("Auto-created worktree is not a Synapse-owned worktree");
     }
 
     await archiveSynapseWorktree(

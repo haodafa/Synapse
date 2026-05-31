@@ -10,7 +10,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 var squadCmd = &cobra.Command{

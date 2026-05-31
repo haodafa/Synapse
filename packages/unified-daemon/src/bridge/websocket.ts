@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 export interface UnifiedMessage {
   id: string;
   type: string;
-  namespace: "paseo" | "synapse" | "synapse";
+  namespace: "synapse";
   payload: any;
   timestamp: number;
 }
@@ -149,7 +149,7 @@ export class SynapseWebSocketServer extends EventEmitter {
     console.log(`[Synapse] Message from ${clientId}: ${message.namespace}.${message.type}`);
     
     switch (message.namespace) {
-      case "paseo":
+      case "synapse":
         this.handlePaseoMessage(clientId, message);
         break;
       case "synapse":
@@ -166,19 +166,19 @@ export class SynapseWebSocketServer extends EventEmitter {
   private handlePaseoMessage(clientId: string, message: UnifiedMessage): void {
     switch (message.type) {
       case "agent:start":
-        this.emit("paseo:agent:start", { clientId, payload: message.payload });
+        this.emit("synapse.agent:start", { clientId, payload: message.payload });
         break;
       case "agent:stop":
-        this.emit("paseo:agent:stop", { clientId, payload: message.payload });
+        this.emit("synapse.agent:stop", { clientId, payload: message.payload });
         break;
       case "agent:send":
-        this.emit("paseo:agent:send", { clientId, payload: message.payload });
+        this.emit("synapse.agent:send", { clientId, payload: message.payload });
         break;
       case "logs:subscribe":
-        this.emit("paseo:logs:subscribe", { clientId, payload: message.payload });
+        this.emit("synapse:logs:subscribe", { clientId, payload: message.payload });
         break;
       default:
-        this.emit("paseo:message", { clientId, message });
+        this.emit("synapse:message", { clientId, message });
     }
   }
 

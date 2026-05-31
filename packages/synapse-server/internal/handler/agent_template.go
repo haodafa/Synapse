@@ -14,12 +14,12 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 
-	"github.com/multica-ai/multica/server/internal/agenttmpl"
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/logger"
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
-	"github.com/multica-ai/multica/server/pkg/protocol"
+	"github.com/haodafa/Synapse/server/internal/agenttmpl"
+	"github.com/haodafa/Synapse/server/internal/analytics"
+	"github.com/haodafa/Synapse/server/internal/logger"
+	"github.com/haodafa/Synapse/server/internal/util"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/pkg/protocol"
 )
 
 // agentTemplates is the in-memory catalog loaded once at package init. We

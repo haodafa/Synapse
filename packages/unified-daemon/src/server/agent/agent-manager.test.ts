@@ -946,7 +946,7 @@ test("createAgent passes persistSession to provider create options", async () =>
   rmSync(workdir, { recursive: true, force: true });
 });
 
-test("createAgent injects paseo MCP server when manager has an MCP base URL", async () => {
+test("createAgent injects synapse MCP server when manager has an MCP base URL", async () => {
   const workdir = mkdtempSync(join(tmpdir(), "agent-manager-test-"));
   const storagePath = join(workdir, "agents");
   const storage = new AgentStorage(storagePath, logger);
@@ -983,7 +983,7 @@ test("createAgent injects paseo MCP server when manager has an MCP base URL", as
   });
 
   expect(snapshot.config.mcpServers).toEqual({
-    paseo: {
+    synapse: {
       type: "http",
       url: `http://127.0.0.1:6767/mcp/agents?callerAgentId=${snapshot.id}`,
     },
@@ -995,7 +995,7 @@ test("createAgent injects paseo MCP server when manager has an MCP base URL", as
   expect(client.lastConfig?.mcpServers).toEqual(snapshot.config.mcpServers);
 });
 
-test("createAgent preserves a user-provided paseo MCP config", async () => {
+test("createAgent preserves a user-provided synapse MCP config", async () => {
   const workdir = mkdtempSync(join(tmpdir(), "agent-manager-test-"));
   const storagePath = join(workdir, "agents");
   const storage = new AgentStorage(storagePath, logger);
@@ -1024,17 +1024,17 @@ test("createAgent preserves a user-provided paseo MCP config", async () => {
     provider: "codex",
     cwd: workdir,
     mcpServers: {
-      paseo: {
+      synapse: {
         type: "http",
-        url: "https://example.com/custom-paseo",
+        url: "https://example.com/custom-synapse",
       },
     },
   });
 
   expect(snapshot.config.mcpServers).toEqual({
-    paseo: {
+    synapse: {
       type: "http",
-      url: "https://example.com/custom-paseo",
+      url: "https://example.com/custom-synapse",
     },
   });
   expect(client.lastConfig?.mcpServers).toEqual(snapshot.config.mcpServers);
@@ -1332,20 +1332,20 @@ test("resumeAgentFromPersistence keeps metadata config, applies overrides, and p
     cwd: workdir,
     systemPrompt: "new prompt",
     mcpServers: {
-      paseo: {
+      synapse: {
         type: "stdio",
         command: "node",
-        args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/paseo.sock"],
+        args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/synapse.sock"],
       },
     },
   });
 
   expect(resumed.config.systemPrompt).toBe("new prompt");
   expect(resumed.config.mcpServers).toEqual({
-    paseo: {
+    synapse: {
       type: "stdio",
       command: "node",
-      args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/paseo.sock"],
+      args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/synapse.sock"],
     },
   });
   expect(client.lastResumeOverrides).toMatchObject({
@@ -1353,10 +1353,10 @@ test("resumeAgentFromPersistence keeps metadata config, applies overrides, and p
     modeId: "auto",
     systemPrompt: "new prompt",
     mcpServers: {
-      paseo: {
+      synapse: {
         type: "stdio",
         command: "node",
-        args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/paseo.sock"],
+        args: ["/tmp/mcp-bridge.mjs", "--socket", "/tmp/synapse.sock"],
       },
     },
   });
@@ -5499,7 +5499,7 @@ test("listImportablePersistedAgents narrows to the providerFilter when supplied"
   expect(result.map((d) => d.provider)).toEqual(["claude"]);
 });
 
-test("user_message events wrapping a paseo-system envelope are not added to the timeline", async () => {
+test("user_message events wrapping a synapse-system envelope are not added to the timeline", async () => {
   const workdir = mkdtempSync(join(tmpdir(), "agent-manager-envelope-live-"));
   const storagePath = join(workdir, "agents");
   const storage = new AgentStorage(storagePath, logger);
@@ -5532,7 +5532,7 @@ test("user_message events wrapping a paseo-system envelope are not added to the 
   expect(userMessages[0].text).toBe("plain user message");
 });
 
-test("user_message events wrapping a paseo-system envelope are not restored during history replay", async () => {
+test("user_message events wrapping a synapse-system envelope are not restored during history replay", async () => {
   const workdir = mkdtempSync(join(tmpdir(), "agent-manager-envelope-history-"));
   const storagePath = join(workdir, "agents");
   const storage = new AgentStorage(storagePath, logger);

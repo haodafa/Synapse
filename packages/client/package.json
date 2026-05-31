@@ -33,7 +33,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@synapse/protocol": "0.1.0",
+    "@synapse/protocol": "*",
     "zod": "^3.23.8"
   },
   "devDependencies": {

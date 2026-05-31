@@ -320,7 +320,7 @@ function ensureRelayBuildArtifact(repoRoot: string): void {
     return;
   }
 
-  console.log("[e2e] Building @getsynapse/relay for daemon startup");
+  console.log("[e2e] Building @synapse/relay for daemon startup");
   execSync("npm run build:relay", {
     cwd: repoRoot,
     stdio: "inherit",

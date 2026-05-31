@@ -14,10 +14,10 @@
 #   bash packages/app/maestro/test-workspace-create-android-crash.sh
 #
 # Optional environment:
-#   PASEO_MAESTRO_APP_ID=sh.paseo.debug
-#   PASEO_MAESTRO_DIRECT_ENDPOINT=127.0.0.1:6767
-#   PASEO_MAESTRO_DAEMON_WS_URL=ws://127.0.0.1:6767/ws
-#   PASEO_MAESTRO_PROJECT_PATH=/path/to/git/repo
+#   SYNAPSE_MAESTRO_APP_ID=sh.synapse.debug
+#   SYNAPSE_MAESTRO_DIRECT_ENDPOINT=127.0.0.1:6767
+#   SYNAPSE_MAESTRO_DAEMON_WS_URL=ws://127.0.0.1:6767/ws
+#   SYNAPSE_MAESTRO_PROJECT_PATH=/path/to/git/repo
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
@@ -26,9 +26,9 @@ FLOW_TEMPLATE_DIR="$REPO_ROOT/packages/app/maestro"
 OUT_DIR="/tmp/paseo-workspace-create-android-$(date +%s)"
 CLIENT_EXPORTS="$REPO_ROOT/packages/client/dist/daemon-client.js"
 
-export PASEO_MAESTRO_APP_ID="${PASEO_MAESTRO_APP_ID:-sh.paseo.debug}"
-export PASEO_MAESTRO_DIRECT_ENDPOINT="${PASEO_MAESTRO_DIRECT_ENDPOINT:-127.0.0.1:6767}"
-export PASEO_MAESTRO_DAEMON_WS_URL="${PASEO_MAESTRO_DAEMON_WS_URL:-ws://127.0.0.1:6767/ws}"
+export SYNAPSE_MAESTRO_APP_ID="${SYNAPSE_MAESTRO_APP_ID:-sh.synapse.debug}"
+export SYNAPSE_MAESTRO_DIRECT_ENDPOINT="${SYNAPSE_MAESTRO_DIRECT_ENDPOINT:-127.0.0.1:6767}"
+export SYNAPSE_MAESTRO_DAEMON_WS_URL="${SYNAPSE_MAESTRO_DAEMON_WS_URL:-ws://127.0.0.1:6767/ws}"
 
 require_command() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -48,9 +48,9 @@ render_flow() {
   local target="$2"
   mkdir -p "$(dirname "$target")"
   perl -0pe '
-    s/\$\{PASEO_MAESTRO_APP_ID\}/$ENV{PASEO_MAESTRO_APP_ID}/g;
-    s/\$\{PASEO_MAESTRO_DIRECT_ENDPOINT\}/$ENV{PASEO_MAESTRO_DIRECT_ENDPOINT}/g;
-    s/\$\{PASEO_MAESTRO_PROJECT_NAME\}/$ENV{PASEO_MAESTRO_PROJECT_NAME}/g;
+    s/\$\{SYNAPSE_MAESTRO_APP_ID\}/$ENV{SYNAPSE_MAESTRO_APP_ID}/g;
+    s/\$\{SYNAPSE_MAESTRO_DIRECT_ENDPOINT\}/$ENV{SYNAPSE_MAESTRO_DIRECT_ENDPOINT}/g;
+    s/\$\{SYNAPSE_MAESTRO_PROJECT_NAME\}/$ENV{SYNAPSE_MAESTRO_PROJECT_NAME}/g;
   ' "$source" > "$target"
 }
 
@@ -70,31 +70,31 @@ fi
 
 mkdir -p "$OUT_DIR"
 
-if [ -z "${PASEO_MAESTRO_PROJECT_PATH:-}" ]; then
+if [ -z "${SYNAPSE_MAESTRO_PROJECT_PATH:-}" ]; then
   PROJECT_PARENT="$(mktemp -d /tmp/paseo-maestro-project-XXXXXX)"
   PROJECT_BASENAME="aaa-workspace-create-android-$(basename "$PROJECT_PARENT")"
-  export PASEO_MAESTRO_PROJECT_PATH="$PROJECT_PARENT/$PROJECT_BASENAME"
-  mkdir -p "$PASEO_MAESTRO_PROJECT_PATH"
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" init >/dev/null
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" checkout -b main >/dev/null 2>&1 || true
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" config user.name "Paseo Maestro"
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" config user.email "maestro@getpaseo.local"
-  printf "# Workspace create Android repro\n" > "$PASEO_MAESTRO_PROJECT_PATH/README.md"
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" add README.md
-  git -C "$PASEO_MAESTRO_PROJECT_PATH" commit -m "Initial commit" >/dev/null
+  export SYNAPSE_MAESTRO_PROJECT_PATH="$PROJECT_PARENT/$PROJECT_BASENAME"
+  mkdir -p "$SYNAPSE_MAESTRO_PROJECT_PATH"
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" init >/dev/null
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" checkout -b main >/dev/null 2>&1 || true
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" config user.name "Synapse Maestro"
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" config user.email "maestro@synapse.local"
+  printf "# Workspace create Android repro\n" > "$SYNAPSE_MAESTRO_PROJECT_PATH/README.md"
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" add README.md
+  git -C "$SYNAPSE_MAESTRO_PROJECT_PATH" commit -m "Initial commit" >/dev/null
 else
   PROJECT_PARENT=""
 fi
 
-export PASEO_MAESTRO_PROJECT_NAME="${PASEO_MAESTRO_PROJECT_NAME:-$(basename "$PASEO_MAESTRO_PROJECT_PATH")}"
+export SYNAPSE_MAESTRO_PROJECT_NAME="${SYNAPSE_MAESTRO_PROJECT_NAME:-$(basename "$SYNAPSE_MAESTRO_PROJECT_PATH")}"
 
 echo "=== Workspace Create Android Crash Harness ==="
 echo "Output dir: $OUT_DIR"
-echo "App id: $PASEO_MAESTRO_APP_ID"
-echo "Android direct endpoint: $PASEO_MAESTRO_DIRECT_ENDPOINT"
-echo "Daemon websocket: $PASEO_MAESTRO_DAEMON_WS_URL"
-echo "Project: $PASEO_MAESTRO_PROJECT_PATH"
-echo "Project name: $PASEO_MAESTRO_PROJECT_NAME"
+echo "App id: $SYNAPSE_MAESTRO_APP_ID"
+echo "Android direct endpoint: $SYNAPSE_MAESTRO_DIRECT_ENDPOINT"
+echo "Daemon websocket: $SYNAPSE_MAESTRO_DAEMON_WS_URL"
+echo "Project: $SYNAPSE_MAESTRO_PROJECT_PATH"
+echo "Project name: $SYNAPSE_MAESTRO_PROJECT_NAME"
 
 FLOW="$OUT_DIR/workspace-create-android-crash.rendered.yaml"
 render_flow_tree
@@ -111,8 +111,8 @@ import { pathToFileURL } from "node:url";
 import WebSocket from "ws";
 
 const repoRoot = process.env.REPO_ROOT;
-const projectPath = process.env.PASEO_MAESTRO_PROJECT_PATH;
-const daemonUrl = process.env.PASEO_MAESTRO_DAEMON_WS_URL;
+const projectPath = process.env.SYNAPSE_MAESTRO_PROJECT_PATH;
+const daemonUrl = process.env.SYNAPSE_MAESTRO_DAEMON_WS_URL;
 if (!repoRoot || !projectPath || !daemonUrl) {
   throw new Error("Missing required environment for daemon project setup.");
 }

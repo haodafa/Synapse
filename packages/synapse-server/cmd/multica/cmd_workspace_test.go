@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 // newWorkspaceSwitchTestCmd builds a standalone cobra command with the flags
@@ -38,11 +38,11 @@ func TestRunWorkspaceSwitch(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	// Isolate HOME so the test never touches the developer's ~/.multica.
+	// Isolate HOME so the test never touches the developer's ~/.synapse.
 	t.Setenv("HOME", t.TempDir())
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_TOKEN", "test-token")
-	t.Setenv("MULTICA_WORKSPACE_ID", "")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "")
 
 	t.Run("switches by slug and persists workspace_id", func(t *testing.T) {
 		cmd := newWorkspaceSwitchTestCmd()
@@ -96,7 +96,7 @@ func TestRunWorkspaceSwitch(t *testing.T) {
 
 		// Verify the staging profile config landed in the expected path.
 		path, _ := cli.CLIConfigPathForProfile("staging")
-		wantSuffix := filepath.Join(".multica", "profiles", "staging", "config.json")
+		wantSuffix := filepath.Join(".synapse", "profiles", "staging", "config.json")
 		if !strings.HasSuffix(path, wantSuffix) {
 			t.Errorf("staging config path = %q, want suffix %q", path, wantSuffix)
 		}

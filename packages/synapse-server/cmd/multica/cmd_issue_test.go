@@ -15,7 +15,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 // stderrCapture redirects os.Stderr through a pipe so a test can assert on
@@ -268,9 +268,9 @@ func TestRunIssueCreateSendsAllowDuplicate(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	cmd := newIssueCreateTestCmd()
 	_ = cmd.Flags().Set("title", "Duplicate allowed")
@@ -303,9 +303,9 @@ func TestRunIssueCreateShowsDuplicateMessage(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	cmd := newIssueCreateTestCmd()
 	_ = cmd.Flags().Set("title", "SH-PM-SYNTH-01 Synthesize recommendation-to-shortlist planning outputs")
@@ -688,9 +688,9 @@ func TestRunIssueRunMessagesResolvesShortTaskPrefix(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	cmd := &cobra.Command{Use: "run-messages"}
 	cmd.Flags().String("output", "json", "")
@@ -930,7 +930,7 @@ func TestResolveAssigneeRespectsKinds(t *testing.T) {
 }
 
 // TestResolveAssigneeExactMatchWins covers the substring-collision scenario from
-// multica-ai/multica#1620: when one name is a substring of another (e.g.
+// synapse.ai/synapse#1620: when one name is a substring of another (e.g.
 // "reviewer" vs "peer-reviewer"), an exact match on the shorter name must
 // short-circuit substring matching instead of erroring out as ambiguous.
 func TestResolveAssigneeExactMatchWins(t *testing.T) {
@@ -999,7 +999,7 @@ func TestResolveAssigneeExactMatchWins(t *testing.T) {
 }
 
 // TestResolveAssigneeByID covers the ID/ShortID escape hatch from
-// multica-ai/multica#1620: passing a full UUID or its 8-char prefix must
+// synapse.ai/synapse#1620: passing a full UUID or its 8-char prefix must
 // resolve directly without going through name matching.
 func TestResolveAssigneeByID(t *testing.T) {
 	membersResp := []map[string]any{
@@ -1309,8 +1309,8 @@ func TestPickAssigneeFromFlags(t *testing.T) {
 // memberOrAgentKinds because their target schema rejects squads
 // (subscriber: server/internal/handler/handler.go:414;
 // project: server/migrations/034_projects.up.sql:10). Without this gating,
-// `multica issue subscriber add --user "<SquadName>"` or
-// `multica project create --lead "<SquadName>"` would resolve to
+// `synapse issue subscriber add --user "<SquadName>"` or
+// `synapse project create --lead "<SquadName>"` would resolve to
 // (squad, ...) and surface as a 500/403 server-side instead of a clean
 // CLI-side resolution error.
 func TestPickAssigneeFromFlagsMemberOrAgentKinds(t *testing.T) {
@@ -1590,9 +1590,9 @@ func TestRunIssueCommentListFlagGuards(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	cases := []struct {
 		name    string
@@ -1707,9 +1707,9 @@ func TestRunIssueCommentList_ThreadTailPassesThroughAndPrintsReplyCursor(t *test
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	// Redirect stderr so we can assert on the "Next reply cursor" line —
 	// that's the user-visible signal that the CLI knew it was paging
@@ -1759,9 +1759,9 @@ func TestRunIssueCommentList_RecentStillLabelsCursorAsThread(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	stderr := captureStderr(t)
 	defer stderr.restore()
@@ -1798,9 +1798,9 @@ func TestRunIssueCommentList_DoesNotPrintShowingPreamble(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	t.Setenv("MULTICA_SERVER_URL", srv.URL)
-	t.Setenv("MULTICA_WORKSPACE_ID", "ws-1")
-	t.Setenv("MULTICA_TOKEN", "test-token")
+	t.Setenv("SYNAPSE_SERVER_URL", srv.URL)
+	t.Setenv("SYNAPSE_WORKSPACE_ID", "ws-1")
+	t.Setenv("SYNAPSE_TOKEN", "test-token")
 
 	stderr := captureStderr(t)
 	defer stderr.restore()

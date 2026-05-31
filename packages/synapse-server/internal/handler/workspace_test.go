@@ -286,7 +286,7 @@ INSERT INTO agent_runtime (
     workspace_id, daemon_id, name, runtime_mode, provider, status,
     device_info, metadata, owner_id, last_seen_at
 )
-VALUES ($1, $2, 'Target Runtime', 'local', 'multica_daemon', 'online', '', '{}'::jsonb, $3, now())
+VALUES ($1, $2, 'Target Runtime', 'local', 'synapse_daemon', 'online', '', '{}'::jsonb, $3, now())
 RETURNING id
 `, wsID, daemonID, targetUserID).Scan(&runtimeID); err != nil {
 		t.Fatalf("insert runtime: %v", err)
@@ -446,7 +446,7 @@ INSERT INTO agent_runtime (
     workspace_id, daemon_id, name, runtime_mode, provider, status,
     device_info, metadata, owner_id, last_seen_at
 )
-VALUES ($1, $2, 'Other Runtime', 'local', 'multica_daemon', 'online', '', '{}'::jsonb, $3, now())
+VALUES ($1, $2, 'Other Runtime', 'local', 'synapse_daemon', 'online', '', '{}'::jsonb, $3, now())
 RETURNING id
 `, fx.WorkspaceID, "daemon-revoke-reassign-other", testUserID).Scan(&otherRuntimeID); err != nil {
 		t.Fatalf("insert other runtime: %v", err)

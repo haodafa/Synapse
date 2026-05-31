@@ -61,7 +61,7 @@ function getGitDirForWorktreeRoot(worktreeRoot: string): string {
 
 export function getSynapseWorktreeMetadataPath(worktreeRoot: string): string {
   const gitDir = getGitDirForWorktreeRoot(worktreeRoot);
-  return join(gitDir, "paseo", "worktree.json");
+  return join(gitDir, "synapse", "worktree.json");
 }
 
 export function normalizeBaseRefName(input: string): string {
@@ -91,7 +91,7 @@ export function writeSynapseWorktreeMetadata(
   }
 
   const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
-  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
+  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "synapse"), { recursive: true });
   const metadata: SynapseWorktreeMetadata = { version: 1, baseRefName };
   writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
 }
@@ -110,7 +110,7 @@ export function writeSynapseWorktreeRuntimeMetadata(
   }
 
   const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
-  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
+  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "synapse"), { recursive: true });
   const next: SynapseWorktreeMetadata = {
     version: 2,
     baseRefName: current.baseRefName,
@@ -185,7 +185,7 @@ export function requireSynapseWorktreeBaseRefName(worktreeRoot: string): string 
   const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
   const metadata = readSynapseWorktreeMetadata(worktreeRoot);
   if (!metadata) {
-    throw new Error(`Missing Paseo worktree base metadata: ${metadataPath}`);
+    throw new Error(`Missing Synapse worktree base metadata: ${metadataPath}`);
   }
   return metadata.baseRefName;
 }
@@ -206,6 +206,6 @@ function writeSynapseWorktreeMetadataFile(
   metadata: SynapseWorktreeMetadata,
 ): void {
   const metadataPath = getSynapseWorktreeMetadataPath(worktreeRoot);
-  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "paseo"), { recursive: true });
+  mkdirSync(join(getGitDirForWorktreeRoot(worktreeRoot), "synapse"), { recursive: true });
   writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, "utf8");
 }

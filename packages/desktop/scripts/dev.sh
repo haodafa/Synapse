@@ -14,13 +14,13 @@ npm run build:main
 EXPO_PORT=$("$ROOT_DIR/node_modules/.bin/get-port" 8081 8082 8083 8084 8085)
 export EXPO_PORT
 
-REMOTE_DEBUGGING_PORT="${PASEO_ELECTRON_REMOTE_DEBUGGING_PORT:-9223}"
-export PASEO_ELECTRON_FLAGS="${PASEO_ELECTRON_FLAGS:+$PASEO_ELECTRON_FLAGS }--remote-debugging-port=$REMOTE_DEBUGGING_PORT"
+REMOTE_DEBUGGING_PORT="${SYNAPSE_ELECTRON_REMOTE_DEBUGGING_PORT:-9223}"
+export SYNAPSE_ELECTRON_FLAGS="${SYNAPSE_ELECTRON_FLAGS:+$SYNAPSE_ELECTRON_FLAGS }--remote-debugging-port=$REMOTE_DEBUGGING_PORT"
 
 # Allow any origin in dev so Electron on random localhost ports can reach
 # the daemon websocket. Safe here because this script is development-only
 # and the daemon still binds to localhost.
-export PASEO_CORS_ORIGINS="*"
+export SYNAPSE_CORS_ORIGINS="*"
 
 echo "══════════════════════════════════════════════════════"
 echo "  Paseo Desktop Dev"
@@ -34,5 +34,5 @@ exec "$ROOT_DIR/node_modules/.bin/concurrently" \
   --kill-others \
   --names "metro,electron" \
   --prefix-colors "magenta,cyan" \
-  "cd '$APP_DIR' && PASEO_WEB_PLATFORM=electron npx expo start --port $EXPO_PORT" \
+  "cd '$APP_DIR' && SYNAPSE_WEB_PLATFORM=electron npx expo start --port $EXPO_PORT" \
   "$ROOT_DIR/node_modules/.bin/wait-on tcp:$EXPO_PORT && EXPO_DEV_URL=http://localhost:$EXPO_PORT electron '$DESKTOP_DIR'"

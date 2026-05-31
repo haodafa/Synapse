@@ -19,9 +19,11 @@
     }
   },
   "scripts": {
-    "build": "node -e \"require('node:fs').rmSync('dist',{ recursive: true, force: true })\" && tsc -p tsconfig.json --incremental false"
+    "build": "node -e \"require('node:fs').rmSync('dist',{ recursive: true, force: true })\" && tsc -p tsconfig.json --incremental false",
+    "typecheck": "tsc --noEmit",
+    "test": "echo 'no tests'"
   },
   "devDependencies": {
-    "typescript": "^5.2.2"
+    "typescript": "^5.9.3"
   }
 }

@@ -17,10 +17,10 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/multica-ai/multica/server/internal/analytics"
-	"github.com/multica-ai/multica/server/internal/auth"
-	"github.com/multica-ai/multica/server/internal/events"
-	"github.com/multica-ai/multica/server/internal/realtime"
+	"github.com/haodafa/Synapse/server/internal/analytics"
+	"github.com/haodafa/Synapse/server/internal/auth"
+	"github.com/haodafa/Synapse/server/internal/events"
+	"github.com/haodafa/Synapse/server/internal/realtime"
 )
 
 var (
@@ -44,7 +44,7 @@ func TestMain(m *testing.M) {
 	ctx := context.Background()
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://multica:multica@localhost:5432/multica?sslmode=disable"
+		dbURL = "postgres://synapse:synapse@localhost:5432/synapse?sslmode=disable"
 	}
 
 	pool, err := pgxpool.New(ctx, dbURL)

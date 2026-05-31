@@ -11,7 +11,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/multica-ai/multica/server/internal/cli"
+	"github.com/haodafa/Synapse/server/internal/cli"
 )
 
 var workspaceCmd = &cobra.Command{
@@ -60,11 +60,11 @@ var workspaceSwitchCmd = &cobra.Command{
 	Long: "Sets the default workspace for the current profile after verifying you " +
 		"have access to it. Accepts a full UUID, a slug, or a short UUID " +
 		"prefix (≥4 hex chars) as shown in 'workspace list'. Subsequent " +
-		"commands without --workspace-id or MULTICA_WORKSPACE_ID will target " +
+		"commands without --workspace-id or SYNAPSE_WORKSPACE_ID will target " +
 		"this workspace.\n\n" +
 		"Resolution priority (highest to lowest): --workspace-id flag, " +
-		"MULTICA_WORKSPACE_ID env, profile default (set by this command).\n\n" +
-		"For low-level use, 'multica config set workspace_id <id>' writes the " +
+		"SYNAPSE_WORKSPACE_ID env, profile default (set by this command).\n\n" +
+		"For low-level use, 'synapse config set workspace_id <id>' writes the " +
 		"same setting without verification.",
 	Args: exactArgs(1),
 	RunE: runWorkspaceSwitch,
@@ -108,7 +108,7 @@ func fetchWorkspaces(ctx context.Context, cmd *cobra.Command) ([]workspaceSummar
 	serverURL := resolveServerURL(cmd)
 	token := resolveToken(cmd)
 	if token == "" {
-		return nil, fmt.Errorf("not authenticated: run 'multica login' first")
+		return nil, fmt.Errorf("not authenticated: run 'synapse login' first")
 	}
 
 	client := cli.NewAPIClient(serverURL, "", token)
@@ -153,9 +153,9 @@ func runWorkspaceList(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 	if currentID != "" {
-		fmt.Fprintln(os.Stderr, "\n* = current default workspace (use 'multica workspace switch <id|slug|prefix>' to change)")
+		fmt.Fprintln(os.Stderr, "\n* = current default workspace (use 'synapse workspace switch <id|slug|prefix>' to change)")
 	} else {
-		fmt.Fprintln(os.Stderr, "\nNo default workspace set. Use 'multica workspace switch <id|slug|prefix>' to pick one.")
+		fmt.Fprintln(os.Stderr, "\nNo default workspace set. Use 'synapse workspace switch <id|slug|prefix>' to pick one.")
 	}
 	fmt.Fprintln(os.Stderr, "Tip: pass the ID column, SLUG, or full UUID (--full-id) to 'workspace get/update/switch'.")
 	return nil
@@ -209,7 +209,7 @@ func resolveWorkspaceByIDOrSlug(workspaces []workspaceSummary, target string) (w
 		}
 	}
 
-	return workspaceSummary{}, fmt.Errorf("workspace %q not found or you do not have access; run 'multica workspace list' to see options", target)
+	return workspaceSummary{}, fmt.Errorf("workspace %q not found or you do not have access; run 'synapse workspace list' to see options", target)
 }
 
 func ambiguousWorkspacePrefixError(input string, matches []workspaceSummary) error {
@@ -294,7 +294,7 @@ func runWorkspaceGet(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if wsID == "" {
-		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set MULTICA_WORKSPACE_ID")
+		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set SYNAPSE_WORKSPACE_ID")
 	}
 
 	client, err := newAPIClient(cmd)
@@ -380,7 +380,7 @@ func runWorkspaceUpdate(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if wsID == "" {
-		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set MULTICA_WORKSPACE_ID")
+		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set SYNAPSE_WORKSPACE_ID")
 	}
 
 	body, err := buildWorkspaceUpdateBody(cmd)
@@ -437,7 +437,7 @@ func runWorkspaceMembers(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	if wsID == "" {
-		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set MULTICA_WORKSPACE_ID")
+		return fmt.Errorf("workspace ID is required: pass an id/slug/prefix as argument or set SYNAPSE_WORKSPACE_ID")
 	}
 
 	client, err := newAPIClient(cmd)

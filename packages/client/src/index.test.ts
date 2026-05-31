@@ -1,6 +1,6 @@
 import { afterEach, expect, test, vi } from "vitest";
 import { createSynapseClient } from "./index.js";
-import type { PaseoAgent, SynapseClient, PaseoProviderConfig, PaseoWorkspace } from "./index.js";
+import type { SynapseAgent, SynapseClient, SynapseProviderConfig, SynapseWorkspace } from "./index.js";
 
 type FakeWebSocketHandler = (...args: unknown[]) => void;
 
@@ -96,7 +96,7 @@ async function connectClient(): Promise<{ client: SynapseClient; ws: FakeWebSock
     clientType: "cli",
     protocolVersion: 1,
   });
-  expect(hello.clientId).toEqual(expect.stringMatching(/^paseo-sdk-/));
+  expect(hello.clientId).toEqual(expect.stringMatching(/^synapse-sdk-/));
   ws.message(
     sessionMessage({
       type: "status",
@@ -113,7 +113,7 @@ async function connectClient(): Promise<{ client: SynapseClient; ws: FakeWebSock
   return { client, ws };
 }
 
-function createWorkspace(input: Partial<PaseoWorkspace> = {}): PaseoWorkspace {
+function createWorkspace(input: Partial<SynapseWorkspace> = {}): SynapseWorkspace {
   return {
     id: "workspace_sdk",
     projectId: "project_sdk",
@@ -133,7 +133,7 @@ function createWorkspace(input: Partial<PaseoWorkspace> = {}): PaseoWorkspace {
   };
 }
 
-function createAgent(input: Partial<PaseoAgent> = {}): PaseoAgent {
+function createAgent(input: Partial<SynapseAgent> = {}): SynapseAgent {
   return {
     id: "agent_sdk",
     provider: "codex",
@@ -747,7 +747,7 @@ test("provider config builders shape existing create-agent config fields", async
     modeId: "full-access",
     thinkingOptionId: "high",
     featureValues: { webSearch: true },
-  } satisfies PaseoProviderConfig;
+  } satisfies SynapseProviderConfig;
 
   expect(provider).toEqual(expectedProviderConfig);
 

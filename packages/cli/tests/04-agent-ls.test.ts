@@ -10,57 +10,57 @@
  * - JSON output format
  *
  * Tests:
- * - paseo --help shows ls command
- * - paseo ls --help shows options
- * - paseo ls returns empty list or error when no daemon
- * - paseo ls --json returns valid JSON (or error)
- * - paseo ls -a flag is accepted
- * - paseo ls -g flag is accepted
- * - paseo ls does not support --ui
+ * - synapse --help shows ls command
+ * - synapse ls --help shows options
+ * - synapse ls returns empty list or error when no daemon
+ * - synapse ls --json returns valid JSON (or error)
+ * - synapse ls -a flag is accepted
+ * - synapse ls -g flag is accepted
+ * - synapse ls does not support --ui
  */
 
 import assert from "node:assert";
 import { mkdtemp, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
-import { runLocalPaseo } from "./helpers/local-cli.ts";
+import { runLocalSynapse } from "./helpers/local-cli.ts";
 
 console.log("=== LS Command Tests ===\n");
 
 // Get random port that's definitely not in use (never 6767)
 const port = 10000 + Math.floor(Math.random() * 50000);
-const paseoHome = await mkdtemp(join(tmpdir(), "paseo-test-home-"));
+const synapseHome = await mkdtemp(join(tmpdir(), "synapse-test-home-"));
 
 try {
-  // Test 1: paseo --help shows ls command
+  // Test 1: synapse --help shows ls command
   {
-    console.log("Test 1: paseo --help shows ls command");
-    const result = await runLocalPaseo(["--help"]);
-    assert.strictEqual(result.exitCode, 0, "paseo --help should exit 0");
+    console.log("Test 1: synapse --help shows ls command");
+    const result = await runLocalSynapse(["--help"]);
+    assert.strictEqual(result.exitCode, 0, "synapse --help should exit 0");
     assert(result.stdout.includes("ls"), "help should mention ls command");
-    console.log("✓ paseo --help shows ls command\n");
+    console.log("✓ synapse --help shows ls command\n");
   }
 
-  // Test 2: paseo ls --help shows options
+  // Test 2: synapse ls --help shows options
   {
-    console.log("Test 2: paseo ls --help shows options");
-    const result = await runLocalPaseo(["ls", "--help"]);
-    assert.strictEqual(result.exitCode, 0, "paseo ls --help should exit 0");
+    console.log("Test 2: synapse ls --help shows options");
+    const result = await runLocalSynapse(["ls", "--help"]);
+    assert.strictEqual(result.exitCode, 0, "synapse ls --help should exit 0");
     assert(result.stdout.includes("-a"), "help should mention -a flag");
     assert(result.stdout.includes("--all"), "help should mention --all flag");
     assert(result.stdout.includes("-g"), "help should mention -g flag");
     assert(result.stdout.includes("--global"), "help should mention --global flag");
     assert(result.stdout.includes("--host"), "help should mention --host option");
     assert(!result.stdout.includes("--ui"), "help should not mention --ui");
-    console.log("✓ paseo ls --help shows options\n");
+    console.log("✓ synapse ls --help shows options\n");
   }
 
-  // Test 3: paseo ls returns error when no daemon running
+  // Test 3: synapse ls returns error when no daemon running
   {
-    console.log("Test 3: paseo ls handles daemon not running");
-    const result = await runLocalPaseo(["ls"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 3: synapse ls handles daemon not running");
+    const result = await runLocalSynapse(["ls"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     // Should fail because daemon not running
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
@@ -71,16 +71,16 @@ try {
       output.toLowerCase().includes("cannot");
     assert(hasError, "error message should mention connection issue");
     assert(output.includes("--host <host:port>"), "error message should mention --host");
-    assert(output.includes("PASEO_HOST"), "error message should mention PASEO_HOST");
-    console.log("✓ paseo ls handles daemon not running\n");
+    assert(output.includes("SYNAPSE_HOST"), "error message should mention SYNAPSE_HOST");
+    console.log("✓ synapse ls handles daemon not running\n");
   }
 
-  // Test 4: paseo ls --json returns valid JSON error
+  // Test 4: synapse ls --json returns valid JSON error
   {
-    console.log("Test 4: paseo ls --json handles errors");
-    const result = await runLocalPaseo(["ls", "--json"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 4: synapse ls --json handles errors");
+    const result = await runLocalSynapse(["ls", "--json"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     // Should still fail (daemon not running)
     assert.notStrictEqual(result.exitCode, 0, "should fail when daemon not running");
@@ -89,63 +89,63 @@ try {
     if (output.length > 0) {
       try {
         JSON.parse(output);
-        console.log("✓ paseo ls --json outputs valid JSON error\n");
+        console.log("✓ synapse ls --json outputs valid JSON error\n");
       } catch {
         // Empty or stderr-only output is acceptable
-        console.log("✓ paseo ls --json handled error (output may be in stderr)\n");
+        console.log("✓ synapse ls --json handled error (output may be in stderr)\n");
       }
     } else {
-      console.log("✓ paseo ls --json handled error gracefully\n");
+      console.log("✓ synapse ls --json handled error gracefully\n");
     }
   }
 
-  // Test 5: paseo ls -a flag is accepted
+  // Test 5: synapse ls -a flag is accepted
   {
-    console.log("Test 5: paseo ls -a flag is accepted");
-    const result = await runLocalPaseo(["ls", "-a"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 5: synapse ls -a flag is accepted");
+    const result = await runLocalSynapse(["ls", "-a"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     // Will fail due to no daemon, but flag should be parsed without error
     // (no "unknown option" error)
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -a flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ paseo ls -a flag is accepted\n");
+    console.log("✓ synapse ls -a flag is accepted\n");
   }
 
-  // Test 6: paseo ls -g flag is accepted
+  // Test 6: synapse ls -g flag is accepted
   {
-    console.log("Test 6: paseo ls -g flag is accepted");
-    const result = await runLocalPaseo(["ls", "-g"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 6: synapse ls -g flag is accepted");
+    const result = await runLocalSynapse(["ls", "-g"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -g flag");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ paseo ls -g flag is accepted\n");
+    console.log("✓ synapse ls -g flag is accepted\n");
   }
 
-  // Test 7: paseo ls -ag combined flags are accepted
+  // Test 7: synapse ls -ag combined flags are accepted
   {
-    console.log("Test 7: paseo ls -ag combined flags are accepted");
-    const result = await runLocalPaseo(["ls", "-ag"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 7: synapse ls -ag combined flags are accepted");
+    const result = await runLocalSynapse(["ls", "-ag"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -ag flags");
     assert(!output.includes("error: option"), "should not have option parsing error");
-    console.log("✓ paseo ls -ag combined flags are accepted\n");
+    console.log("✓ synapse ls -ag combined flags are accepted\n");
   }
 
   // Test 8: -q (quiet) flag is accepted globally
   {
     console.log("Test 8: -q (quiet) flag is accepted");
-    const result = await runLocalPaseo(["-q", "ls"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    const result = await runLocalSynapse(["-q", "ls"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     const output = result.stdout + result.stderr;
     assert(!output.includes("unknown option"), "should accept -q flag");
@@ -153,21 +153,21 @@ try {
     console.log("✓ -q (quiet) flag is accepted\n");
   }
 
-  // Test 9: paseo ls --ui is rejected (flag removed)
+  // Test 9: synapse ls --ui is rejected (flag removed)
   {
-    console.log("Test 9: paseo ls --ui is rejected");
-    const result = await runLocalPaseo(["ls", "--ui"], {
-      PASEO_HOST: `localhost:${port}`,
-      PASEO_HOME: paseoHome,
+    console.log("Test 9: synapse ls --ui is rejected");
+    const result = await runLocalSynapse(["ls", "--ui"], {
+      SYNAPSE_HOST: `localhost:${port}`,
+      SYNAPSE_HOME: synapseHome,
     });
     assert.notStrictEqual(result.exitCode, 0, "should fail for removed --ui flag");
     const output = result.stdout + result.stderr;
     assert(output.includes("unknown option"), "should report unknown option for --ui");
-    console.log("✓ paseo ls --ui is rejected\n");
+    console.log("✓ synapse ls --ui is rejected\n");
   }
 } finally {
   // Clean up temp directory
-  await rm(paseoHome, { recursive: true, force: true });
+  await rm(synapseHome, { recursive: true, force: true });
 }
 
 console.log("=== All ls tests passed ===");

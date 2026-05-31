@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/multica-ai/multica/server/internal/service"
-	"github.com/multica-ai/multica/server/pkg/agent"
+	"github.com/haodafa/Synapse/server/internal/service"
+	"github.com/haodafa/Synapse/server/pkg/agent"
 )
 
 // TestQuickCreateIssueParentTrustBoundary locks the server-side trust boundary

@@ -13,7 +13,7 @@ function expandHomeDir(input: string): string {
 }
 
 export function resolveSynapseHome(env: NodeJS.ProcessEnv = process.env): string {
-  const raw = env.SYNAPSE_HOME ?? "~/.paseo";
+  const raw = env.SYNAPSE_HOME ?? "~/.synapse";
   const resolved = path.resolve(expandHomeDir(raw));
   ensurePrivateDirectory(resolved);
   return resolved;

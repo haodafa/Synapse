@@ -816,7 +816,7 @@ export const ReviewAttachmentCommentSchema = z.object({
 
 export const ReviewAttachmentSchema = z.object({
   type: z.literal("review"),
-  mimeType: z.literal("application/paseo-review"),
+  mimeType: z.literal("application/synapse-review"),
   cwd: z.string(),
   mode: z.enum(["uncommitted", "base"]),
   baseRef: z.string().nullable().optional(),
@@ -1461,7 +1461,7 @@ export const StashPopRequestSchema = z.object({
 export const StashListRequestSchema = z.object({
   type: z.literal("stash_list_request"),
   cwd: z.string(),
-  /** If true, only return paseo-created stashes. Default true. */
+  /** If true, only return synapse-created stashes. Default true. */
   paseoOnly: z.boolean().optional(),
   requestId: z.string(),
 });

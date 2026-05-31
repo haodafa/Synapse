@@ -47,7 +47,7 @@ func TestSubIssueCreationSectionPresentForIssueRuns(t *testing.T) {
 				"**Choosing `--status` when creating sub-issues.**",
 				"`--status todo` = **start now**",
 				"`--status backlog` = **wait**",
-				"`multica issue status <child-id> todo`",
+				"`synapse issue status <child-id> todo`",
 				"all `--status todo`",
 				"`--status backlog` from the start",
 			} {
@@ -90,7 +90,7 @@ func TestBriefHasNoParentNotificationGuidance(t *testing.T) {
 			// Old "do it yourself" framing (PR #2918).
 			"## Parent / Sub-issue Protocol",
 			"**Tell the parent when you finish a child.**",
-			"multica issue comment add <parent-id>",
+			"synapse issue comment add <parent-id>",
 			"with NO `--parent`",
 			"link the child as `[MUL-",
 			"`@mention` the parent's assignee",
@@ -121,7 +121,7 @@ func TestBriefHasNoParentNotificationGuidance(t *testing.T) {
 			// The protocol must no longer emit a placeholder
 			// `<this-issue-id>` status flip — the workflow above owns
 			// that command with the real issue id substituted.
-			"`multica issue status <this-issue-id> in_review`",
+			"`synapse issue status <this-issue-id> in_review`",
 			// Non-existent CLI form Elon's earlier review flagged.
 			"issue list --parent",
 		} {
@@ -134,7 +134,7 @@ func TestBriefHasNoParentNotificationGuidance(t *testing.T) {
 
 // Comment-triggered briefs must NOT carry any unconditional status-flip
 // command targeting the current issue. Previous revisions had a
-// dedicated protocol step that wrote `multica issue status <this-issue-id> in_review`;
+// dedicated protocol step that wrote `synapse issue status <this-issue-id> in_review`;
 // the comment-triggered workflow rule "Do NOT change the issue status
 // unless the comment explicitly asks for it" must remain the source of
 // truth (Elon's blocking review on PR #2918).
@@ -146,7 +146,7 @@ func TestCommentTriggeredProtocolDoesNotForceInReview(t *testing.T) {
 	}
 	out := buildMetaSkillContent("claude", ctx)
 
-	if strings.Contains(out, "`multica issue status <this-issue-id> in_review`") {
+	if strings.Contains(out, "`synapse issue status <this-issue-id> in_review`") {
 		t.Errorf("comment-triggered brief must not contain a placeholder `<this-issue-id> in_review` flip — that conflicts with the comment-triggered \"do not change status unless asked\" rule")
 	}
 
@@ -166,7 +166,7 @@ func TestAssignmentTriggeredProtocolStillFlipsInReview(t *testing.T) {
 	ctx := TaskContextForEnv{IssueID: issueID}
 	out := buildMetaSkillContent("claude", ctx)
 
-	want := "`multica issue status " + issueID + " in_review`"
+	want := "`synapse issue status " + issueID + " in_review`"
 	if !strings.Contains(out, want) {
 		t.Errorf("assignment-triggered brief must still flip to in_review on completion (expected %q in the workflow above)", want)
 	}

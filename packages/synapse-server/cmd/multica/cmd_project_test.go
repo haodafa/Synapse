@@ -25,14 +25,14 @@ func newProjectResourceUpdateTestCmd() *cobra.Command {
 }
 
 // TestBuildResourceRefFromFlagsGithubMergesHint pins the nit fix from MUL-2662
-// review round 2: `multica project resource update <p> <r> --default-branch-hint x`
+// review round 2: `synapse project resource update <p> <r> --default-branch-hint x`
 // must rebuild the full github_repo payload by merging the existing `url` —
 // otherwise the server sees `{default_branch_hint: "x"}` and 400s.
 func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 	t.Run("hint-only edit preserves existing url", func(t *testing.T) {
 		cmd := newProjectResourceUpdateTestCmd()
 		_ = cmd.Flags().Set("default-branch-hint", "main")
-		existing := map[string]any{"url": "https://github.com/multica-ai/multica"}
+		existing := map[string]any{"url": "https://github.com/haodafa/Synapse"}
 
 		ref, has, err := buildResourceRefFromFlags(cmd, "github_repo", existing)
 		if err != nil {
@@ -41,7 +41,7 @@ func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 		if !has {
 			t.Fatalf("expected has=true when default-branch-hint is set")
 		}
-		if ref["url"] != "https://github.com/multica-ai/multica" {
+		if ref["url"] != "https://github.com/haodafa/Synapse" {
 			t.Errorf("expected merged url, got %v", ref["url"])
 		}
 		if ref["default_branch_hint"] != "main" {
@@ -53,7 +53,7 @@ func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 		cmd := newProjectResourceUpdateTestCmd()
 		_ = cmd.Flags().Set("default-branch-hint", "")
 		existing := map[string]any{
-			"url":                 "https://github.com/multica-ai/multica",
+			"url":                 "https://github.com/haodafa/Synapse",
 			"default_branch_hint": "stale",
 		}
 		ref, has, err := buildResourceRefFromFlags(cmd, "github_repo", existing)
@@ -63,7 +63,7 @@ func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 		if !has {
 			t.Fatalf("expected has=true")
 		}
-		if ref["url"] != "https://github.com/multica-ai/multica" {
+		if ref["url"] != "https://github.com/haodafa/Synapse" {
 			t.Errorf("expected url to survive empty-hint clear, got %v", ref["url"])
 		}
 		if _, ok := ref["default_branch_hint"]; ok {
@@ -73,9 +73,9 @@ func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 
 	t.Run("url override survives merge", func(t *testing.T) {
 		cmd := newProjectResourceUpdateTestCmd()
-		_ = cmd.Flags().Set("url", "https://github.com/multica-ai/new-repo")
+		_ = cmd.Flags().Set("url", "https://github.com/synapse.ai/new-repo")
 		existing := map[string]any{
-			"url":                 "https://github.com/multica-ai/multica",
+			"url":                 "https://github.com/haodafa/Synapse",
 			"default_branch_hint": "main",
 		}
 		ref, has, err := buildResourceRefFromFlags(cmd, "github_repo", existing)
@@ -85,7 +85,7 @@ func TestBuildResourceRefFromFlagsGithubMergesHint(t *testing.T) {
 		if !has {
 			t.Fatalf("expected has=true")
 		}
-		if ref["url"] != "https://github.com/multica-ai/new-repo" {
+		if ref["url"] != "https://github.com/synapse.ai/new-repo" {
 			t.Errorf("expected overridden url, got %v", ref["url"])
 		}
 		if ref["default_branch_hint"] != "main" {

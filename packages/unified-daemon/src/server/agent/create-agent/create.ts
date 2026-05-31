@@ -446,7 +446,7 @@ async function createMcpWorktree(
 ): Promise<CreateSynapseWorktreeWorkflowResult> {
   try {
     if (!options.createSynapseWorktree) {
-      throw new Error("Paseo worktree service is not configured");
+      throw new Error("Synapse worktree service is not configured");
     }
     return await options.createSynapseWorktree(options.input, {
       ...(options.resolveDefaultBranch

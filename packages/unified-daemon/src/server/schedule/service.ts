@@ -542,8 +542,8 @@ export class ScheduleService {
       mcpServers: schedule.target.config.mcpServers as AgentSessionConfig["mcpServers"],
     };
     const labels = {
-      "paseo.schedule-id": schedule.id,
-      "paseo.schedule-run": runId,
+      "synapse.schedule-id": schedule.id,
+      "synapse.schedule-run": runId,
     };
     const agent = await this.agentManager.createAgent(config, undefined, { labels });
     let result;

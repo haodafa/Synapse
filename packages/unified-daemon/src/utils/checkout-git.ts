@@ -841,7 +841,7 @@ async function getMainRepoRootFromCommonDir(
   });
   const worktrees = parseWorktreeList(worktreeOut);
   const nonBareNonPaseo = worktrees.filter((wt) => !wt.isBare && !isSynapseWorktreePath(wt.path));
-  const childrenOfBareRepo = nonBareNonPaseo.filter((wt) => isDescendantPath(wt.path, normalized));
+  const childrenOfBareRepo = nonBareNonSynapse.filter((wt) => isDescendantPath(wt.path, normalized));
   const mainChild = childrenOfBareRepo.find((wt) => basename(wt.path) === "main");
   return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonPaseo[0]?.path ?? normalized;
 }
@@ -852,7 +852,7 @@ export interface GitWorktreeEntry {
   isBare?: boolean;
 }
 
-/** Check whether a path contains a `.paseo/worktrees/` segment (both `/` and `\`). */
+/** Check whether a path contains a `.synapse/worktrees/` segment (both `/` and `\`). */
 export function isSynapseWorktreePath(p: string): boolean {
   return /[/\\]\.paseo[/\\]worktrees[/\\]/.test(p);
 }
@@ -1077,7 +1077,7 @@ async function resolvePullRequestStatusLookupTarget(
     return context.facts.pullRequestLookupTarget;
   }
   const remoteName = await getGitConfigValue(cwd, `branch.${currentBranch}.remote`);
-  if (!remoteName?.startsWith("paseo-pr-")) {
+  if (!remoteName?.startsWith("synapse-pr-")) {
     return { headRef: currentBranch };
   }
 
@@ -1455,7 +1455,7 @@ function buildPullRequestLookupTargetFromBranchConfig(input: {
   branchMergeRef: string | null;
   branchRemoteUrl: string | null;
 }): PullRequestStatusLookupTarget {
-  if (!input.branchRemoteName?.startsWith("paseo-pr-")) {
+  if (!input.branchRemoteName?.startsWith("synapse-pr-")) {
     return { headRef: input.currentBranch };
   }
 
@@ -1520,7 +1520,7 @@ export async function getCheckoutSnapshotFacts(
         `branch.${inspected.currentBranch}.merge`,
         context,
       );
-      if (branchRemoteName.startsWith("paseo-pr-")) {
+      if (branchRemoteName.startsWith("synapse-pr-")) {
         branchRemoteUrl = await getGitConfigValue(cwd, `remote.${branchRemoteName}.url`, context);
       }
     }

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/multica-ai/multica/server/internal/util"
-	db "github.com/multica-ai/multica/server/pkg/db/generated"
+	"github.com/haodafa/Synapse/server/internal/util"
+	db "github.com/haodafa/Synapse/server/pkg/db/generated"
 )
 
 // selfMentionFixture wires the seeded "Handler Test Agent" as J plus two

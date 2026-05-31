@@ -144,7 +144,7 @@ async function prepareTestDaemonConfig(
     options.paseoHomeRoot ?? (await mkdtemp(path.join(os.tmpdir(), "synapse-home-")));
   const paseoHome = path.join(paseoHomeRoot, ".paseo");
   await mkdir(paseoHome, { recursive: true });
-  const staticDir = options.staticDir ?? (await mkdtemp(path.join(os.tmpdir(), "paseo-static-")));
+  const staticDir = options.staticDir ?? (await mkdtemp(path.join(os.tmpdir(), "synapse-static-")));
   const listenHost = options.listen ?? "127.0.0.1";
   const config: SynapseDaemonConfig = {
     listen: `${listenHost}:0`,
@@ -157,8 +157,8 @@ async function prepareTestDaemonConfig(
     agentClients: options.agentClients ?? createTestAgentClients(),
     agentStoragePath: path.join(paseoHome, "agents"),
     relayEnabled: options.relayEnabled ?? false,
-    relayEndpoint: options.relayEndpoint ?? "relay.paseo.sh:443",
-    appBaseUrl: "https://app.paseo.sh",
+    relayEndpoint: options.relayEndpoint ?? "relay.synapse.sh:443",
+    appBaseUrl: "https://app.synapse.sh",
     auth: options.auth,
     pushNotificationSender: options.pushNotificationSender,
     openai: options.openai,

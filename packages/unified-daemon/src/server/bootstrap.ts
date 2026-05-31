@@ -363,8 +363,8 @@ export async function createSynapseDaemon(
   // CORS - allow same-origin + configured origins
   const allowedOrigins = new Set([
     ...config.corsAllowedOrigins,
-    // Packaged desktop renderers use the custom paseo:// protocol scheme.
-    "paseo://app",
+    // Packaged desktop renderers use the custom synapse:// protocol scheme.
+    "synapse://app",
     // For TCP, add localhost variants
     ...(listenTarget.type === "tcp"
       ? [
@@ -877,11 +877,11 @@ export async function createSynapseDaemon(
             agentManager.setAppendSystemPrompt(typeof value === "string" ? value : "");
           });
           const relayEnabled = config.relayEnabled ?? true;
-          const relayEndpoint = config.relayEndpoint ?? "relay.paseo.sh:443";
+          const relayEndpoint = config.relayEndpoint ?? "relay.synapse.sh:443";
           const relayPublicEndpoint = config.relayPublicEndpoint ?? relayEndpoint;
-          const relayUseTls = config.relayUseTls ?? relayEndpoint === "relay.paseo.sh:443";
+          const relayUseTls = config.relayUseTls ?? relayEndpoint === "relay.synapse.sh:443";
           const relayPublicUseTls = config.relayPublicUseTls ?? relayUseTls;
-          const appBaseUrl = config.appBaseUrl ?? "https://app.paseo.sh";
+          const appBaseUrl = config.appBaseUrl ?? "https://app.synapse.sh";
 
           if (boundListenTarget.type === "tcp") {
             logger.info(

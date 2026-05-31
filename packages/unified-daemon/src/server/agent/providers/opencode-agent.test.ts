@@ -725,7 +725,7 @@ describe("OpenCode adapter startTurn error handling", () => {
         provider: "opencode",
         cwd,
         mcpServers: {
-          paseo: {
+          synapse: {
             type: "http",
             url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=test-agent",
           },
@@ -758,7 +758,7 @@ describe("OpenCode adapter startTurn error handling", () => {
     const openCodeClient = new TestOpenCodeClient();
     openCodeClient.mcpAddResponse = {
       data: {
-        paseo: {
+        synapse: {
           status: "failed",
           error: "SSE error: Non-200 status code (400)",
         },
@@ -773,7 +773,7 @@ describe("OpenCode adapter startTurn error handling", () => {
         provider: "opencode",
         cwd,
         mcpServers: {
-          paseo: {
+          synapse: {
             type: "http",
             url: "http://127.0.0.1:6767/mcp/agents?callerAgentId=test-agent",
           },

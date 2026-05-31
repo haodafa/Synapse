@@ -15,22 +15,22 @@ $env:EXPO_PORT = (npx get-port-cli 8081 8082 8083 8084 8085).Trim()
 # Set EXPO_DEV_URL in the environment so Electron inherits it
 $env:EXPO_DEV_URL = "http://localhost:$($env:EXPO_PORT)"
 
-$RemoteDebuggingPort = if ($env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT) {
-    $env:PASEO_ELECTRON_REMOTE_DEBUGGING_PORT
+$RemoteDebuggingPort = if ($env:SYNAPSE_ELECTRON_REMOTE_DEBUGGING_PORT) {
+    $env:SYNAPSE_ELECTRON_REMOTE_DEBUGGING_PORT
 } else {
     "9223"
 }
-$ExistingElectronFlags = if ($env:PASEO_ELECTRON_FLAGS) {
-    "$($env:PASEO_ELECTRON_FLAGS) "
+$ExistingElectronFlags = if ($env:SYNAPSE_ELECTRON_FLAGS) {
+    "$($env:SYNAPSE_ELECTRON_FLAGS) "
 } else {
     ""
 }
-$env:PASEO_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$RemoteDebuggingPort"
+$env:SYNAPSE_ELECTRON_FLAGS = "$($ExistingElectronFlags)--remote-debugging-port=$RemoteDebuggingPort"
 
 # Allow any origin in dev so Electron on random ports works.
 # SECURITY: wildcard CORS is unsafe in production — only acceptable here because
 # the daemon binds to localhost and this script is never used for production.
-$env:PASEO_CORS_ORIGINS = "*"
+$env:SYNAPSE_CORS_ORIGINS = "*"
 
 Write-Host @"
 ======================================================
@@ -46,5 +46,5 @@ Write-Host @"
     --kill-others `
     --names "metro,electron" `
     --prefix-colors "magenta,cyan" `
-    "cd `"$AppDir`" && `$env:PASEO_WEB_PLATFORM = `"electron`"; npx expo start --port $($env:EXPO_PORT)" `
+    "cd `"$AppDir`" && `$env:SYNAPSE_WEB_PLATFORM = `"electron`"; npx expo start --port $($env:EXPO_PORT)" `
     "npx wait-on tcp:$($env:EXPO_PORT) && npx electron `"$DesktopDir`""

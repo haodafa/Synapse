@@ -43,8 +43,8 @@ function isPidRunning(pid: number): boolean {
   }
 }
 
-function getPidFilePath(paseoHome: string): string {
-  return join(paseoHome, "paseo.pid");
+function getPidFilePath(synapseHome: string): string {
+  return join(synapseHome, "synapse.pid");
 }
 
 function resolveOwnerPid(ownerPid?: number): number {
@@ -55,15 +55,15 @@ function resolveOwnerPid(ownerPid?: number): number {
 }
 
 export async function acquirePidLock(
-  paseoHome: string,
+  synapseHome: string,
   listen: string | null,
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(synapseHome);
 
-  // Ensure paseoHome directory exists
-  if (!existsSync(paseoHome)) {
-    await mkdir(paseoHome, { recursive: true });
+  // Ensure synapseHome directory exists
+  if (!existsSync(synapseHome)) {
+    await mkdir(synapseHome, { recursive: true });
   }
 
   // Try to read existing lock
@@ -84,7 +84,7 @@ export async function acquirePidLock(
       }
 
       throw new PidLockError(
-        `Another Paseo daemon is already running (PID ${existingLock.pid}, started ${existingLock.startedAt})`,
+        `Another Synapse daemon is already running (PID ${existingLock.pid}, started ${existingLock.startedAt})`,
         existingLock,
       );
     }
@@ -115,7 +115,7 @@ export async function acquirePidLock(
         const raceLock = parsePidLockInfo(JSON.parse(content));
         if (raceLock) {
           throw new PidLockError(
-            `Another Paseo daemon is already running (PID ${raceLock.pid})`,
+            `Another Synapse daemon is already running (PID ${raceLock.pid})`,
             raceLock,
           );
         }
@@ -132,11 +132,11 @@ export async function acquirePidLock(
 }
 
 export async function updatePidLock(
-  paseoHome: string,
+  synapseHome: string,
   patch: { listen: string },
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(synapseHome);
   const lockOwnerPid = resolveOwnerPid(options?.ownerPid);
   const content = await readFile(pidPath, "utf-8");
   const existingLock = parsePidLockInfo(JSON.parse(content));
@@ -163,10 +163,10 @@ export async function updatePidLock(
 }
 
 export async function releasePidLock(
-  paseoHome: string,
+  synapseHome: string,
   options?: { ownerPid?: number },
 ): Promise<void> {
-  const pidPath = getPidFilePath(paseoHome);
+  const pidPath = getPidFilePath(synapseHome);
   const lockOwnerPid = resolveOwnerPid(options?.ownerPid);
   try {
     // Only remove if it's our lock
@@ -180,8 +180,8 @@ export async function releasePidLock(
   }
 }
 
-export async function getPidLockInfo(paseoHome: string): Promise<PidLockInfo | null> {
-  const pidPath = getPidFilePath(paseoHome);
+export async function getPidLockInfo(synapseHome: string): Promise<PidLockInfo | null> {
+  const pidPath = getPidFilePath(synapseHome);
   try {
     const content = await readFile(pidPath, "utf-8");
     return parsePidLockInfo(JSON.parse(content));
@@ -191,9 +191,9 @@ export async function getPidLockInfo(paseoHome: string): Promise<PidLockInfo | n
 }
 
 export async function isLocked(
-  paseoHome: string,
+  synapseHome: string,
 ): Promise<{ locked: boolean; info?: PidLockInfo }> {
-  const info = await getPidLockInfo(paseoHome);
+  const info = await getPidLockInfo(synapseHome);
   if (!info) {
     return { locked: false };
   }

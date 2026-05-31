@@ -176,10 +176,10 @@ func TestEnsureCodexMemoryConfigEmptyFile(t *testing.T) {
 		"features.memories = false",
 		"memories.generate_memories = false",
 		"memories.use_memories = false",
-		multicaMemoryFeatureBeginMarker,
-		multicaMemoryFeatureEndMarker,
-		multicaMemoryConfigBeginMarker,
-		multicaMemoryConfigEndMarker,
+		synapseMemoryFeatureBeginMarker,
+		synapseMemoryFeatureEndMarker,
+		synapseMemoryConfigBeginMarker,
+		synapseMemoryConfigEndMarker,
 	} {
 		if !strings.Contains(got, want) {
 			t.Errorf("expected %q in output, got:\n%s", want, got)
@@ -531,10 +531,10 @@ features.multi_agent = true
 	data, _ := os.ReadFile(configPath)
 	got := string(data)
 	for _, marker := range []string{
-		multicaManagedBeginMarker,
-		multicaMultiAgentBeginMarker,
-		multicaMemoryFeatureBeginMarker,
-		multicaMemoryConfigBeginMarker,
+		synapseManagedBeginMarker,
+		synapseMultiAgentBeginMarker,
+		synapseMemoryFeatureBeginMarker,
+		synapseMemoryConfigBeginMarker,
 	} {
 		if !strings.Contains(got, marker) {
 			t.Errorf("expected marker %q in combined output, got:\n%s", marker, got)

@@ -81,9 +81,9 @@ export async function setDaemonPasswordInConfig(
   newPassword: string,
   options: SetPasswordOptions = {},
 ): Promise<SetPasswordResult> {
-  const paseoHome = resolveLocalPaseoHome(options.home);
-  const configPath = path.join(paseoHome, CONFIG_FILENAME);
-  const persisted = loadPersistedConfig(paseoHome);
+  const synapseHome = resolveLocalPaseoHome(options.home);
+  const configPath = path.join(synapseHome, CONFIG_FILENAME);
+  const persisted = loadPersistedConfig(synapseHome);
   const nextConfig: PersistedConfig = {
     ...persisted,
     daemon: {
@@ -95,13 +95,13 @@ export async function setDaemonPasswordInConfig(
     },
   };
 
-  savePersistedConfig(paseoHome, nextConfig);
+  savePersistedConfig(synapseHome, nextConfig);
 
   return {
     action: "password_set",
     configPath,
-    restartCommand: "paseo daemon restart",
-    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: paseo daemon restart`,
+    restartCommand: "synapse daemon restart",
+    message: `Password written to ${configPath}\nRestart the daemon for the change to take effect.\nRun: synapse daemon restart`,
   };
 }
 
