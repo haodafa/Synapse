@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createCommitteeCommand(): Command {
@@ -29,7 +29,9 @@ export function createCommitteeCommand(): Command {
             message: "Enter agent names (comma-separated):",
             placeholder: "claude,codex,gemini",
           });
-          agentNames = input.split(",").map((s: string) => s.trim());
+          if (typeof input === "string") {
+            agentNames = input.split(",").map((s: string) => s.trim());
+          }
         }
 
         let perspectives: string[] = [];
@@ -40,7 +42,9 @@ export function createCommitteeCommand(): Command {
             message: "Enter perspectives (comma-separated):",
             placeholder: "security,performance,maintainability",
           });
-          perspectives = input.split(",").map((s: string) => s.trim());
+          if (typeof input === "string") {
+            perspectives = input.split(",").map((s: string) => s.trim());
+          }
         }
 
         if (agentNames.length !== perspectives.length) {

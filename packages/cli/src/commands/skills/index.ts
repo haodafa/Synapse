@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createSkillsCommand(): Command {
@@ -168,7 +168,9 @@ function createSkillsCreateCommand(): Command {
 
           console.log(chalk.blue("\n⏳ Running skill..."));
           console.log(chalk.gray(`Prompt: ${options.prompt}`));
-          console.log(chalk.gray(`Test Input: ${testInput}\n`));
+          if (typeof testInput === "string") {
+            console.log(chalk.gray(`Test Input: ${testInput}\n`));
+          }
           console.log(chalk.yellow("(Skill execution not yet implemented - will be integrated with agent runtime)"));
         }
       } catch (error) {

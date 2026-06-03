@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 
 export function createWebhookCommand(): Command {
   const webhook = new Command("webhook");

@@ -1,5 +1,3 @@
-import { readFileSync, existsSync } from "node:fs";
-import { join, homedir } from "node:path";
 import { SynapseConfig, loadConfig } from "./config.js";
 
 let cachedClient: SynapseClient | null = null;
@@ -12,97 +10,6 @@ export async function getSynapseClient(): Promise<SynapseClient> {
   const config = await loadConfig();
   cachedClient = new SynapseClient(config);
   return cachedClient;
-}
-
-export interface SynapseClient {
-  config: {
-    show(): Promise<ConfigShow>;
-    set(key: string, value: string): Promise<void>;
-  };
-  daemon: {
-    start(options?: DaemonStartOptions): Promise<void>;
-    stop(): Promise<void>;
-    status(): Promise<DaemonStatus>;
-  };
-  agent: {
-    list(): Promise<Agent[]>;
-    get(id: string): Promise<Agent>;
-    create(options: AgentCreateOptions): Promise<Agent>;
-    stop(id: string): Promise<void>;
-    send(id: string, message: string): Promise<void>;
-    attach(id: string): Promise<void>;
-    logs(id: string): Promise<AgentLog[]>;
-  };
-  worktree: {
-    list(): Promise<Worktree[]>;
-    create(options: WorktreeCreateOptions): Promise<Worktree>;
-    delete(id: string): Promise<void>;
-  };
-  issue: {
-    list(options?: IssueListOptions): Promise<Issue[]>;
-    get(id: string): Promise<Issue>;
-    create(options: IssueCreateOptions): Promise<Issue>;
-    update(id: string, options: IssueUpdateOptions): Promise<void>;
-    delete(id: string): Promise<void>;
-  };
-  workspace: {
-    list(): Promise<Workspace[]>;
-    get(id?: string): Promise<Workspace>;
-    switch(id: string): Promise<void>;
-    memberList(id?: string): Promise<Member[]>;
-  };
-  project: {
-    list(options?: ProjectListOptions): Promise<Project[]>;
-    get(id: string): Promise<Project>;
-    create(options: ProjectCreateOptions): Promise<Project>;
-    update(id: string, options: ProjectUpdateOptions): Promise<void>;
-    delete(id: string): Promise<void>;
-  };
-  autopilot: {
-    list(options?: AutopilotListOptions): Promise<Autopilot[]>;
-    get(id: string): Promise<Autopilot>;
-    create(options: AutopilotCreateOptions): Promise<Autopilot>;
-    trigger(id: string): Promise<AutopilotRun>;
-    delete(id: string): Promise<void>;
-  };
-  skill: {
-    list(): Promise<Skill[]>;
-    get(id: string): Promise<Skill>;
-    create(options: SkillCreateOptions): Promise<Skill>;
-    update(id: string, options: SkillUpdateOptions): Promise<void>;
-    delete(id: string): Promise<void>;
-    recommend(task: string): Promise<Skill[]>;
-  };
-  squad: {
-    list(): Promise<Squad[]>;
-    get(id: string): Promise<Squad>;
-    create(options: SquadCreateOptions): Promise<Squad>;
-    assign(squadId: string, issueId: string): Promise<void>;
-    delete(id: string): Promise<void>;
-  };
-  orchestration: {
-    handoff(options: HandoffOptions): Promise<HandoffResult>;
-    getHandoff(id: string): Promise<Handoff>;
-    listHandoffs(options?: HandoffListOptions): Promise<Handoff[]>;
-    waitForHandoff(id: string): Promise<void>;
-    loop(options: LoopOptions): Promise<LoopResult>;
-    getLoopStatus(id: string): Promise<LoopStatus>;
-    stopLoop(id: string): Promise<void>;
-    listLoops(options?: LoopListOptions): Promise<LoopStatus[]>;
-    committee(options: CommitteeOptions): Promise<CommitteeResult>;
-    listCommitteeHistory(options?: HistoryOptions): Promise<CommitteeRecord[]>;
-    advisor(options: AdvisorOptions): Promise<AdvisorResponse>;
-    listAdvisors(): Promise<Advisor[]>;
-    registerAdvisor(options: RegisterAdvisorOptions): Promise<Advisor>;
-    listAdvisorHistory(options?: HistoryOptions): Promise<AdvisorHistoryRecord[]>;
-  };
-  ws: {
-    connect(): Promise<void>;
-    disconnect(): void;
-    send(message: any): void;
-    on(event: string, handler: (data: any) => void): void;
-    off(event: string, handler: (data: any) => void): void;
-  };
 }
 
 interface ConfigShow {
@@ -320,6 +227,52 @@ interface Skill {
   createdAt: string;
 }
 
+interface AuthStatus {
+  authenticated: boolean;
+  server?: string;
+  user?: string;
+  expiresAt?: string;
+}
+
+interface IssueComment {
+  id: string;
+  content: string;
+  actor: string;
+  actorType: string;
+  createdAt: string;
+}
+
+interface IssueRun {
+  id: string;
+  status: string;
+  startedAt?: string;
+  completedAt?: string;
+}
+
+interface AutopilotTrigger {
+  id: string;
+  type: string;
+  cron?: string;
+  timezone?: string;
+  enabled?: boolean;
+}
+
+interface Webhook {
+  id: string;
+  name: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  createdAt: string;
+}
+
+interface WebhookCreateOptions {
+  name: string;
+  url: string;
+  events?: string[];
+  secret?: string;
+}
+
 interface SkillCreateOptions {
   title: string;
   description: string;
@@ -344,6 +297,8 @@ interface Squad {
   members: Array<{ name: string; role: string; type: string }>;
   workspaceId: string;
   leadId?: string;
+  issueCount?: number;
+  issues?: Array<{ key: string; title: string; status: string }>;
   createdAt: string;
 }
 
@@ -485,24 +440,24 @@ interface AdvisorHistoryRecord {
   timestamp: string;
 }
 
-class SynapseClient implements SynapseClient {
-  private config: SynapseConfig;
-  private serverUrl: string;
-  private ws: WebSocket | null = null;
-  private wsHandlers: Map<string, Set<(data: any) => void>> = new Map();
+export class SynapseClient {
+  private _synapseConfig: SynapseConfig;
+  private _serverUrl: string;
+  private _ws: WebSocket | null = null;
+  private _wsHandlers: Map<string, Set<(data: any) => void>> = new Map();
 
   constructor(config: SynapseConfig) {
-    this.config = config;
-    this.serverUrl = config.serverUrl || "http://localhost:8080";
+    this._synapseConfig = config;
+    this._serverUrl = config.serverUrl || "http://localhost:8080";
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${this.serverUrl}${endpoint}`;
+  private async _request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${this._serverUrl}${endpoint}`;
     const response = await fetch(url, {
       ...options,
       headers: {
         "Content-Type": "application/json",
-        ...(this.config.token ? { Authorization: `Bearer ${this.config.token}` } : {}),
+        ...(this._synapseConfig.token ? { Authorization: `Bearer ${this._synapseConfig.token}` } : {}),
         ...options.headers,
       },
     });
@@ -515,47 +470,47 @@ class SynapseClient implements SynapseClient {
   }
 
   config = {
-    async show(): Promise<ConfigShow> {
+    show: async (): Promise<ConfigShow> => {
       return {
-        configFile: this.config.configPath,
-        serverUrl: this.serverUrl,
-        appUrl: this.config.appUrl || "http://localhost:3000",
-        workspace: this.config.workspaceId,
-        profile: this.config.profile || "default",
+        configFile: this._synapseConfig.configPath,
+        serverUrl: this._serverUrl,
+        appUrl: this._synapseConfig.appUrl || "http://localhost:3000",
+        workspace: this._synapseConfig.workspaceId,
+        profile: this._synapseConfig.profile || "default",
       };
     },
 
-    async set(key: string, value: string): Promise<void> {
+    set: async (key: string, value: string): Promise<void> => {
       switch (key) {
         case "server_url":
-          this.config.serverUrl = value;
+          this._synapseConfig.serverUrl = value;
           break;
         case "app_url":
-          this.config.appUrl = value;
+          this._synapseConfig.appUrl = value;
           break;
         case "workspace_id":
-          this.config.workspaceId = value;
+          this._synapseConfig.workspaceId = value;
           break;
         case "profile":
-          this.config.profile = value;
+          this._synapseConfig.profile = value;
           break;
       }
       await import("./config.js").then(({ saveConfig }) =>
-        saveConfig(this.config)
+        saveConfig(this._synapseConfig)
       );
     },
   };
 
   daemon = {
-    async start(options?: DaemonStartOptions): Promise<void> {
+    start: async (_options?: DaemonStartOptions): Promise<void> => {
       console.log("Starting Synapse daemon...");
     },
 
-    async stop(): Promise<void> {
+    stop: async (): Promise<void> => {
       console.log("Stopping Synapse daemon...");
     },
 
-    async status(): Promise<DaemonStatus> {
+    status: async (): Promise<DaemonStatus> => {
       return {
         running: true,
         pid: process.pid,
@@ -566,194 +521,302 @@ class SynapseClient implements SynapseClient {
   };
 
   agent = {
-    async list(): Promise<Agent[]> {
-      return this.request<Agent[]>("/api/agents");
+    list: async (): Promise<Agent[]> => {
+      return this._request<Agent[]>("/api/agents");
     },
 
-    async get(id: string): Promise<Agent> {
-      return this.request<Agent>(`/api/agents/${id}`);
+    get: async (id: string): Promise<Agent> => {
+      return this._request<Agent>(`/api/agents/${id}`);
     },
 
-    async create(options: AgentCreateOptions): Promise<Agent> {
-      return this.request<Agent>("/api/agents", {
+    create: async (options: AgentCreateOptions): Promise<Agent> => {
+      return this._request<Agent>("/api/agents", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async stop(id: string): Promise<void> {
-      await this.request(`/api/agents/${id}/stop`, { method: "POST" });
+    stop: async (id: string): Promise<void> => {
+      await this._request(`/api/agents/${id}/stop`, { method: "POST" });
     },
 
-    async send(id: string, message: string): Promise<void> {
-      await this.request(`/api/agents/${id}/send`, {
+    send: async (id: string, message: string): Promise<void> => {
+      await this._request(`/api/agents/${id}/send`, {
         method: "POST",
         body: JSON.stringify({ message }),
       });
     },
 
-    async attach(id: string): Promise<void> {
+    attach: async (id: string): Promise<void> => {
       console.log(`Attaching to agent ${id}...`);
     },
 
-    async logs(id: string): Promise<AgentLog[]> {
-      return this.request<AgentLog[]>(`/api/agents/${id}/logs`);
+    logs: async (id: string): Promise<AgentLog[]> => {
+      return this._request<AgentLog[]>(`/api/agents/${id}/logs`);
+    },
+
+    delete: async (id: string): Promise<void> => {
+      await this._request(`/api/agents/${id}`, { method: "DELETE" });
+    },
+
+    wait: async (id: string): Promise<Agent> => {
+      const agent = await this._request<Agent>(`/api/agents/${id}`);
+      if (agent.status === "completed" || agent.status === "failed") {
+        return agent;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return this.agent.wait(id);
+    },
+  };
+
+  auth = {
+    login: async (): Promise<void> => {
+      console.log("Opening browser for authentication...");
+    },
+
+    status: async (): Promise<AuthStatus> => {
+      return {
+        authenticated: !!this._synapseConfig.token,
+        server: this._serverUrl,
+        expiresAt: "N/A",
+      };
+    },
+
+    logout: async (): Promise<void> => {
+      this._synapseConfig.token = undefined;
+      console.log("Logged out successfully");
     },
   };
 
   worktree = {
-    async list(): Promise<Worktree[]> {
-      return this.request<Worktree[]>("/api/worktrees");
+    list: async (): Promise<Worktree[]> => {
+      return this._request<Worktree[]>("/api/worktrees");
     },
 
-    async create(options: WorktreeCreateOptions): Promise<Worktree> {
-      return this.request<Worktree>("/api/worktrees", {
+    create: async (options: WorktreeCreateOptions): Promise<Worktree> => {
+      return this._request<Worktree>("/api/worktrees", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async delete(id: string): Promise<void> {
-      await this.request(`/api/worktrees/${id}`, { method: "DELETE" });
+    delete: async (id: string): Promise<void> => {
+      await this._request(`/api/worktrees/${id}`, { method: "DELETE" });
     },
   };
 
   issue = {
-    async list(options?: IssueListOptions): Promise<Issue[]> {
-      const workspaceId = this.config.workspaceId;
+    list: async (options?: IssueListOptions): Promise<Issue[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
       const params = new URLSearchParams();
       if (options?.status) params.append("status", options.status);
       if (options?.priority) params.append("priority", options.priority);
       if (options?.assignee) params.append("assignee", options.assignee);
       if (options?.limit) params.append("limit", options.limit.toString());
 
-      return this.request<Issue[]>(
+      return this._request<Issue[]>(
         `/api/workspaces/${workspaceId}/issues?${params}`
       );
     },
 
-    async get(id: string): Promise<Issue> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Issue>(
+    get: async (id: string): Promise<Issue> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Issue>(
         `/api/workspaces/${workspaceId}/issues/${id}`
       );
     },
 
-    async create(options: IssueCreateOptions): Promise<Issue> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Issue>(`/api/workspaces/${workspaceId}/issues`, {
+    create: async (options: IssueCreateOptions): Promise<Issue> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Issue>(`/api/workspaces/${workspaceId}/issues`, {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async update(id: string, options: IssueUpdateOptions): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(`/api/workspaces/${workspaceId}/issues/${id}`, {
+    update: async (id: string, options: IssueUpdateOptions): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${id}`, {
         method: "PATCH",
         body: JSON.stringify(options),
       });
     },
 
-    async delete(id: string): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(`/api/workspaces/${workspaceId}/issues/${id}`, {
+    delete: async (id: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${id}`, {
         method: "DELETE",
       });
+    },
+
+    assign: async (id: string, assignee: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${id}/assign`, {
+        method: "POST",
+        body: JSON.stringify({ assignee }),
+      });
+    },
+
+    unassign: async (id: string): Promise<void> => {
+      await this.issue.update(id, { assigneeId: "" } as any);
+    },
+
+    setStatus: async (id: string, status: string): Promise<void> => {
+      await this.issue.update(id, { status });
+    },
+
+    commentList: async (issueId: string, _options?: any): Promise<IssueComment[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<IssueComment[]>(
+        `/api/workspaces/${workspaceId}/issues/${issueId}/comments`
+      );
+    },
+
+    commentAdd: async (issueId: string, content: string, parent?: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${issueId}/comments`, {
+        method: "POST",
+        body: JSON.stringify({ content, parent }),
+      });
+    },
+
+    metadataList: async (issueId: string): Promise<Record<string, any>> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Record<string, any>>(
+        `/api/workspaces/${workspaceId}/issues/${issueId}/metadata`
+      );
+    },
+
+    metadataSet: async (issueId: string, key: string, value: string, type?: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${issueId}/metadata`, {
+        method: "POST",
+        body: JSON.stringify({ key, value, type }),
+      });
+    },
+
+    subscriberList: async (issueId: string): Promise<Member[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Member[]>(
+        `/api/workspaces/${workspaceId}/issues/${issueId}/subscribers`
+      );
+    },
+
+    subscriberAdd: async (issueId: string, user?: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/issues/${issueId}/subscribers`, {
+        method: "POST",
+        body: JSON.stringify({ user }),
+      });
+    },
+
+    runs: async (issueId: string): Promise<IssueRun[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<IssueRun[]>(
+        `/api/workspaces/${workspaceId}/issues/${issueId}/runs`
+      );
     },
   };
 
   workspace = {
-    async list(): Promise<Workspace[]> {
-      return this.request<Workspace[]>("/api/workspaces");
+    list: async (): Promise<Workspace[]> => {
+      return this._request<Workspace[]>("/api/workspaces");
     },
 
-    async get(id?: string): Promise<Workspace> {
-      const workspaceId = id || this.config.workspaceId;
+    get: async (id?: string): Promise<Workspace> => {
+      const workspaceId = id || this._synapseConfig.workspaceId;
       if (!workspaceId) {
         throw new Error("No workspace ID specified");
       }
-      return this.request<Workspace>(`/api/workspaces/${workspaceId}`);
+      return this._request<Workspace>(`/api/workspaces/${workspaceId}`);
     },
 
-    async switch(id: string): Promise<void> {
-      this.config.workspaceId = id;
+    switch: async (id: string): Promise<void> => {
+      this._synapseConfig.workspaceId = id;
       await import("./config.js").then(({ saveConfig }) =>
-        saveConfig(this.config)
+        saveConfig(this._synapseConfig)
       );
     },
 
-    async memberList(id?: string): Promise<Member[]> {
-      const workspaceId = id || this.config.workspaceId;
-      return this.request<Member[]>(
+    memberList: async (id?: string): Promise<Member[]> => {
+      const workspaceId = id || this._synapseConfig.workspaceId;
+      return this._request<Member[]>(
         `/api/workspaces/${workspaceId}/members`
       );
     },
   };
 
   project = {
-    async list(options?: ProjectListOptions): Promise<Project[]> {
-      const workspaceId = this.config.workspaceId;
+    list: async (options?: ProjectListOptions): Promise<Project[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
       const params = new URLSearchParams();
       if (options?.status) params.append("status", options.status);
 
-      return this.request<Project[]>(
+      return this._request<Project[]>(
         `/api/workspaces/${workspaceId}/projects?${params}`
       );
     },
 
-    async get(id: string): Promise<Project> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Project>(
+    get: async (id: string): Promise<Project> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Project>(
         `/api/workspaces/${workspaceId}/projects/${id}`
       );
     },
 
-    async create(options: ProjectCreateOptions): Promise<Project> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Project>(`/api/workspaces/${workspaceId}/projects`, {
+    create: async (options: ProjectCreateOptions): Promise<Project> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Project>(`/api/workspaces/${workspaceId}/projects`, {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async update(id: string, options: ProjectUpdateOptions): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(`/api/workspaces/${workspaceId}/projects/${id}`, {
+    update: async (id: string, options: ProjectUpdateOptions): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/projects/${id}`, {
         method: "PATCH",
         body: JSON.stringify(options),
       });
     },
 
-    async delete(id: string): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(`/api/workspaces/${workspaceId}/projects/${id}`, {
+    delete: async (id: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/projects/${id}`, {
         method: "DELETE",
+      });
+    },
+
+    setStatus: async (id: string, status: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/projects/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
       });
     },
   };
 
   autopilot = {
-    async list(options?: AutopilotListOptions): Promise<Autopilot[]> {
-      const workspaceId = this.config.workspaceId;
+    list: async (options?: AutopilotListOptions): Promise<Autopilot[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
       const params = new URLSearchParams();
       if (options?.status) params.append("status", options.status);
 
-      return this.request<Autopilot[]>(
+      return this._request<Autopilot[]>(
         `/api/workspaces/${workspaceId}/autopilots?${params}`
       );
     },
 
-    async get(id: string): Promise<Autopilot> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Autopilot>(
+    get: async (id: string): Promise<Autopilot> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Autopilot>(
         `/api/workspaces/${workspaceId}/autopilots/${id}`
       );
     },
 
-    async create(options: AutopilotCreateOptions): Promise<Autopilot> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Autopilot>(
+    create: async (options: AutopilotCreateOptions): Promise<Autopilot> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Autopilot>(
         `/api/workspaces/${workspaceId}/autopilots`,
         {
           method: "POST",
@@ -762,52 +825,93 @@ class SynapseClient implements SynapseClient {
       );
     },
 
-    async trigger(id: string): Promise<AutopilotRun> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<AutopilotRun>(
+    trigger: async (id: string): Promise<AutopilotRun> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<AutopilotRun>(
         `/api/workspaces/${workspaceId}/autopilots/${id}/trigger`,
         { method: "POST" }
       );
     },
 
-    async delete(id: string): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(
+    delete: async (id: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(
         `/api/workspaces/${workspaceId}/autopilots/${id}`,
+        { method: "DELETE" }
+      );
+    },
+
+    update: async (id: string, options: Partial<AutopilotCreateOptions & { status: string }>): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/autopilots/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(options),
+      });
+    },
+
+    runs: async (id: string, limit?: number): Promise<AutopilotRun[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      const params = new URLSearchParams();
+      if (limit) params.append("limit", limit.toString());
+      return this._request<AutopilotRun[]>(
+        `/api/workspaces/${workspaceId}/autopilots/${id}/runs?${params}`
+      );
+    },
+
+    addTrigger: async (autopilotId: string, trigger: any): Promise<AutopilotTrigger> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<AutopilotTrigger>(
+        `/api/workspaces/${workspaceId}/autopilots/${autopilotId}/triggers`,
+        { method: "POST", body: JSON.stringify(trigger) }
+      );
+    },
+
+    updateTrigger: async (autopilotId: string, triggerId: string, options: any): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(
+        `/api/workspaces/${workspaceId}/autopilots/${autopilotId}/triggers/${triggerId}`,
+        { method: "PATCH", body: JSON.stringify(options) }
+      );
+    },
+
+    deleteTrigger: async (autopilotId: string, triggerId: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(
+        `/api/workspaces/${workspaceId}/autopilots/${autopilotId}/triggers/${triggerId}`,
         { method: "DELETE" }
       );
     },
   };
 
   skill = {
-    async list(): Promise<Skill[]> {
-      return this.request<Skill[]>("/api/skills");
+    list: async (): Promise<Skill[]> => {
+      return this._request<Skill[]>("/api/skills");
     },
 
-    async get(id: string): Promise<Skill> {
-      return this.request<Skill>(`/api/skills/${id}`);
+    get: async (id: string): Promise<Skill> => {
+      return this._request<Skill>(`/api/skills/${id}`);
     },
 
-    async create(options: SkillCreateOptions): Promise<Skill> {
-      return this.request<Skill>("/api/skills", {
+    create: async (options: SkillCreateOptions): Promise<Skill> => {
+      return this._request<Skill>("/api/skills", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async update(id: string, options: SkillUpdateOptions): Promise<void> {
-      await this.request(`/api/skills/${id}`, {
+    update: async (id: string, options: SkillUpdateOptions): Promise<void> => {
+      await this._request(`/api/skills/${id}`, {
         method: "PATCH",
         body: JSON.stringify(options),
       });
     },
 
-    async delete(id: string): Promise<void> {
-      await this.request(`/api/skills/${id}`, { method: "DELETE" });
+    delete: async (id: string): Promise<void> => {
+      await this._request(`/api/skills/${id}`, { method: "DELETE" });
     },
 
-    async recommend(task: string): Promise<Skill[]> {
-      return this.request<Skill[]>("/api/skills/recommend", {
+    recommend: async (task: string): Promise<Skill[]> => {
+      return this._request<Skill[]>("/api/skills/recommend", {
         method: "POST",
         body: JSON.stringify({ task }),
       });
@@ -815,27 +919,27 @@ class SynapseClient implements SynapseClient {
   };
 
   squad = {
-    async list(): Promise<Squad[]> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Squad[]>(`/api/workspaces/${workspaceId}/squads`);
+    list: async (): Promise<Squad[]> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Squad[]>(`/api/workspaces/${workspaceId}/squads`);
     },
 
-    async get(id: string): Promise<Squad> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Squad>(`/api/workspaces/${workspaceId}/squads/${id}`);
+    get: async (id: string): Promise<Squad> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Squad>(`/api/workspaces/${workspaceId}/squads/${id}`);
     },
 
-    async create(options: SquadCreateOptions): Promise<Squad> {
-      const workspaceId = this.config.workspaceId;
-      return this.request<Squad>(`/api/workspaces/${workspaceId}/squads`, {
+    create: async (options: SquadCreateOptions): Promise<Squad> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      return this._request<Squad>(`/api/workspaces/${workspaceId}/squads`, {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async assign(squadId: string, issueId: string): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(
+    assign: async (squadId: string, issueId: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(
         `/api/workspaces/${workspaceId}/squads/${squadId}/assign`,
         {
           method: "POST",
@@ -844,38 +948,46 @@ class SynapseClient implements SynapseClient {
       );
     },
 
-    async delete(id: string): Promise<void> {
-      const workspaceId = this.config.workspaceId;
-      await this.request(`/api/workspaces/${workspaceId}/squads/${id}`, {
+    delete: async (id: string): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/squads/${id}`, {
         method: "DELETE",
+      });
+    },
+
+    update: async (id: string, options: Partial<SquadCreateOptions & { members?: any[] }>): Promise<void> => {
+      const workspaceId = this._synapseConfig.workspaceId;
+      await this._request(`/api/workspaces/${workspaceId}/squads/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(options),
       });
     },
   };
 
   orchestration = {
-    async handoff(options: HandoffOptions): Promise<HandoffResult> {
-      return this.request<HandoffResult>("/api/orchestration/handoffs", {
+    handoff: async (options: HandoffOptions): Promise<HandoffResult> => {
+      return this._request<HandoffResult>("/api/orchestration/handoffs", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async getHandoff(id: string): Promise<Handoff> {
-      return this.request<Handoff>(`/api/orchestration/handoffs/${id}`);
+    getHandoff: async (id: string): Promise<Handoff> => {
+      return this._request<Handoff>(`/api/orchestration/handoffs/${id}`);
     },
 
-    async listHandoffs(options?: HandoffListOptions): Promise<Handoff[]> {
+    listHandoffs: async (options?: HandoffListOptions): Promise<Handoff[]> => {
       const params = new URLSearchParams();
       if (options?.status) params.append("status", options.status);
       if (options?.from) params.append("from", options.from);
       if (options?.to) params.append("to", options.to);
 
-      return this.request<Handoff[]>(
+      return this._request<Handoff[]>(
         `/api/orchestration/handoffs?${params}`
       );
     },
 
-    async waitForHandoff(id: string): Promise<void> {
+    waitForHandoff: async (id: string): Promise<void> => {
       return new Promise((resolve, reject) => {
         const check = async () => {
           try {
@@ -885,7 +997,7 @@ class SynapseClient implements SynapseClient {
             } else {
               setTimeout(check, 1000);
             }
-          } catch (error) {
+          } catch (error: any) {
             reject(error);
           }
         };
@@ -893,145 +1005,162 @@ class SynapseClient implements SynapseClient {
       });
     },
 
-    async loop(options: LoopOptions): Promise<LoopResult> {
-      return this.request<LoopResult>("/api/orchestration/loops", {
+    loop: async (options: LoopOptions): Promise<LoopResult> => {
+      return this._request<LoopResult>("/api/orchestration/loops", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async getLoopStatus(id: string): Promise<LoopStatus> {
-      return this.request<LoopStatus>(`/api/orchestration/loops/${id}`);
+    getLoopStatus: async (id: string): Promise<LoopStatus> => {
+      return this._request<LoopStatus>(`/api/orchestration/loops/${id}`);
     },
 
-    async stopLoop(id: string): Promise<void> {
-      await this.request(`/api/orchestration/loops/${id}`, {
+    stopLoop: async (id: string): Promise<void> => {
+      await this._request(`/api/orchestration/loops/${id}`, {
         method: "DELETE",
       });
     },
 
-    async listLoops(options?: LoopListOptions): Promise<LoopStatus[]> {
+    listLoops: async (options?: LoopListOptions): Promise<LoopStatus[]> => {
       const params = new URLSearchParams();
       if (options?.status) params.append("status", options.status);
 
-      return this.request<LoopStatus[]>(
+      return this._request<LoopStatus[]>(
         `/api/orchestration/loops?${params}`
       );
     },
 
-    async committee(options: CommitteeOptions): Promise<CommitteeResult> {
-      return this.request<CommitteeResult>("/api/orchestration/committees", {
+    committee: async (options: CommitteeOptions): Promise<CommitteeResult> => {
+      return this._request<CommitteeResult>("/api/orchestration/committees", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async listCommitteeHistory(
+    listCommitteeHistory: async (
       options?: HistoryOptions
-    ): Promise<CommitteeRecord[]> {
+    ): Promise<CommitteeRecord[]> => {
       const params = new URLSearchParams();
       if (options?.limit) params.append("limit", options.limit.toString());
 
-      return this.request<CommitteeRecord[]>(
+      return this._request<CommitteeRecord[]>(
         `/api/orchestration/committees/history?${params}`
       );
     },
 
-    async advisor(options: AdvisorOptions): Promise<AdvisorResponse> {
-      return this.request<AdvisorResponse>("/api/orchestration/advisor", {
+    advisor: async (options: AdvisorOptions): Promise<AdvisorResponse> => {
+      return this._request<AdvisorResponse>("/api/orchestration/advisor", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async listAdvisors(): Promise<Advisor[]> {
-      return this.request<Advisor[]>("/api/orchestration/advisors");
+    listAdvisors: async (): Promise<Advisor[]> => {
+      return this._request<Advisor[]>("/api/orchestration/advisors");
     },
 
-    async registerAdvisor(
+    registerAdvisor: async (
       options: RegisterAdvisorOptions
-    ): Promise<Advisor> {
-      return this.request<Advisor>("/api/orchestration/advisors", {
+    ): Promise<Advisor> => {
+      return this._request<Advisor>("/api/orchestration/advisors", {
         method: "POST",
         body: JSON.stringify(options),
       });
     },
 
-    async listAdvisorHistory(
+    listAdvisorHistory: async (
       options?: HistoryOptions
-    ): Promise<AdvisorHistoryRecord[]> {
+    ): Promise<AdvisorHistoryRecord[]> => {
       const params = new URLSearchParams();
       if (options?.limit) params.append("limit", options.limit.toString());
       if (options?.agentName) params.append("agent", options.agentName);
 
-      return this.request<AdvisorHistoryRecord[]>(
+      return this._request<AdvisorHistoryRecord[]>(
         `/api/orchestration/advisor/history?${params}`
       );
     },
   };
 
   ws = {
-    async connect(): Promise<void> {
+    connect: async (): Promise<void> => {
       return new Promise((resolve, reject) => {
         try {
-          this.ws = new WebSocket(`ws://localhost:8080`);
+          this._ws = new WebSocket(`ws://localhost:8080`);
 
-          this.ws.onopen = () => {
+          this._ws.onopen = () => {
             console.log("WebSocket connected");
             resolve();
           };
 
-          this.ws.onmessage = (event) => {
+          this._ws.onmessage = (event: MessageEvent) => {
             try {
-              const message = JSON.parse(event.data);
-              const handlers = this.wsHandlers.get(message.type);
+              const message = JSON.parse(event.data as string);
+              const handlers = this._wsHandlers.get(message.type);
               if (handlers) {
-                handlers.forEach((handler) => handler(message));
+                handlers.forEach((handler: (data: any) => void) => handler(message));
               }
-            } catch (error) {
+            } catch (error: any) {
               console.error("Failed to parse WebSocket message:", error);
             }
           };
 
-          this.ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
-            reject(error);
+          this._ws.onerror = (event: Event) => {
+            console.error("WebSocket error:", event);
+            reject(event);
           };
 
-          this.ws.onclose = () => {
+          this._ws.onclose = () => {
             console.log("WebSocket disconnected");
           };
-        } catch (error) {
+        } catch (error: any) {
           reject(error);
         }
       });
     },
 
-    disconnect(): void {
-      if (this.ws) {
-        this.ws.close();
-        this.ws = null;
+    disconnect: (): void => {
+      if (this._ws) {
+        this._ws.close();
+        this._ws = null;
       }
     },
 
-    send(message: any): void {
-      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify(message));
+    send: (message: any): void => {
+      if (this._ws && this._ws.readyState === WebSocket.OPEN) {
+        this._ws.send(JSON.stringify(message));
       }
     },
 
-    on(event: string, handler: (data: any) => void): void {
-      if (!this.wsHandlers.has(event)) {
-        this.wsHandlers.set(event, new Set());
+    on: (event: string, handler: (data: any) => void): void => {
+      if (!this._wsHandlers.has(event)) {
+        this._wsHandlers.set(event, new Set());
       }
-      this.wsHandlers.get(event)!.add(handler);
+      this._wsHandlers.get(event)!.add(handler);
     },
 
-    off(event: string, handler: (data: any) => void): void {
-      const handlers = this.wsHandlers.get(event);
+    off: (event: string, handler: (data: any) => void): void => {
+      const handlers = this._wsHandlers.get(event);
       if (handlers) {
         handlers.delete(handler);
       }
+    },
+  };
+
+  webhook = {
+    list: async (): Promise<Webhook[]> => {
+      return this._request<Webhook[]>("/api/webhooks");
+    },
+
+    create: async (options: WebhookCreateOptions): Promise<Webhook> => {
+      return this._request<Webhook>("/api/webhooks", {
+        method: "POST",
+        body: JSON.stringify(options),
+      });
+    },
+
+    delete: async (id: string): Promise<void> => {
+      await this._request(`/api/webhooks/${id}`, { method: "DELETE" });
     },
   };
 }

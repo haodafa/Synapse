@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createProviderCommand(): Command {
@@ -126,7 +126,7 @@ function createProviderConfigCommand(): Command {
             placeholder: q.placeholder,
           });
 
-          if (answer) {
+          if (typeof answer === "string" && answer) {
             const client = await getSynapseClient();
             await client.config.set(`provider.${providerId}.${q.key}`, answer);
             console.log(chalk.green(`   ✓ Set ${q.key}`));

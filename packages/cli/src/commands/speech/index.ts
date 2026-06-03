@@ -49,7 +49,7 @@ function createSpeechListenCommand(): Command {
     .description("Listen for voice commands (requires microphone)")
     .option("--timeout <seconds>", "Listen timeout", "30")
     .option("--language <lang>", "Recognition language", "en-US")
-    .action(async (options) => {
+    .action(async (_options) => {
       try {
         console.log(chalk.blue("\n🎤 Listening for voice commands...\n"));
         console.log(chalk.gray("  Press Ctrl+C to stop\n"));

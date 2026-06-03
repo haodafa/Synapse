@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
-import QRCode from "qrcode";
+import * as inquirer from "@clack/prompts";
+import * as QRCode from "qrcode";
 
 export function createRelayCommand(): Command {
   const relay = new Command("relay");
@@ -58,10 +58,13 @@ function createRelayConnectCommand(): Command {
           console.log(chalk.yellow("⚠️  Relay token required"));
           console.log(chalk.blue("\n  Get your token at: https://synapse.sh/relay\n"));
           
-          options.token = await inquirer.text({
+          const tokenInput = await inquirer.text({
             message: "Enter relay token:",
             placeholder: "rel_...",
           });
+          if (typeof tokenInput === "string") {
+            options.token = tokenInput;
+          }
         }
 
         console.log(chalk.green("  ✅ Connected successfully!"));
@@ -109,7 +112,6 @@ function createRelayQrCommand(): Command {
 
         console.log(chalk.bold("  Scan with Synapse mobile app:\n"));
         
-        const qrLines = qrDataUrl.split("\n");
         console.log(chalk.blue(qrDataUrl));
 
         console.log(chalk.gray("\n  Or open manually:"));

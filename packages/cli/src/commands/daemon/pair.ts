@@ -55,7 +55,7 @@ export async function runPairCommand(options: PairOptions): Promise<void> {
   // Fall back to local pairing offer generation.
   const config = loadConfig(synapseHome);
   const pairing = await generateLocalPairingOffer({
-    synapseHome,
+    paseoHome: synapseHome,
     relayEnabled: config.relayEnabled,
     relayEndpoint: config.relayEndpoint,
     relayPublicEndpoint: config.relayPublicEndpoint,

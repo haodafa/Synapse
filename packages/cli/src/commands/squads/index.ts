@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createSquadsCommand(): Command {
@@ -103,21 +103,23 @@ function createSquadsCreateCommand(): Command {
               placeholder: "claude, codex, gemini",
             });
 
-            const names = memberNames.split(",").map((s: string) => s.trim());
-            for (const name of names) {
-              const role = await inquirer.select({
-                message: `Role for ${name}:`,
-                options: [
-                  { value: "member", label: "Member" },
-                  { value: "advisor", label: "Advisor" },
-                ],
-              });
+            if (typeof memberNames === "string") {
+              const names = memberNames.split(",").map((s: string) => s.trim());
+              for (const name of names) {
+                const role = await inquirer.select({
+                  message: `Role for ${name}:`,
+                  options: [
+                    { value: "member", label: "Member" },
+                    { value: "advisor", label: "Advisor" },
+                  ],
+                });
 
-              members.push({
-                name,
-                role,
-                type: "agent",
-              });
+                members.push({
+                  name,
+                  role: typeof role === "string" ? role : "member",
+                  type: "agent",
+                });
+              }
             }
           }
         }
@@ -149,11 +151,13 @@ function createSquadsCreateCommand(): Command {
             placeholder: "ISS-123",
           });
 
-          try {
-            await client.squad.assign(squad.id, issueId);
-            console.log(chalk.green(`   ✅ Assigned issue ${issueId} to squad ${squad.name}`));
-          } catch (error) {
-            console.log(chalk.yellow(`   ⚠️  Could not assign issue: ${error}`));
+          if (typeof issueId === "string") {
+            try {
+              await client.squad.assign(squad.id, issueId);
+              console.log(chalk.green(`   ✅ Assigned issue ${issueId} to squad ${squad.name}`));
+            } catch (error) {
+              console.log(chalk.yellow(`   ⚠️  Could not assign issue: ${error}`));
+            }
           }
         }
       } catch (error) {

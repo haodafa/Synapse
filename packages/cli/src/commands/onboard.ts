@@ -487,7 +487,7 @@ export async function runOnboard(options: OnboardOptions): Promise<void> {
   }
 
   const pairing = await generateLocalPairingOffer({
-    synapseHome,
+    paseoHome: synapseHome,
     relayEnabled: config.relayEnabled,
     relayEndpoint: config.relayEndpoint,
     relayPublicEndpoint: config.relayPublicEndpoint,

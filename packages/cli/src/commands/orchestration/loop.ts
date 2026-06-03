@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createLoopCommand(): Command {
@@ -163,22 +163,21 @@ export function createLoopCommand(): Command {
 
 async function loopUntil(message: string): Promise<string> {
   const lines: string[] = [];
-  let line = "";
 
   console.log(chalk.blue(`\n${message}`));
   console.log(chalk.gray("(Press Enter on empty line to finish)\n"));
 
   while (true) {
-    line = await inquirer.text({
+    const input = await inquirer.text({
       message: "",
       placeholder: "",
     });
 
-    if (line === "") {
+    if (typeof input !== "string" || input === "") {
       break;
     }
 
-    lines.push(line);
+    lines.push(input);
   }
 
   return lines.join("\n");

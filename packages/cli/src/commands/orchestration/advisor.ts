@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createAdvisorCommand(): Command {
@@ -34,10 +34,13 @@ export function createAdvisorCommand(): Command {
           });
 
           if (addContext) {
-            context = await inquirer.text({
+            const ctxInput = await inquirer.text({
               message: "Enter context:",
               placeholder: "Paste relevant code, error messages, etc.",
             });
+            if (typeof ctxInput === "string") {
+              context = ctxInput;
+            }
           }
         }
 
@@ -104,26 +107,28 @@ export function createAdvisorCommand(): Command {
   advisor
     .command("register")
     .description("Register a new advisor agent")
-    .option("--name <name>", "Advisor name", { prompt: "Enter advisor name:" })
+    .option("--name <name>", "Advisor name")
     .option("--description <text>", "Advisor description")
     .option("--expertise <list>", "Comma-separated expertise areas")
     .action(async (options) => {
       try {
         const client = await getSynapseClient();
 
-        const name =
+        const nameInput =
           options.name ||
           (await inquirer.text({
             message: "Enter advisor name:",
             placeholder: "security-expert",
           }));
+        const name = typeof nameInput === "string" ? nameInput : "";
 
-        const description =
+        const descInput =
           options.description ||
           (await inquirer.text({
             message: "Enter description:",
             placeholder: "Expert in security best practices",
           }));
+        const description = typeof descInput === "string" ? descInput : "";
 
         const expertiseInput =
           options.expertise ||
@@ -132,10 +137,12 @@ export function createAdvisorCommand(): Command {
             placeholder: "security, cryptography, authentication",
           }));
 
-        const expertise = expertiseInput
-          .split(",")
-          .map((s: string) => s.trim())
-          .filter(Boolean);
+        const expertise = typeof expertiseInput === "string"
+          ? expertiseInput
+              .split(",")
+              .map((s: string) => s.trim())
+              .filter(Boolean)
+          : [];
 
         const advisor = await client.orchestration.registerAdvisor({
           name,

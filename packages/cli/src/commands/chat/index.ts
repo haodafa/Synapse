@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
-import { getSynapseClient } from "../../lib/synapse-client.js";
+import * as inquirer from "@clack/prompts";
+import { getSynapseClient, SynapseClient } from "../../lib/synapse-client.js";
 
 export function createChatCommand(): Command {
   const chat = new Command("chat");
@@ -53,7 +53,7 @@ function createChatSendCommand(): Command {
         if (shouldStream) {
           process.stdout.write(chalk.cyan("🤖 "));
           
-          const response = await streamAgentResponse(client, agentId);
+          await streamAgentResponse(client, agentId);
           
           console.log(chalk.reset("\n"));
           console.log(chalk.green("✅ Response complete\n"));
@@ -75,27 +75,32 @@ function createChatSendCommand(): Command {
     });
 }
 
-async function streamAgentResponse(client: any, agentId: string): Promise<string> {
+async function streamAgentResponse(client: SynapseClient, agentId: string): Promise<string> {
   return new Promise((resolve) => {
     let fullResponse = "";
 
-    client.ws.on("log", (data: any) => {
-      if (data.payload.agentId === agentId && data.payload.level === "info") {
+    const logHandler = (data: any) => {
+      if (data.payload?.agentId === agentId && data.payload?.level === "info") {
         const content = data.payload.message;
         fullResponse += content;
         process.stdout.write(content);
       }
-    });
+    };
 
-    client.ws.on("agent:status", (data: any) => {
-      if (data.payload.agentId === agentId && data.payload.status === "completed") {
-        client.ws.off("log", () => {});
-        client.ws.off("agent:status", () => {});
+    const statusHandler = (data: any) => {
+      if (data.payload?.agentId === agentId && data.payload?.status === "completed") {
+        client.ws.off("log", logHandler);
+        client.ws.off("agent:status", statusHandler);
         resolve(fullResponse);
       }
-    });
+    };
+
+    client.ws.on("log", logHandler);
+    client.ws.on("agent:status", statusHandler);
 
     setTimeout(() => {
+      client.ws.off("log", logHandler);
+      client.ws.off("agent:status", statusHandler);
       resolve(fullResponse);
     }, 30000);
   });
@@ -195,12 +200,14 @@ function createChatSessionCommand(): Command {
         console.log(chalk.gray("  Type 'exit' to end the session, 'clear' to clear the screen\n"));
 
         while (true) {
-          const message = await inquirer.text({
+          const rawMessage = await inquirer.text({
             message: chalk.blue("👤"),
             placeholder: "Type your message...",
           });
 
-          if (!message.trim()) continue;
+          if (typeof rawMessage !== "string" || !rawMessage.trim()) continue;
+
+          const message = rawMessage;
 
           if (message.toLowerCase() === "exit") {
             console.log(chalk.blue("\n👋 Ending session...\n"));
@@ -221,20 +228,22 @@ function createChatSessionCommand(): Command {
 
           try {
             await client.agent.send(agentId, message);
-            
-            console.write(chalk.cyan("🤖 "));
-            
+
+            process.stdout.write(chalk.cyan("🤖 "));
+
             let response = "";
+            const logHandler = (data: any) => {
+              if (data.payload?.agentId === agentId) {
+                response += data.payload.message;
+                process.stdout.write(data.payload.message);
+              }
+            };
+
+            client.ws.on("log", logHandler);
+
             const responsePromise = new Promise<string>((resolve) => {
-              client.ws.on("log", function handler(data: any) {
-                if (data.payload.agentId === agentId) {
-                  response += data.payload.message;
-                  process.stdout.write(data.payload.message);
-                }
-              });
-              
               setTimeout(() => {
-                client.ws.off("log", handler);
+                client.ws.off("log", logHandler);
                 resolve(response);
               }, 10000);
             });
@@ -252,8 +261,8 @@ function createChatSessionCommand(): Command {
     });
 }
 
-async function handleSlashCommand(message: string, client: any, agentId: string) {
-  const [command, ...args] = message.slice(1).split(" ");
+async function handleSlashCommand(message: string, client: SynapseClient, agentId: string) {
+  const [command] = message.slice(1).split(" ");
 
   switch (command) {
     case "agent":

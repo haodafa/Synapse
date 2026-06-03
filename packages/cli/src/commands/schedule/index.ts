@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createScheduleCommand(): Command {
@@ -103,7 +103,7 @@ function createScheduleListCommand(): Command {
 
         console.log(chalk.bold(`\n📅 Scheduled Tasks (${scheduledTasks.length})\n`));
 
-        if (schedilizedTasks.length === 0) {
+        if (scheduledTasks.length === 0) {
           console.log(chalk.yellow("  No scheduled tasks found.\n"));
           return;
         }
@@ -208,7 +208,7 @@ function isValidCron(cron: string): boolean {
   return parts.length === 5;
 }
 
-function formatNextRun(cron: string, timezone: string): string {
+function formatNextRun(_cron: string, _timezone: string): string {
   try {
     return `in approximately ${chalk.yellow("1h")} (cron parsing not implemented)`;
   } catch {

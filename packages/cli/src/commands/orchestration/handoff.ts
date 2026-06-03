@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import chalk from "chalk";
-import inquirer from "@clack/prompts";
+import * as inquirer from "@clack/prompts";
 import { getSynapseClient } from "../../lib/synapse-client.js";
 
 export function createHandoffCommand(): Command {
@@ -29,7 +29,7 @@ export function createHandoffCommand(): Command {
         console.log(chalk.cyan(`From: ${fromAgentId}`));
         console.log(chalk.cyan(`To: ${toAgentId}`));
 
-        const handoffMessage =
+        const rawMessage =
           options.message ||
           (
             await inquirer.text({
@@ -37,6 +37,7 @@ export function createHandoffCommand(): Command {
               placeholder: "Describe what needs to be done...",
             })
           );
+        const handoffMessage = typeof rawMessage === "string" ? rawMessage : "";
 
         console.log(chalk.blue("\n📤 Creating handoff..."));
 

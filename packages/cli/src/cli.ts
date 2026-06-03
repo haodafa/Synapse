@@ -12,24 +12,19 @@ import { createWorktreeCommand } from "./commands/worktree/index.js";
 import { startCommand as daemonStartCommand } from "./commands/daemon/start.js";
 import { runStatusCommand as runDaemonStatusCommand } from "./commands/daemon/status.js";
 import { runRestartCommand as runDaemonRestartCommand } from "./commands/daemon/restart.js";
-import { addLsOptions, runLsCommand } from "./commands/agent/ls.js";
-import { addRunOptions, runRunCommand } from "./commands/agent/run.js";
-import { addLogsOptions, runLogsCommand } from "./commands/agent/logs.js";
-import { addDeleteOptions, runDeleteCommand } from "./commands/agent/delete.js";
-import { addStopOptions, runStopCommand } from "./commands/agent/stop.js";
-import { addSendOptions, runSendCommand } from "./commands/agent/send.js";
-import { addInspectOptions, runInspectCommand } from "./commands/agent/inspect.js";
-import { addWaitOptions, runWaitCommand } from "./commands/agent/wait.js";
-import { addArchiveOptions, runArchiveCommand } from "./commands/agent/archive.js";
-import { addAttachOptions, runAttachCommand } from "./commands/agent/attach.js";
-import { addImportOptions, runImportCommand } from "./commands/agent/import.js";
+import { runLsCommand } from "./commands/agent/ls.js";
+import { runRunCommand } from "./commands/agent/run.js";
+import { runLogsCommand } from "./commands/agent/logs.js";
+import { runDeleteCommand } from "./commands/agent/delete.js";
+import { runStopCommand } from "./commands/agent/stop.js";
+import { runSendCommand } from "./commands/agent/send.js";
+import { runInspectCommand } from "./commands/agent/inspect.js";
+import { runWaitCommand } from "./commands/agent/wait.js";
+import { runArchiveCommand } from "./commands/agent/archive.js";
+import { runAttachCommand } from "./commands/agent/attach.js";
+import { runImportCommand } from "./commands/agent/import.js";
 import { withOutput } from "./output/index.js";
 import { onboardCommand } from "./commands/onboard.js";
-import {
-  addDaemonHostOption,
-  addJsonAndDaemonHostOptions,
-  addJsonOption,
-} from "./utils/command-options.js";
 import { resolveCliVersion } from "./version.js";
 
 import { createAuthCommand } from "./commands/synapse/auth.js";
