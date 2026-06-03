@@ -230,7 +230,7 @@ export type DaemonLifecycleIntent =
 
 export interface SynapseDaemonConfig {
   listen: string;
-  paseoHome: string;
+  synapseHome: string;
   corsAllowedOrigins: string[];
   allowedHosts?: HostnamesConfig;
   hostnames?: HostnamesConfig;
@@ -285,7 +285,7 @@ export async function createSynapseDaemon(
   const elapsed = () => `${(performance.now() - bootstrapStart).toFixed(0)}ms`;
   const daemonVersion = resolveDaemonVersion(import.meta.url);
   const daemonConfigStore = new DaemonConfigStore(
-    config.paseoHome,
+    config.synapseHome,
     {
       mcp: { injectIntoAgents: config.mcpInjectIntoAgents ?? true },
       providers: Object.fromEntries(
@@ -303,8 +303,8 @@ export async function createSynapseDaemon(
     logger,
   );
 
-  const serverId = getOrCreateServerId(config.paseoHome, { logger });
-  const daemonKeyPair = await loadOrCreateDaemonKeyPair(config.paseoHome, logger);
+  const serverId = getOrCreateServerId(config.synapseHome, { logger });
+  const daemonKeyPair = await loadOrCreateDaemonKeyPair(config.synapseHome, logger);
   let relayTransport: RelayTransportController | null = null;
 
   const staticDir = config.staticDir;
@@ -492,22 +492,22 @@ export async function createSynapseDaemon(
 
   const agentStorage = new AgentStorage(config.agentStoragePath, logger);
   const projectRegistry = new FileBackedProjectRegistry(
-    path.join(config.paseoHome, "projects", "projects.json"),
+    path.join(config.synapseHome, "projects", "projects.json"),
     logger,
   );
   workspaceRegistry = new FileBackedWorkspaceRegistry(
-    path.join(config.paseoHome, "projects", "workspaces.json"),
+    path.join(config.synapseHome, "projects", "workspaces.json"),
     logger,
   );
   const chatService = new FileBackedChatService({
-    paseoHome: config.paseoHome,
+    paseoHome: config.synapseHome,
     logger,
   });
   const terminalManager = createConfiguredTerminalManager();
   const github = createGitHubService();
   const workspaceGitService = new WorkspaceGitServiceImpl({
     logger,
-    paseoHome: config.paseoHome,
+    synapseHome: config.synapseHome,
     deps: {
       github,
     },
@@ -538,7 +538,7 @@ export async function createSynapseDaemon(
   await agentStorage.initialize();
   logger.info({ elapsed: elapsed() }, "Agent storage initialized");
   await bootstrapWorkspaceRegistries({
-    paseoHome: config.paseoHome,
+    paseoHome: config.synapseHome,
     agentStorage,
     projectRegistry,
     workspaceRegistry,
@@ -570,18 +570,18 @@ export async function createSynapseDaemon(
   logger.info({ elapsed: elapsed() }, "Chat service initialized");
   const checkoutDiffManager = new CheckoutDiffManager({
     logger,
-    paseoHome: config.paseoHome,
+    paseoHome: config.synapseHome,
     workspaceGitService,
   });
   const loopService = new LoopService({
-    paseoHome: config.paseoHome,
+    paseoHome: config.synapseHome,
     logger,
     agentManager,
   });
   await loopService.initialize();
   logger.info({ elapsed: elapsed() }, "Loop service initialized");
   const scheduleService = new ScheduleService({
-    paseoHome: config.paseoHome,
+    paseoHome: config.synapseHome,
     logger,
     agentManager,
     agentStorage,
@@ -639,7 +639,7 @@ export async function createSynapseDaemon(
   };
 
   setupAutoArchiveOnMerge({
-    paseoHome: config.paseoHome,
+    synapseHome: config.synapseHome,
     daemonConfigStore,
     workspaceGitService,
     github,
@@ -678,7 +678,7 @@ export async function createSynapseDaemon(
         createSynapseWorktree: async (input, serviceOptions) => {
           return createSynapseWorktreeWorkflow(
             {
-              paseoHome: config.paseoHome,
+              synapseHome: config.synapseHome,
               createSynapseWorktree: async (workflowInput, workflowOptions) => {
                 return createRegisteredSynapseWorktree(workflowInput, {
                   github,
@@ -724,7 +724,7 @@ export async function createSynapseDaemon(
             serviceOptions,
           );
         },
-        paseoHome: config.paseoHome,
+        synapseHome: config.synapseHome,
         callerAgentId,
         enableVoiceTools: false,
         resolveSpeakHandler: (agentId) => wsServer?.resolveVoiceSpeakHandler(agentId) ?? null,
@@ -914,7 +914,7 @@ export async function createSynapseDaemon(
             agentManager,
             agentStorage,
             downloadTokenStore,
-            config.paseoHome,
+            config.synapseHome,
             daemonConfigStore,
             mcpBaseUrl,
             { allowedOrigins, hostnames: configuredHostnames },

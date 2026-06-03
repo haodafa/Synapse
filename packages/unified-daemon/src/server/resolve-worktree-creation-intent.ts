@@ -71,27 +71,29 @@ export async function resolveWorktreeCreationIntent(
     throw new MissingCheckoutTargetError();
   }
 
-  if (input.githubPrNumber !== undefined) {
+  const remaining = input as Extract<ResolveWorktreeCreationIntentInput, { action?: undefined }>;
+
+  if (remaining.githubPrNumber !== undefined) {
     return resolveGitHubPrCheckoutIntent({
-      refName: input.refName,
-      githubPrNumber: input.githubPrNumber,
+      refName: remaining.refName,
+      githubPrNumber: remaining.githubPrNumber,
       repoRoot,
       deps,
     });
   }
 
-  if (input.refName?.trim()) {
+  if (remaining.refName?.trim()) {
     return {
       kind: "branch-off",
-      baseBranch: input.refName.trim(),
-      branchName: input.worktreeSlug,
+      baseBranch: remaining.refName.trim(),
+      branchName: remaining.worktreeSlug,
     };
   }
 
   return {
     kind: "branch-off",
     baseBranch: await resolveDefaultBranch(repoRoot, deps),
-    branchName: input.worktreeSlug,
+    branchName: remaining.worktreeSlug,
   };
 }
 

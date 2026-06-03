@@ -276,7 +276,13 @@ async function resolveExplicitProjectForWorktree(options: {
   if (!project || project.archivedAt) {
     throw new Error(`Project not found for worktree: ${options.projectId}`);
   }
-  return sourceProjectFromRecord(project);
+  return sourceProjectFromRecord(project as unknown as {
+    projectId: string;
+    rootPath: string;
+    displayName: string;
+    customName?: string | null;
+    createdAt?: string | null;
+  });
 }
 
 async function resolveWorkspaceProjectForWorktree(options: {

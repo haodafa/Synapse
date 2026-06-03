@@ -857,7 +857,7 @@ export class VoiceAssistantWebSocketServer {
       logger: connectionLogger.child({ module: "session" }),
       downloadTokenStore: this.downloadTokenStore,
       pushTokenStore: this.pushTokenStore,
-      paseoHome: this.paseoHome,
+      synapseHome: this.paseoHome,
       agentManager: this.agentManager,
       agentStorage: this.agentStorage,
       projectRegistry: this.projectRegistry,
@@ -1216,7 +1216,7 @@ export class VoiceAssistantWebSocketServer {
   private handleInvalidInboundMessage(args: {
     ws: WebSocketLike;
     parsed: unknown;
-    parsedMessage: { success: false; error: { message: string } } & Record<string, unknown>;
+    parsedMessage: { success: false; error: { message?: string } };
     pendingConnection: PendingConnection | undefined;
     activeConnection: SessionConnection | undefined;
     log: pino.Logger;
@@ -1373,7 +1373,7 @@ export class VoiceAssistantWebSocketServer {
         this.handleInvalidInboundMessage({
           ws,
           parsed,
-          parsedMessage,
+          parsedMessage: parsedMessage as { success: false; error: { message?: string } },
           pendingConnection,
           activeConnection,
           log,

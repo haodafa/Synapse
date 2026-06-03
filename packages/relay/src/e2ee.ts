@@ -6,6 +6,7 @@ export interface KeyPair {
 export interface EncryptedChannel {
   send: (data: unknown) => Promise<void>;
   close: (code?: number, reason?: string) => void;
+  setState: (state: string) => void;
 }
 
 export type Transport = {
@@ -73,11 +74,53 @@ export async function createClientChannel(
   };
 
   return {
-    send: async (data) => {
+    send: async (data: unknown) => {
       transport.send(data);
     },
-    close: (code, reason) => {
+    close: (code?: number, reason?: string) => {
       transport.close(code, reason);
+    },
+    setState: (_state: string) => {
+      // stub: no-op
+    },
+  };
+}
+
+export async function createDaemonChannel(
+  transport: Transport,
+  clientPublicKeyB64: string,
+  keyPair: KeyPair,
+  handlers: {
+    onopen: () => void;
+    onmessage: (data: unknown) => void;
+    onclose: (code?: number, reason?: string) => void;
+    onerror: (error: unknown) => void;
+  }
+): Promise<EncryptedChannel> {
+  // Simple stub that just forwards everything (daemon side mirror of createClientChannel)
+  setTimeout(() => handlers.onopen(), 0);
+
+  transport.onmessage = (data: unknown) => {
+    handlers.onmessage(data);
+  };
+
+  transport.onclose = (code?: number, reason?: string) => {
+    handlers.onclose(code, reason);
+  };
+
+  transport.onerror = (error: unknown) => {
+    handlers.onerror(error);
+  };
+
+  return {
+    send: async (data: unknown) => {
+      transport.send(data);
+    },
+    close: (code?: number, reason?: string) => {
+      transport.close(code, reason);
+    },
+    setState: (_state: string) => {
+      // stub: no-op
     },
   };
 }

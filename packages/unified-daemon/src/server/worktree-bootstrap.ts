@@ -836,7 +836,8 @@ export async function spawnWorkspaceScript(
   } = options;
   const configResult = readSynapseConfig(repoRoot);
   if (!configResult.ok) {
-    throw paseoConfigParseError(configResult);
+    const { configPath, error } = configResult as Extract<typeof configResult, { ok: false }>;
+    throw paseoConfigParseError({ configPath, error });
   }
   const scriptConfigs = getScriptConfigs(configResult.config);
   const config = scriptConfigs.get(scriptName);

@@ -224,7 +224,8 @@ export function paseoConfigParseError(failure: { configPath: string; error: unkn
 function readSynapseConfigOrThrow(repoRoot: string): SynapseConfig | null {
   const result = readSynapseConfig(repoRoot);
   if (!result.ok) {
-    throw paseoConfigParseError(result);
+    const { configPath, error } = result as Extract<typeof result, { ok: false }>;
+    throw paseoConfigParseError({ configPath, error });
   }
   return result.config;
 }

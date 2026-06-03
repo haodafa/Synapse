@@ -74,7 +74,7 @@ type AgentWorktreeSetupTimelineWriter = (input: {
 }) => Promise<boolean>;
 
 interface BuildAgentSessionConfigDependencies {
-  paseoHome?: string;
+  synapseHome?: string;
   sessionLogger: Logger;
   workspaceGitService?: WorkspaceGitService;
   createSynapseWorktree: (
@@ -94,7 +94,7 @@ interface BuildAgentSessionConfigDependencies {
 }
 
 interface CreateSynapseWorktreeInBackgroundDependencies {
-  paseoHome?: string;
+  synapseHome?: string;
   emitWorkspaceUpdateForCwd: (cwd: string, options?: { dedupeGitState?: boolean }) => Promise<void>;
   cacheWorkspaceSetupSnapshot: (workspaceId: string, snapshot: WorkspaceSetupSnapshot) => void;
   emit: EmitSessionMessage;
@@ -157,7 +157,7 @@ interface HandleWorkspaceSetupStatusRequestDependencies {
 }
 
 interface HandleCreateSynapseWorktreeRequestDependencies {
-  paseoHome?: string;
+  synapseHome?: string;
   describeWorkspaceRecord: (
     result: CreateSynapseWorktreeResult,
   ) => Promise<WorkspaceDescriptorPayload>;
@@ -223,7 +223,7 @@ export async function buildAgentSessionConfig(
         githubPrNumber: normalized.githubPrNumber,
         firstAgentContext,
         runSetup: false,
-        paseoHome: dependencies.paseoHome,
+        synapseHome: dependencies.synapseHome,
       },
       {
         resolveDefaultBranch: normalized.baseBranch
@@ -232,7 +232,7 @@ export async function buildAgentSessionConfig(
               resolveGitCreateBaseBranch(
                 repoRoot,
                 dependencies.workspaceGitService,
-                dependencies.paseoHome,
+                dependencies.synapseHome,
               ),
       },
     );
@@ -244,7 +244,7 @@ export async function buildAgentSessionConfig(
       (await resolveGitCreateBaseBranch(
         cwd,
         dependencies.workspaceGitService,
-        dependencies.paseoHome,
+        dependencies.synapseHome,
       ));
     await dependencies.createBranchFromBase({
       cwd,
@@ -364,7 +364,7 @@ export function assertSafeGitRef(ref: string, label: string): void {
 export async function resolveGitCreateBaseBranch(
   cwd: string,
   workspaceGitService?: WorkspaceGitService,
-  _paseoHome?: string,
+  _synapseHome?: string,
 ): Promise<string> {
   if (!workspaceGitService) {
     throw new Error("WorkspaceGitService is required to resolve the repository root");
@@ -376,7 +376,7 @@ export async function resolveGitCreateBaseBranch(
 export async function handleSynapseWorktreeListRequest(
   dependencies: {
     emit: EmitSessionMessage;
-    paseoHome?: string;
+    synapseHome?: string;
     workspaceGitService: WorkspaceGitService;
   },
   msg: Extract<SessionInboundMessage, { type: "paseo_worktree_list_request" }>,
@@ -446,14 +446,15 @@ export async function handleSynapseWorktreeArchiveRequest(
       branchName: msg.branchName,
     });
     if (!result.ok) {
+      const { code: archiveErrCode, message: archiveErrMsg } = result as Extract<typeof result, { ok: false }>;
       dependencies.emit({
         type: "paseo_worktree_archive_response",
         payload: {
           success: false,
           removedAgents: result.removedAgents,
           error: {
-            code: result.code,
-            message: result.message,
+            code: archiveErrCode,
+            message: archiveErrMsg,
           },
           requestId,
         },
@@ -490,7 +491,7 @@ export async function handleCreateSynapseWorktreeRequest(
   try {
     const commandResult = await createSynapseWorktreeCommand(
       {
-        paseoHome: dependencies.paseoHome,
+        synapseHome: dependencies.synapseHome,
         createSynapseWorktreeWorkflow: dependencies.createSynapseWorktreeWorkflow,
       },
       {
@@ -505,16 +506,17 @@ export async function handleCreateSynapseWorktreeRequest(
     );
 
     if (!commandResult.ok) {
+      const { cause: createCause, error: createErr } = commandResult as Extract<typeof commandResult, { ok: false }>;
       dependencies.sessionLogger.error(
-        { err: commandResult.cause, cwd: request.cwd, worktreeSlug: request.worktreeSlug },
+        { err: createCause, cwd: request.cwd, worktreeSlug: request.worktreeSlug },
         "Failed to create worktree",
       );
       dependencies.emit({
         type: "create_paseo_worktree_response",
         payload: {
           workspace: null,
-          error: commandResult.error.message,
-          errorCode: commandResult.error.code,
+          error: createErr.message,
+          errorCode: createErr.code,
           setupTerminalId: null,
           requestId: request.requestId,
         },
@@ -571,7 +573,7 @@ export async function createSynapseWorktreeWorkflow(
     {
       ...input,
       runSetup: false,
-      paseoHome: input.paseoHome ?? dependencies.paseoHome,
+      synapseHome: input.synapseHome ?? dependencies.synapseHome,
     },
     options?.resolveDefaultBranch
       ? { resolveDefaultBranch: options.resolveDefaultBranch }

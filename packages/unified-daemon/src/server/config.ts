@@ -281,14 +281,14 @@ function resolveStaticLoadConfigSettings(
 }
 
 export function loadConfig(
-  paseoHome: string,
+  synapseHome: string,
   options?: {
     env?: NodeJS.ProcessEnv;
     cli?: CliConfigOverrides;
   },
 ): SynapseDaemonConfig {
   const env = options?.env ?? process.env;
-  const persisted = loadPersistedConfig(paseoHome);
+  const persisted = loadPersistedConfig(synapseHome);
 
   const listen = resolveListenAddress(env, options?.cli, persisted);
   const {
@@ -308,7 +308,7 @@ export function loadConfig(
   });
 
   const { openai, speech } = resolveSpeechConfig({
-    paseoHome,
+    paseoHome: synapseHome,
     env,
     persisted,
   });
@@ -320,7 +320,7 @@ export function loadConfig(
 
   return {
     listen,
-    paseoHome,
+    synapseHome,
     corsAllowedOrigins: resolveCorsAllowedOrigins(env, persisted),
     hostnames,
     mcpEnabled,
@@ -329,7 +329,7 @@ export function loadConfig(
     appendSystemPrompt,
     mcpDebug: env.MCP_DEBUG === "1",
     isDev: resolveSynapseNodeEnv(env) === "development",
-    agentStoragePath: path.join(paseoHome, "agents"),
+    agentStoragePath: path.join(synapseHome, "agents"),
     staticDir: "public",
     agentClients: {},
     relayEnabled: relay.enabled,

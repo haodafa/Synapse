@@ -3,10 +3,11 @@ import { EventEmitter } from "node:events";
 import { WebSocket } from "ws";
 import type pino from "pino";
 import {
-  createDaemonChannel,
+  createClientChannel,
   type EncryptedChannel,
   type Transport as RelayTransport,
   type KeyPair,
+  exportPublicKey,
 } from "@synapse/relay/e2ee";
 import { buildRelayWebSocketUrl } from "@synapse/protocol/daemon-endpoints";
 import type { ExternalSocketMetadata } from "./websocket-server.js";
@@ -441,7 +442,10 @@ async function attachEncryptedSocket(
       }
       pendingMessages.push(data);
     };
-    const channel = await createDaemonChannel(relayTransport, daemonKeyPair, {
+    const channel = await createClientChannel(relayTransport, exportPublicKey(daemonKeyPair.publicKey), {
+      onopen: () => {
+        // no-op: channel opened
+      },
       onmessage: emitMessage,
       onclose: (code, reason) => emitter.emit("close", code, reason),
       onerror: (error) => {
@@ -473,7 +477,7 @@ function createRelayTransportAdapter(
   const relayTransport: RelayTransport = {
     send: (data) => {
       try {
-        socket.send(data);
+        socket.send(data as string | Uint8Array | ArrayBuffer);
       } catch (err) {
         // Socket likely transitioned to closed between checks; let onclose/onerror
         // drive cleanup. Without this guard the synchronous throw would propagate

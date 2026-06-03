@@ -339,9 +339,9 @@ function hasUserPrompt(descriptor: PersistedAgentDescriptor): boolean {
 function collectProviderSessionHandleKeys(
   target: Set<string>,
   provider: AgentProvider | StoredAgentRecord["provider"] | string,
-  persistence: AgentPersistenceHandle | null | undefined,
+  persistence: StoredAgentRecord["persistence"],
 ): void {
-  if (!persistence) {
+  if (!persistence?.sessionId) {
     return;
   }
 

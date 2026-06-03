@@ -38,10 +38,13 @@ export function readSynapseConfigForProjection(
   if (result.ok) {
     return result.config;
   }
-  logger.warn(
-    { configPath: result.configPath, workspaceDirectory, err: result.error },
-    "Failed to parse synapse.json; treating workspace as having no scripts",
-  );
+  if (!result.ok) {
+    const { configPath, error } = result as Extract<typeof result, { ok: false }>;
+    logger.warn(
+      { configPath, workspaceDirectory, err: error },
+      "Failed to parse synapse.json; treating workspace as having no scripts",
+    );
+  }
   return null;
 }
 

@@ -173,10 +173,10 @@ function mergeMutableConfigIntoPersistedConfig(params: {
 }): PersistedConfig {
   const { persisted, mutable } = params;
   const providerOverrides = applyMutableProviderConfigToOverrides(
-    persisted.agents?.providers as Record<string, ProviderOverride> | undefined,
+    persisted.agents?.providers as unknown as Record<string, ProviderOverride> | undefined,
     mutable.providers,
   );
-  const persistedAgents = persisted.agents as
+  const persistedAgents = persisted.agents as unknown as
     | ({ providers?: Record<string, ProviderOverride> } & Record<string, unknown>)
     | undefined;
 

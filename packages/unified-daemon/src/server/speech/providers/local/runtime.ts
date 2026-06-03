@@ -130,7 +130,7 @@ async function createLocalSttEngine(params: {
 
 type LocalConfig = NonNullable<PaseoSpeechConfig["local"]>;
 
-function isLocalProviderEnabled(provider: { enabled?: boolean; provider: string }): boolean {
+function isLocalProviderEnabled(provider: { enabled?: boolean; provider?: string }): boolean {
   return provider.enabled !== false && provider.provider === "local";
 }
 

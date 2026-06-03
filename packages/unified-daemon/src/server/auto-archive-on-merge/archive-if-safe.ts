@@ -15,7 +15,7 @@ import type { TerminalManager } from "../../terminal/terminal-manager.js";
 import { isPaseoOwnedWorktreeCwd } from "../../utils/worktree.js";
 
 export interface AutoArchiveArchiveOptions {
-  paseoHome: string;
+  synapseHome: string;
   daemonConfigStore: DaemonConfigStore;
   workspaceGitService: WorkspaceGitServiceImpl;
   github: GitHubService;
@@ -83,7 +83,7 @@ export async function archiveIfSafe(input: {
       return;
     }
 
-    const ownership = await deps.isPaseoOwnedWorktreeCwd(cwd, { paseoHome: options.paseoHome });
+    const ownership = await deps.isPaseoOwnedWorktreeCwd(cwd, { synapseHome: options.synapseHome });
     if (!ownership.allowed) {
       return;
     }
@@ -91,7 +91,7 @@ export async function archiveIfSafe(input: {
     try {
       await deps.archiveSynapseWorktree(
         {
-          paseoHome: options.paseoHome,
+          synapseHome: options.synapseHome,
           github: options.github,
           workspaceGitService: options.workspaceGitService,
           agentManager: options.agentManager,

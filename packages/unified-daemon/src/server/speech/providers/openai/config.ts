@@ -45,12 +45,12 @@ const OpenAiSpeechResolutionSchema = z.object({
   ),
 });
 
-function isOpenAiProviderActive(provider: { enabled?: boolean; provider: string }): boolean {
+function isOpenAiProviderActive(provider: { enabled?: boolean; provider?: string }): boolean {
   return provider.enabled !== false && provider.provider === "openai";
 }
 
 function pickIfOpenAi<T>(
-  provider: { enabled?: boolean; provider: string },
+  provider: { enabled?: boolean; provider?: string },
   value: T | undefined,
 ): T | undefined {
   return isOpenAiProviderActive(provider) ? value : undefined;

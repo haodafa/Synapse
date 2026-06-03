@@ -23,7 +23,7 @@ export interface CreateWorktreeCoreInput {
   action?: "branch-off" | "checkout";
   githubPrNumber?: number;
   firstAgentContext?: FirstAgentContext;
-  paseoHome?: string;
+  synapseHome?: string;
   runSetup?: boolean;
 }
 
@@ -97,7 +97,7 @@ export async function createWorktreeCore(
   const existingWorktree = await resolveExistingWorktreeForSlug({
     slug: normalizedSlug,
     repoRoot,
-    paseoHome: input.paseoHome,
+    synapseHome: input.synapseHome,
   });
   if (existingWorktree) {
     return { worktree: existingWorktree, intent, repoRoot, created: false };
@@ -109,7 +109,7 @@ export async function createWorktreeCore(
       worktreeSlug: normalizedSlug,
       source: intent,
       runSetup: input.runSetup ?? true,
-      paseoHome: input.paseoHome,
+      synapseHome: input.synapseHome,
     }),
     intent,
     repoRoot,
@@ -131,7 +131,7 @@ async function resolveDefaultBranch(
 }
 
 export async function resolveWorktreeRepoRoot(
-  input: Pick<CreateWorktreeCoreInput, "cwd" | "paseoHome">,
+  input: Pick<CreateWorktreeCoreInput, "cwd" | "synapseHome">,
   workspaceGitService?: Pick<WorkspaceGitService, "resolveRepoRoot">,
 ): Promise<string> {
   if (!workspaceGitService) {

@@ -83,8 +83,9 @@ export async function notifyChatMentions(input: NotifyChatMentionsInput): Promis
     targetMentionAgentIds.map(async (mentionedAgentId) => {
       const resolved = await input.resolveAgentIdentifier(mentionedAgentId);
       if (!resolved.ok) {
+        const resolveError = (resolved as { ok: false; error: string }).error;
         input.logger.warn(
-          { mentionedAgentId, room: input.room, error: resolved.error },
+          { mentionedAgentId, room: input.room, error: resolveError },
           "Failed to resolve chat mention target",
         );
         return;

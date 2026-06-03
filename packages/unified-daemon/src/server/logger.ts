@@ -28,7 +28,7 @@ interface LegacyLogConfig {
 type LoggerConfigInput = PersistedConfig | LegacyLogConfig | undefined;
 
 interface ResolveLogConfigOptions {
-  paseoHome?: string;
+  synapseHome?: string;
   file?: boolean;
 }
 
@@ -60,8 +60,8 @@ const REDACT_PATHS = [
   "req.headers.Sec-WebSocket-Protocol",
 ];
 
-function resolveFilePath(paseoHome: string, configuredPath: string | undefined): string {
-  const fallback = path.join(paseoHome, DEFAULT_DAEMON_LOG_FILENAME);
+function resolveFilePath(synapseHome: string, configuredPath: string | undefined): string {
+  const fallback = path.join(synapseHome, DEFAULT_DAEMON_LOG_FILENAME);
   if (!configuredPath) {
     return fallback;
   }
@@ -70,7 +70,7 @@ function resolveFilePath(paseoHome: string, configuredPath: string | undefined):
     return configuredPath;
   }
 
-  return path.resolve(paseoHome, configuredPath);
+  return path.resolve(synapseHome, configuredPath);
 }
 
 function minLogLevel(levels: LogLevel[]): LogLevel {
@@ -86,8 +86,8 @@ function minLogLevel(levels: LogLevel[]): LogLevel {
 }
 
 function resolveConfiguredSynapseHome(options: ResolveLogConfigOptions | undefined): string {
-  if (options?.paseoHome) {
-    return options.paseoHome;
+  if (options?.synapseHome) {
+    return options.synapseHome;
   }
   return resolveSynapseHome();
 }
@@ -139,7 +139,7 @@ export function resolveLogConfig(
   options?: ResolveLogConfigOptions,
 ): ResolvedLogConfig {
   const persistedConfig = normalizeLoggerConfigInput(configInput);
-  const paseoHome = resolveConfiguredSynapseHome(options);
+  const synapseHome = resolveConfiguredSynapseHome(options);
   const persistedLog = persistedConfig?.log;
 
   const { consoleLevel, fileLevel, consoleFormat } = resolveLogLevelsAndFormat(persistedLog);
@@ -147,7 +147,7 @@ export function resolveLogConfig(
     options?.file !== false && persistedLog?.file
       ? {
           level: fileLevel ?? DEFAULT_FILE_LEVEL,
-          path: resolveFilePath(paseoHome, persistedLog.file.path),
+          path: resolveFilePath(synapseHome, persistedLog.file.path),
         }
       : undefined;
 

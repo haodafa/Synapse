@@ -357,7 +357,7 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-export function resolveLocalPaseoHome(home?: string): string {
+export function resolveLocalSynapseHome(home?: string): string {
   return resolveSynapseHome(envWithHome(home));
 }
 
@@ -426,7 +426,7 @@ export function resolveLocalDaemonState(options: { home?: string } = {}): LocalD
 }
 
 export function tailDaemonLog(home?: string, lines = 30): string | null {
-  const logPath = path.join(resolveLocalPaseoHome(home), DAEMON_LOG_FILENAME);
+  const logPath = path.join(resolveLocalSynapseHome(home), DAEMON_LOG_FILENAME);
   return tailFile(logPath, lines);
 }
 

@@ -1181,7 +1181,7 @@ export function createGitHubService(options: CreateGitHubServiceOptions = {}): G
           number: z.number(),
         })
         .parse(JSON.parse(stdout || "{}"));
-      return parsed;
+      return parsed as GitHubPullRequestCreateResult;
     },
 
     async mergePullRequest(input) {
@@ -1506,7 +1506,7 @@ function toCommandFailureLike(error: unknown): CommandFailureLike {
   return {
     code:
       typeof record.code === "string" || typeof record.code === "number" || record.code === null
-        ? record.code
+        ? (record.code as string | number | null)
         : undefined,
     stderr:
       typeof record.stderr === "string" || Buffer.isBuffer(record.stderr)

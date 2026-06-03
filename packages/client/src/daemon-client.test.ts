@@ -922,7 +922,7 @@ test("omitting create_agent_request worktree base-ref fields preserves legacy wi
   await expect(createPromise).rejects.toThrow("legacy git shape sentinel");
 });
 
-test("sends structured first-agent context attachments with create_synapse_worktree_request", async () => {
+test("sends structured first-agent context attachments with create_paseo_worktree_request", async () => {
   const logger = createMockLogger();
   const mock = createMockTransport();
 
@@ -939,7 +939,7 @@ test("sends structured first-agent context attachments with create_synapse_workt
   mock.triggerOpen();
   await connectPromise;
 
-  const createPromise = client.createSynapseWorktree({
+  const createPromise = client.createPaseoWorktree({
     cwd: "/tmp/project",
     worktreeSlug: "review-pr-123",
     firstAgentContext: {
@@ -972,7 +972,7 @@ test("sends structured first-agent context attachments with create_synapse_workt
 
   mock.triggerMessage(
     wrapSessionMessage({
-      type: "create_synapse_worktree_response",
+      type: "create_paseo_worktree_response",
       payload: {
         requestId: request.requestId,
         workspace: null,
@@ -990,7 +990,7 @@ test("sends structured first-agent context attachments with create_synapse_workt
   });
 });
 
-test("sends worktree base-ref fields in create_synapse_worktree_request", async () => {
+test("sends worktree base-ref fields in create_paseo_worktree_request", async () => {
   const logger = createMockLogger();
   const mock = createMockTransport();
 
@@ -1007,7 +1007,7 @@ test("sends worktree base-ref fields in create_synapse_worktree_request", async 
   mock.triggerOpen();
   await connectPromise;
 
-  const createPromise = client.createSynapseWorktree(
+  const createPromise = client.createPaseoWorktree(
     {
       cwd: "/tmp/project",
       projectId: "remote:github.com/acme/project",
@@ -1022,7 +1022,7 @@ test("sends worktree base-ref fields in create_synapse_worktree_request", async 
   expect(mock.sent).toHaveLength(1);
   const request = parseSentFrame(mock.sent[0]);
   expect(request).toEqual({
-    type: "create_synapse_worktree_request",
+    type: "create_paseo_worktree_request",
     cwd: "/tmp/project",
     projectId: "remote:github.com/acme/project",
     worktreeSlug: "review-pr-123",
@@ -1034,7 +1034,7 @@ test("sends worktree base-ref fields in create_synapse_worktree_request", async 
 
   mock.triggerMessage(
     wrapSessionMessage({
-      type: "create_synapse_worktree_response",
+      type: "create_paseo_worktree_response",
       payload: {
         requestId: request.requestId,
         workspace: null,
@@ -1052,7 +1052,7 @@ test("sends worktree base-ref fields in create_synapse_worktree_request", async 
   });
 });
 
-test("omitting create_synapse_worktree_request worktree base-ref fields preserves legacy wire shape", async () => {
+test("omitting create_paseo_worktree_request worktree base-ref fields preserves legacy wire shape", async () => {
   const logger = createMockLogger();
   const mock = createMockTransport();
 
@@ -1069,7 +1069,7 @@ test("omitting create_synapse_worktree_request worktree base-ref fields preserve
   mock.triggerOpen();
   await connectPromise;
 
-  const createPromise = client.createSynapseWorktree(
+  const createPromise = client.createPaseoWorktree(
     {
       cwd: "/tmp/project",
       worktreeSlug: "feature-a",
@@ -1081,7 +1081,7 @@ test("omitting create_synapse_worktree_request worktree base-ref fields preserve
     JSON.stringify({
       type: "session",
       message: {
-        type: "create_synapse_worktree_request",
+        type: "create_paseo_worktree_request",
         cwd: "/tmp/project",
         worktreeSlug: "feature-a",
         requestId: "req-worktree-legacy",
@@ -1091,7 +1091,7 @@ test("omitting create_synapse_worktree_request worktree base-ref fields preserve
 
   mock.triggerMessage(
     wrapSessionMessage({
-      type: "create_synapse_worktree_response",
+      type: "create_paseo_worktree_response",
       payload: {
         requestId: "req-worktree-legacy",
         workspace: null,

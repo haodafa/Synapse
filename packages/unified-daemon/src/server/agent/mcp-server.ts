@@ -99,7 +99,7 @@ export interface AgentMcpServerOptions {
   clearWorkspaceArchiving?: ArchiveSynapseWorktreeDependencies["clearWorkspaceArchiving"];
   emitSessionMessage?: ArchiveSynapseWorktreeDependencies["emit"];
   createSynapseWorktree?: CreateSynapseWorktreeWorkflowFn;
-  paseoHome?: string;
+  synapseHome?: string;
   /**
    * ID of the agent that is connecting to this MCP server.
    * Used for cwd/mode inheritance when agents spawn child agents.
@@ -864,7 +864,7 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
           agentManager,
           agentStorage,
           logger: childLogger,
-          paseoHome: options.paseoHome,
+          synapseHome: options.synapseHome,
           workspaceGitService: options.workspaceGitService,
           terminalManager,
           providerSnapshotManager,
@@ -2062,13 +2062,14 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
       const repoRoot = resolveScopedCwd(cwd, { required: true });
       const commandResult = await createSynapseWorktreeCommand(
         {
-          paseoHome: options.paseoHome,
+          synapseHome: options.synapseHome,
           createSynapseWorktreeWorkflow: options.createSynapseWorktree,
         },
-        createMcpWorktreeCommandInput(repoRoot, target),
+        createMcpWorktreeCommandInput(repoRoot, target as McpCreateWorktreeTarget),
       );
       if (!commandResult.ok) {
-        throw new WorktreeRequestError(commandResult.error);
+        const { error: createErr } = commandResult as Extract<typeof commandResult, { ok: false }>;
+        throw new WorktreeRequestError(createErr);
       }
       const { worktree } = commandResult.createdWorktree;
       await options.workspaceGitService?.listWorktrees?.(repoRoot, {
@@ -2128,7 +2129,8 @@ export async function createAgentMcpServer(options: AgentMcpServerOptions): Prom
         },
       );
       if (!result.ok) {
-        throw new Error(result.message);
+        const { message: archiveErrMsg } = result as Extract<typeof result, { ok: false }>;
+        throw new Error(archiveErrMsg);
       }
       await options.workspaceGitService.listWorktrees(repoRoot, {
         force: true,
@@ -2328,7 +2330,7 @@ function archiveWorktreeDependencies(
   }
 
   return {
-    paseoHome: options.paseoHome,
+    synapseHome: options.synapseHome,
     github: options.github,
     workspaceGitService: options.workspaceGitService,
     agentManager: context.agentManager,

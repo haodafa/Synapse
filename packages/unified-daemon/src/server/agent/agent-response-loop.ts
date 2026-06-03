@@ -328,11 +328,11 @@ export async function getStructuredAgentResponse<T>(
     }
 
     const validation = validator.validate(parsed);
-    if (validation.ok) {
+    if (!validation.ok) {
+      lastErrors = (validation as Extract<typeof validation, { ok: false }>).errors;
+    } else {
       return validation.value;
     }
-
-    lastErrors = validation.errors;
     if (attempt === maxRetries) {
       break;
     }

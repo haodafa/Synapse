@@ -14,7 +14,7 @@ import type {
   OutputSchema,
   SingleResult,
 } from "../../output/index.js";
-import { resolveLocalPaseoHome } from "./local-daemon.js";
+import { resolveLocalSynapseHome } from "./local-daemon.js";
 
 const CONFIG_FILENAME = "config.json";
 
@@ -81,7 +81,7 @@ export async function setDaemonPasswordInConfig(
   newPassword: string,
   options: SetPasswordOptions = {},
 ): Promise<SetPasswordResult> {
-  const synapseHome = resolveLocalPaseoHome(options.home);
+  const synapseHome = resolveLocalSynapseHome(options.home);
   const configPath = path.join(synapseHome, CONFIG_FILENAME);
   const persisted = loadPersistedConfig(synapseHome);
   const nextConfig: PersistedConfig = {

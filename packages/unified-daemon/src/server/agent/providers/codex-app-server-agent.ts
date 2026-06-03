@@ -5564,13 +5564,15 @@ export class CodexAppServerAgentClient implements AgentClient {
         typeof configuredDefaultModelId === "string"
           ? models.some((model) => model?.id === configuredDefaultModelId)
           : false;
-      return models.map((model) =>
-        buildCodexModelDefinition(model, {
-          configuredDefaultModelId,
-          configuredDefaultThinkingOptionId,
-          hasConfiguredDefaultModel,
-        }),
-      );
+      return models
+        .filter((model): model is CodexModel => model.id != null)
+        .map((model) =>
+          buildCodexModelDefinition(model, {
+            configuredDefaultModelId,
+            configuredDefaultThinkingOptionId,
+            hasConfiguredDefaultModel,
+          }),
+        );
     } finally {
       await client.dispose();
     }

@@ -184,18 +184,18 @@ function readNonEmptyString(value: unknown): string | undefined {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
 }
 
-const BashToolInputSchema: z.ZodType<BashToolInput> = z.object({
+const BashToolInputSchema = z.object({
   command: z.string(),
   timeout: z.number().optional(),
-});
+}) as z.ZodType<BashToolInput>;
 
-const ReadToolInputSchema: z.ZodType<ReadToolInput> = z.object({
+const ReadToolInputSchema = z.object({
   path: z.string(),
   offset: z.number().optional(),
   limit: z.number().optional(),
-});
+}) as z.ZodType<ReadToolInput>;
 
-const EditToolInputSchema: z.ZodType<EditToolInput> = z.object({
+const EditToolInputSchema = z.object({
   path: z.string(),
   edits: z.array(
     z.object({
@@ -203,7 +203,7 @@ const EditToolInputSchema: z.ZodType<EditToolInput> = z.object({
       newText: z.string(),
     }),
   ),
-});
+}) as z.ZodType<EditToolInput>;
 
 const LegacyEditToolInputSchema = z.object({
   path: z.string(),
@@ -213,18 +213,18 @@ const LegacyEditToolInputSchema = z.object({
   newString: z.string().optional(),
 });
 
-const WriteToolInputSchema: z.ZodType<WriteToolInput> = z.object({
+const WriteToolInputSchema = z.object({
   path: z.string(),
   content: z.string(),
-});
+}) as z.ZodType<WriteToolInput>;
 
-const FindToolInputSchema: z.ZodType<FindToolInput> = z.object({
+const FindToolInputSchema = z.object({
   pattern: z.string(),
   path: z.string().optional(),
   limit: z.number().optional(),
-});
+}) as z.ZodType<FindToolInput>;
 
-const GrepToolInputSchema: z.ZodType<GrepToolInput> = z.object({
+const GrepToolInputSchema = z.object({
   pattern: z.string(),
   path: z.string().optional(),
   glob: z.string().optional(),
@@ -232,7 +232,7 @@ const GrepToolInputSchema: z.ZodType<GrepToolInput> = z.object({
   literal: z.boolean().optional(),
   context: z.number().optional(),
   limit: z.number().optional(),
-});
+}) as z.ZodType<GrepToolInput>;
 
 const LsToolInputSchema: z.ZodType<LsToolInput> = z.object({
   path: z.string().optional(),
@@ -242,7 +242,7 @@ const LsToolInputSchema: z.ZodType<LsToolInput> = z.object({
 export function parseToolResult(rawResult: unknown): PiToolResult {
   const parsed = PiToolResultSchema.safeParse(rawResult);
   if (parsed.success) {
-    return parsed.data;
+    return parsed.data as PiToolResult;
   }
   return null;
 }

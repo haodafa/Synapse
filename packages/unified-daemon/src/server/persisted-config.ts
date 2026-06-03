@@ -275,7 +275,7 @@ const DEFAULT_PERSISTED_CONFIG = PersistedConfigSchema.parse({
   app: {
     baseUrl: "https://app.synapse.sh",
   },
-}) as PersistedConfig;
+}) as unknown as PersistedConfig;
 
 interface LoggerLike {
   child(bindings: Record<string, unknown>): LoggerLike;
@@ -363,7 +363,7 @@ export function loadPersistedConfig(paseoHome: string, logger?: LoggerLike): Per
   }
 
   log?.info(`Loaded from ${configPath}`);
-  return result.data as PersistedConfig;
+  return result.data as unknown as PersistedConfig;
 }
 
 export function savePersistedConfig(

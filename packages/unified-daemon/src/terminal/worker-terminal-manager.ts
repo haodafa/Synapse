@@ -475,7 +475,8 @@ export function createWorkerTerminalManager(
       if (message.ok) {
         pending.resolve(message.result);
       } else {
-        pending.reject(new Error(message.error));
+        const { error } = message as Extract<typeof message, { ok: false }>;
+        pending.reject(new Error(error));
       }
       return;
     }

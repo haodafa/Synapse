@@ -1148,7 +1148,7 @@ export class AgentManager {
         foregroundTurnWaiters: new Set(),
         finalizedForegroundTurnIds: new Set(),
         unsubscribeSession: null,
-        persistence: record.persistence ?? null,
+        persistence: (record.persistence ?? null) as unknown as AgentPersistenceHandle | null,
         historyPrimed: true,
         lastUserMessageAt: record.lastUserMessageAt ? new Date(record.lastUserMessageAt) : null,
         lastUsage: undefined,
@@ -3530,13 +3530,19 @@ export class AgentManager {
 
   async archiveNativeSessionBestEffort(
     provider: AgentProvider,
-    persistence: AgentPersistenceHandle | null | undefined,
+    persistence: StoredAgentRecord["persistence"],
   ): Promise<void> {
-    if (!persistence) return;
+    if (!persistence?.sessionId) return;
     const client = this.clients.get(provider);
     if (!client?.archiveNativeSession) return;
+    const handle: AgentPersistenceHandle = {
+      provider,
+      sessionId: persistence.sessionId,
+      nativeHandle: persistence.nativeHandle,
+      metadata: persistence.metadata,
+    };
     try {
-      await client.archiveNativeSession(persistence);
+      await client.archiveNativeSession(handle);
     } catch (error) {
       this.logger.warn(
         { error, provider, sessionId: persistence.sessionId },

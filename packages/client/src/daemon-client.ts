@@ -20,7 +20,7 @@ import type {
   ProjectPlacementPayload,
   AgentPermissionResolvedMessage,
   CreateAgentRequestMessage,
-  CreateSynapseWorktreeRequest,
+  CreatePaseoWorktreeRequest,
   FileDownloadTokenResponse,
   FileExplorerResponse,
   FetchAgentTimelineResponseMessage,
@@ -46,8 +46,8 @@ import type {
   GitHubSearchResponse,
   GitHubSearchRequest,
   DirectorySuggestionsResponse,
-  SynapseWorktreeListResponse,
-  SynapseWorktreeArchiveResponse,
+  PaseoWorktreeListResponse,
+  PaseoWorktreeArchiveResponse,
   ProjectIconResponse,
   ListAvailableEditorsResponseMessage,
   OpenInEditorResponseMessage,
@@ -266,8 +266,8 @@ export interface CreateAgentRequestOptions extends AgentConfigOverrides {
   labels?: Record<string, string>;
 }
 
-export interface CreateSynapseWorktreeInput extends Pick<
-  CreateSynapseWorktreeRequest,
+export interface CreatePaseoWorktreeInput extends Pick<
+  CreatePaseoWorktreeRequest,
   | "cwd"
   | "projectId"
   | "worktreeSlug"
@@ -302,11 +302,11 @@ type ValidateBranchPayload = ValidateBranchResponse["payload"];
 type BranchSuggestionsPayload = BranchSuggestionsResponse["payload"];
 type GitHubSearchPayload = GitHubSearchResponse["payload"];
 type DirectorySuggestionsPayload = DirectorySuggestionsResponse["payload"];
-type SynapseWorktreeListPayload = SynapseWorktreeListResponse["payload"];
-type SynapseWorktreeArchivePayload = SynapseWorktreeArchiveResponse["payload"];
-type CreateSynapseWorktreePayload = Extract<
+type PaseoWorktreeListPayload = PaseoWorktreeListResponse["payload"];
+type PaseoWorktreeArchivePayload = PaseoWorktreeArchiveResponse["payload"];
+type CreatePaseoWorktreePayload = Extract<
   SessionOutboundMessage,
-  { type: "create_synapse_worktree_response" }
+  { type: "create_paseo_worktree_response" }
 >["payload"];
 type FileExplorerPayload = FileExplorerResponse["payload"];
 export type FileExplorerDirectoryPayload = NonNullable<FileExplorerPayload["directory"]>;
@@ -3110,47 +3110,47 @@ export class DaemonClient {
     });
   }
 
-  async getSynapseWorktreeList(
+  async getPaseoWorktreeList(
     input: { cwd?: string; repoRoot?: string },
     requestId?: string,
-  ): Promise<SynapseWorktreeListPayload> {
+  ): Promise<PaseoWorktreeListPayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "synapse_worktree_list_request",
+        type: "paseo_worktree_list_request",
         cwd: input.cwd,
         repoRoot: input.repoRoot,
       },
-      responseType: "synapse_worktree_list_response",
+      responseType: "paseo_worktree_list_response",
       timeout: 60000,
     });
   }
 
-  async archiveSynapseWorktree(
+  async archivePaseoWorktree(
     input: { worktreePath?: string; repoRoot?: string; branchName?: string },
     requestId?: string,
-  ): Promise<SynapseWorktreeArchivePayload> {
+  ): Promise<PaseoWorktreeArchivePayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "synapse_worktree_archive_request",
+        type: "paseo_worktree_archive_request",
         worktreePath: input.worktreePath,
         repoRoot: input.repoRoot,
         branchName: input.branchName,
       },
-      responseType: "synapse_worktree_archive_response",
+      responseType: "paseo_worktree_archive_response",
       timeout: 60000,
     });
   }
 
-  async createSynapseWorktree(
-    input: CreateSynapseWorktreeInput,
+  async createPaseoWorktree(
+    input: CreatePaseoWorktreeInput,
     requestId?: string,
-  ): Promise<CreateSynapseWorktreePayload> {
+  ): Promise<CreatePaseoWorktreePayload> {
     return this.sendCorrelatedSessionRequest({
       requestId,
       message: {
-        type: "create_synapse_worktree_request",
+        type: "create_paseo_worktree_request",
         cwd: input.cwd,
         ...(input.projectId !== undefined ? { projectId: input.projectId } : {}),
         worktreeSlug: input.worktreeSlug,
@@ -3161,7 +3161,7 @@ export class DaemonClient {
         ...(input.action !== undefined ? { action: input.action } : {}),
         ...(input.githubPrNumber !== undefined ? { githubPrNumber: input.githubPrNumber } : {}),
       },
-      responseType: "create_synapse_worktree_response",
+      responseType: "create_paseo_worktree_response",
       timeout: 60000,
     });
   }

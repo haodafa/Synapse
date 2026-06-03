@@ -12,7 +12,7 @@ import type { TerminalManager } from "../terminal/terminal-manager.js";
 type EmitSessionMessage = (message: SessionOutboundMessage) => void;
 
 export interface ArchiveSynapseWorktreeDependencies {
-  paseoHome?: string;
+  synapseHome?: string;
   github: GitHubService;
   workspaceGitService: Pick<WorkspaceGitService, "getSnapshot">;
   agentManager: Pick<AgentManager, "listAgents" | "closeAgent">;
@@ -46,7 +46,7 @@ export async function archiveSynapseWorktree(
 ): Promise<string[]> {
   let targetPath = options.targetPath;
   const resolvedWorktree = await resolveSynapseWorktreeRootForCwd(targetPath, {
-    paseoHome: dependencies.paseoHome,
+    synapseHome: dependencies.synapseHome,
   });
   if (resolvedWorktree) {
     targetPath = resolvedWorktree.worktreePath;
@@ -130,7 +130,7 @@ export async function archiveSynapseWorktree(
       cwd: options.repoRoot,
       worktreePath: targetPath,
       worktreesRoot: options.worktreesRoot,
-      paseoHome: dependencies.paseoHome,
+      synapseHome: dependencies.synapseHome,
     });
 
     if (options.repoRoot) {

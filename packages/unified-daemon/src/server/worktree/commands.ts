@@ -38,15 +38,15 @@ type CreateSynapseWorktreeWorkflow<Result extends CreateSynapseWorktreeResult> =
 export interface CreateSynapseWorktreeCommandDependencies<
   Result extends CreateSynapseWorktreeResult = CreateSynapseWorktreeResult,
 > {
-  paseoHome?: string;
+  synapseHome?: string;
   createSynapseWorktreeWorkflow?: CreateSynapseWorktreeWorkflow<Result>;
 }
 
 export type CreateSynapseWorktreeCommandInput = Omit<
   CreateSynapseWorktreeInput,
-  "paseoHome" | "runSetup"
+  "synapseHome" | "runSetup"
 > & {
-  paseoHome?: string;
+  synapseHome?: string;
 };
 
 export type CreateSynapseWorktreeCommandResult<Result extends CreateSynapseWorktreeResult> =
@@ -72,7 +72,7 @@ export async function createSynapseWorktreeCommand<Result extends CreateSynapseW
     const createdWorktree = await dependencies.createSynapseWorktreeWorkflow({
       ...input,
       runSetup: false,
-      paseoHome: input.paseoHome ?? dependencies.paseoHome,
+      synapseHome: input.synapseHome ?? dependencies.synapseHome,
     });
     return { ok: true, createdWorktree };
   } catch (error) {
@@ -117,7 +117,7 @@ export async function archiveSynapseWorktreeCommand(
 ): Promise<ArchiveSynapseWorktreeCommandResult> {
   const resolvedTarget = await resolveArchiveTarget(dependencies, input);
   const ownership = await isPaseoOwnedWorktreeCwd(resolvedTarget.targetPath, {
-    paseoHome: dependencies.paseoHome,
+    synapseHome: dependencies.synapseHome,
   });
 
   if (!ownership.allowed) {
@@ -184,6 +184,6 @@ async function resolveWorktreeSlugPath(
   repoRoot: string,
   worktreeSlug: string,
 ): Promise<string> {
-  const worktreesRoot = await getSynapseWorktreesRoot(repoRoot, dependencies.paseoHome);
+  const worktreesRoot = await getSynapseWorktreesRoot(repoRoot, dependencies.synapseHome);
   return join(worktreesRoot, worktreeSlug);
 }

@@ -31,7 +31,7 @@ export async function respondToAgentPermission(
   const result = await agentManager.respondToPermission(agentId, requestId, response);
   logger.debug({ agentId }, `Permission response forwarded to agent ${agentId}`);
 
-  if (result?.followUpPrompt) {
+  if (result && result.followUpPrompt) {
     logger.debug({ agentId }, "Permission response requires follow-up turn, starting agent stream");
     startAgentRun(agentManager, agentId, result.followUpPrompt, logger, {
       replaceRunning: true,

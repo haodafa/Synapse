@@ -721,7 +721,7 @@ export interface MergeFromBaseOptions {
 }
 
 export interface CheckoutContext {
-  paseoHome?: string;
+  synapseHome?: string;
   logger?: Pick<Logger, "trace">;
   facts?: CheckoutSnapshotFacts | null;
 }
@@ -840,10 +840,10 @@ async function getMainRepoRootFromCommonDir(
     envOverlay: READ_ONLY_GIT_ENV,
   });
   const worktrees = parseWorktreeList(worktreeOut);
-  const nonBareNonPaseo = worktrees.filter((wt) => !wt.isBare && !isSynapseWorktreePath(wt.path));
+  const nonBareNonSynapse = worktrees.filter((wt) => !wt.isBare && !isSynapseWorktreePath(wt.path));
   const childrenOfBareRepo = nonBareNonSynapse.filter((wt) => isDescendantPath(wt.path, normalized));
   const mainChild = childrenOfBareRepo.find((wt) => basename(wt.path) === "main");
-  return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonPaseo[0]?.path ?? normalized;
+  return mainChild?.path ?? childrenOfBareRepo[0]?.path ?? nonBareNonSynapse[0]?.path ?? normalized;
 }
 
 export interface GitWorktreeEntry {
@@ -951,7 +951,7 @@ async function getSynapseWorktreeForCwd(
     return { isPaseoOwnedWorktree: false };
   }
 
-  const ownership = await isPaseoOwnedWorktreeCwd(cwd, { paseoHome: context?.paseoHome });
+  const ownership = await isPaseoOwnedWorktreeCwd(cwd, { synapseHome: context?.synapseHome });
   if (!ownership.allowed) {
     return { isPaseoOwnedWorktree: false };
   }

@@ -44,7 +44,7 @@ interface CreateAgentCommandDependencies {
   agentManager: AgentManager;
   agentStorage: AgentStorage;
   logger: Logger;
-  paseoHome?: string;
+  synapseHome?: string;
   workspaceGitService?: Pick<
     WorkspaceGitService,
     "getSnapshot" | "listWorktrees" | "resolveRepoRoot"
@@ -293,7 +293,7 @@ async function sendInitialPrompt(
     workspaceGitService: dependencies.workspaceGitService,
     initialPrompt: resolved.metadataInitialPrompt,
     explicitTitle: resolved.explicitTitle,
-    paseoHome: dependencies.paseoHome,
+    paseoHome: dependencies.synapseHome,
     logger: dependencies.logger,
   });
 
@@ -406,7 +406,7 @@ async function resolveMcpCwd(params: {
       githubPrNumber: worktree.githubPrNumber,
       ...(params.initialPrompt ? { firstAgentContext: { prompt: params.initialPrompt } } : {}),
       runSetup: false,
-      paseoHome: dependencies.paseoHome,
+      synapseHome: dependencies.synapseHome,
     },
     createSynapseWorktree: dependencies.createSynapseWorktree,
     resolveDefaultBranch: baseBranch ? async () => baseBranch : undefined,

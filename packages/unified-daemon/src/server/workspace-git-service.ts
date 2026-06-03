@@ -258,7 +258,7 @@ interface WorkspaceGitServiceDependencies {
 
 interface WorkspaceGitServiceOptions {
   logger: pino.Logger;
-  paseoHome: string;
+  synapseHome: string;
   deps?: Partial<WorkspaceGitServiceDependencies>;
 }
 
@@ -346,7 +346,7 @@ function resolveWorkspaceGitServiceDeps(
 
 export class WorkspaceGitServiceImpl implements WorkspaceGitService {
   private readonly logger: pino.Logger;
-  private readonly paseoHome: string;
+  private readonly synapseHome: string;
   private readonly deps: WorkspaceGitServiceDependencies;
   private readonly snapshotUpdatedListeners = new Set<WorkspaceGitSnapshotUpdatedListener>();
   private readonly workspaceTargets = new Map<string, WorkspaceGitTarget>();
@@ -384,7 +384,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
   >({ max: WORKSPACE_GIT_CHECKOUT_DIFF_CACHE_MAX });
   constructor(options: WorkspaceGitServiceOptions) {
     this.logger = options.logger.child({ module: "workspace-git-service" });
-    this.paseoHome = options.paseoHome;
+    this.synapseHome = options.synapseHome;
     this.deps = resolveWorkspaceGitServiceDeps(options.deps);
   }
 
@@ -437,7 +437,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
     const normalizedCwd = normalizeWorkspaceId(cwd);
     try {
       const status = await this.deps.getCheckoutStatus(normalizedCwd, {
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         logger: this.logger,
       });
       if (!status.isGit) {
@@ -484,7 +484,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
     const normalizedOptions = this.normalizeCheckoutDiffOptions(options);
     const key = this.buildCheckoutDiffCacheKey(normalizedCwd, normalizedOptions);
     return this.readAuxiliaryCache(this.checkoutDiffCache, key, readOptions, () =>
-      this.deps.getCheckoutDiff(normalizedCwd, normalizedOptions, { paseoHome: this.paseoHome }),
+      this.deps.getCheckoutDiff(normalizedCwd, normalizedOptions, { synapseHome: this.synapseHome }),
     );
   }
 
@@ -580,7 +580,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
     return this.readAuxiliaryCache(this.worktreeListCache, key, options, () =>
       this.deps.listSynapseWorktrees({
         cwd: repoRoot,
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
       }),
     );
   }
@@ -878,7 +878,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
     target: WorkspaceGitTarget,
   ): Promise<CheckoutSnapshotFacts | null> {
     return this.loadCheckoutFacts(target, {
-      paseoHome: this.paseoHome,
+      synapseHome: this.synapseHome,
       logger: this.logger,
       allowRecent: true,
     });
@@ -1566,7 +1566,7 @@ export class WorkspaceGitServiceImpl implements WorkspaceGitService {
 
     const cwd = target.cwd;
     const previousGitHubPollKey = this.getGitHubPollKey(target);
-    const baseContext: CheckoutContext = { paseoHome: this.paseoHome, logger: this.logger };
+    const baseContext: CheckoutContext = { synapseHome: this.synapseHome, logger: this.logger };
     const facts = await this.loadCheckoutFacts(target, {
       ...baseContext,
       allowRecent: !request.force,

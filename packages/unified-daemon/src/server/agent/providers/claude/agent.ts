@@ -745,7 +745,7 @@ function coerceSessionMetadata(metadata: AgentMetadata | undefined): Partial<Age
     result.model = metadata.model;
   }
   if (typeof metadata.title === "string" || metadata.title === null) {
-    result.title = metadata.title;
+    result.title = metadata.title as string | null;
   }
   if (typeof metadata.approvalPolicy === "string") {
     result.approvalPolicy = metadata.approvalPolicy;

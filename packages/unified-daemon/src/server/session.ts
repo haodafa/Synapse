@@ -563,7 +563,7 @@ export interface SessionOptions {
   logger: pino.Logger;
   downloadTokenStore: DownloadTokenStore;
   pushTokenStore: PushTokenStore;
-  paseoHome: string;
+  synapseHome: string;
   agentManager: AgentManager;
   agentStorage: AgentStorage;
   projectRegistry: ProjectRegistry;
@@ -727,7 +727,7 @@ export class Session {
   private readonly onBinaryMessage: ((frame: Uint8Array) => void) | null;
   private readonly onLifecycleIntent: ((intent: SessionLifecycleIntent) => void) | null;
   private readonly sessionLogger: pino.Logger;
-  private readonly paseoHome: string;
+  private readonly synapseHome: string;
 
   // State machine
   private abortController: AbortController;
@@ -845,7 +845,7 @@ export class Session {
       logger,
       downloadTokenStore,
       pushTokenStore,
-      paseoHome,
+      synapseHome,
       agentManager,
       agentStorage,
       projectRegistry,
@@ -886,7 +886,7 @@ export class Session {
     this.onLifecycleIntent = onLifecycleIntent ?? null;
     this.downloadTokenStore = downloadTokenStore;
     this.pushTokenStore = pushTokenStore;
-    this.paseoHome = paseoHome;
+    this.synapseHome = synapseHome;
     this.sessionLogger = logger.child({
       module: "session",
       clientId: this.clientId,
@@ -914,7 +914,7 @@ export class Session {
       sessionLogger: this.sessionLogger,
     });
     this.createAgentLifecycleDispatch = new CreateAgentLifecycleDispatch({
-      paseoHome: this.paseoHome,
+      synapseHome: this.synapseHome,
       agentManager: this.agentManager,
       agentStorage: this.agentStorage,
       github: this.github,
@@ -1883,7 +1883,7 @@ export class Session {
         this.emit({
           type: "get_daemon_config_response",
           payload: { requestId: msg.requestId, config: this.daemonConfigStore.get() },
-        });
+        } as SessionOutboundMessage);
         return undefined;
       case "daemon.get_status.request":
         return this.handleDaemonGetStatusRequest(msg);
@@ -1896,7 +1896,7 @@ export class Session {
             requestId: msg.requestId,
             config: this.daemonConfigStore.patch(msg.config),
           },
-        });
+        } as SessionOutboundMessage);
         return undefined;
       case "read_project_config_request":
         return this.handleReadProjectConfigRequest(msg);
@@ -1921,11 +1921,12 @@ export class Session {
 
     const result = readSynapseConfigForEdit(repoRoot);
     if (!result.ok) {
+      const { error: readErr } = result as Extract<typeof result, { ok: false }>;
       this.sessionLogger.warn(
-        { repoRoot, requestId: msg.requestId, outcome: result.error.code },
+        { repoRoot, requestId: msg.requestId, outcome: readErr.code },
         "Failed to read project config",
       );
-      this.emitProjectConfigReadFailure(msg, result.error, repoRoot);
+      this.emitProjectConfigReadFailure(msg, readErr, repoRoot);
       return;
     }
 
@@ -1970,11 +1971,12 @@ export class Session {
       expectedRevision: msg.expectedRevision,
     });
     if (!result.ok) {
+      const { error: writeErr } = result as Extract<typeof result, { ok: false }>;
       this.sessionLogger.debug(
-        { repoRoot, requestId: msg.requestId, outcome: result.error.code },
+        { repoRoot, requestId: msg.requestId, outcome: writeErr.code },
         "Project config write did not complete",
       );
-      this.emitProjectConfigWriteFailure(msg, result.error, repoRoot);
+      this.emitProjectConfigWriteFailure(msg, writeErr, repoRoot);
       return;
     }
 
@@ -3084,7 +3086,7 @@ export class Session {
           agentManager: this.agentManager,
           agentStorage: this.agentStorage,
           logger: this.sessionLogger,
-          paseoHome: this.paseoHome,
+          synapseHome: this.synapseHome,
           workspaceGitService: this.workspaceGitService,
           providerSnapshotManager: this.providerSnapshotManager,
         },
@@ -3284,7 +3286,7 @@ export class Session {
         agentManager: this.agentManager,
         agentStorage: this.agentStorage,
         workspaceGitService: this.workspaceGitService,
-        paseoHome: this.paseoHome,
+        paseoHome: this.synapseHome,
         logger: this.sessionLogger,
       });
       await this.registerWorkspaceForImportedAgent(snapshot.cwd);
@@ -3461,7 +3463,7 @@ export class Session {
   }> {
     return buildWorktreeAgentSessionConfig(
       {
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         sessionLogger: this.sessionLogger,
         workspaceGitService: this.workspaceGitService,
         createSynapseWorktree: (input, serviceOptions) =>
@@ -3749,7 +3751,7 @@ export class Session {
     msg: Extract<SessionInboundMessage, { type: "daemon.get_status.request" }>,
   ): Promise<void> {
     try {
-      const pidInfo = await getPidLockInfo(this.paseoHome);
+      const pidInfo = await getPidLockInfo(this.synapseHome);
       const providers = (await this.agentManager.listProviderAvailability()).map((p) => ({
         provider: p.provider,
         available: p.available,
@@ -3794,7 +3796,7 @@ export class Session {
     try {
       const relay = this.daemonRuntimeConfig?.relay;
       const pairing = await generateLocalPairingOffer({
-        paseoHome: this.paseoHome,
+        paseoHome: this.synapseHome,
         relayEnabled: relay?.enabled ?? true,
         relayEndpoint: relay?.endpoint,
         relayPublicEndpoint: relay?.publicEndpoint,
@@ -4057,7 +4059,7 @@ export class Session {
       ].join("\n"),
     });
     try {
-      return await generateStructuredAgentResponseWithFallback({
+      return (await generateStructuredAgentResponseWithFallback({
         manager: this.agentManager,
         cwd,
         prompt,
@@ -4070,7 +4072,7 @@ export class Session {
           title: "PR generator",
           internal: true,
         },
-      });
+      })) as { title: string; body: string };
     } catch (error) {
       if (
         error instanceof StructuredAgentResponseError ||
@@ -5186,7 +5188,7 @@ export class Session {
           baseRef,
           mode: msg.strategy === "squash" ? "squash" : "merge",
         },
-        { paseoHome: this.paseoHome },
+        { synapseHome: this.synapseHome },
       );
       await Promise.all([
         this.notifyGitMutation(mutatedCwd, "merge-to-base", { invalidateGithub: true }),
@@ -5619,7 +5621,7 @@ export class Session {
     return handleWorktreeListRequest(
       {
         emit: (message) => this.emit(message),
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         workspaceGitService: this.workspaceGitService,
       },
       msg,
@@ -5631,7 +5633,7 @@ export class Session {
   ): Promise<void> {
     return handleWorktreeArchiveRequest(
       {
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         github: this.github,
         workspaceGitService: this.workspaceGitService,
         agentManager: this.agentManager,
@@ -7218,7 +7220,7 @@ export class Session {
   ): Promise<void> {
     return handleCreateWorktreeRequest(
       {
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         describeWorkspaceRecord: (result) => this.describeCreatedWorktreeWorkspace(result),
         emit: (message) => this.emit(message),
         sessionLogger: this.sessionLogger,
@@ -7237,7 +7239,7 @@ export class Session {
   ): Promise<CreateSynapseWorktreeWorkflowResult> {
     return createWorktreeWorkflow(
       {
-        paseoHome: this.paseoHome,
+        synapseHome: this.synapseHome,
         createSynapseWorktree: (workflowInput, serviceOptions) =>
           this.createSynapseWorktree(workflowInput, serviceOptions),
         warmWorkspaceGitData: (workspace) => this.warmWorkspaceGitDataForWorkspace(workspace),
@@ -7321,9 +7323,10 @@ export class Session {
   private async handleFetchAgent(agentIdOrIdentifier: string, requestId: string): Promise<void> {
     const resolved = await this.resolveAgentIdentifier(agentIdOrIdentifier);
     if (!resolved.ok) {
+      const resolvedErr = (resolved as { ok: false; error: string }).error;
       this.emit({
         type: "fetch_agent_response",
-        payload: { requestId, agent: null, project: null, error: resolved.error },
+        payload: { requestId, agent: null, project: null, error: resolvedErr },
       });
       return;
     }
@@ -7545,13 +7548,14 @@ export class Session {
   ): Promise<void> {
     const resolved = await this.resolveAgentIdentifier(msg.agentId);
     if (!resolved.ok) {
+      const resolvedMsgErr = (resolved as { ok: false; error: string }).error;
       this.emit({
         type: "send_agent_message_response",
         payload: {
           requestId: msg.requestId,
           agentId: msg.agentId,
           accepted: false,
-          error: resolved.error,
+          error: resolvedMsgErr,
         },
       });
       return;
@@ -7651,13 +7655,14 @@ export class Session {
   ): Promise<void> {
     const resolved = await this.resolveAgentIdentifier(agentIdOrIdentifier);
     if (!resolved.ok) {
+      const resolvedWaitErr = (resolved as { ok: false; error: string }).error;
       this.emit({
         type: "wait_for_finish_response",
         payload: {
           requestId,
           status: "error",
           final: null,
-          error: resolved.error,
+          error: resolvedWaitErr,
           lastMessage: null,
         },
       });
@@ -8583,7 +8588,8 @@ export class Session {
           this.chatService.listRoomPosterAgentIds({ room: request.room }),
       });
       if (!fanout.ok) {
-        throw new ChatServiceError("chat_mention_fanout_limit_exceeded", fanout.error);
+        const { error: fanoutErr } = fanout as Extract<typeof fanout, { ok: false }>;
+        throw new ChatServiceError("chat_mention_fanout_limit_exceeded", fanoutErr);
       }
       const message = await this.chatService.dispatchMessage({
         room: request.room,
@@ -8946,7 +8952,7 @@ export class Session {
           loop,
           error: null,
         },
-      });
+      } as SessionOutboundMessage);
     } catch (error) {
       this.emitLoopRpcError(request, error);
     }
@@ -8982,7 +8988,7 @@ export class Session {
           loop,
           error: null,
         },
-      });
+      } as SessionOutboundMessage);
     } catch (error) {
       this.emitLoopRpcError(request, error);
     }
@@ -9002,7 +9008,7 @@ export class Session {
           nextCursor: result.nextCursor,
           error: null,
         },
-      });
+      } as SessionOutboundMessage);
     } catch (error) {
       this.emitLoopRpcError(request, error);
     }
@@ -9020,7 +9026,7 @@ export class Session {
           loop,
           error: null,
         },
-      });
+      } as SessionOutboundMessage);
     } catch (error) {
       this.emitLoopRpcError(request, error);
     }
