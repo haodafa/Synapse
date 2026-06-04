@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildRelayWebSocketUrl } from "@synapse/protocol/daemon-endpoints";
 import { parseConnectionOfferFromUrl } from "@synapse/protocol/connection-offer";
-import { generateLocalPairingOffer } from "@synapse/server";
+import { generateLocalPairingOffer } from "@synapse/unified-daemon";
 import { DaemonClient } from "@synapse/client/internal/daemon-client";
 import { WebSocket } from "ws";
 import { getAvailablePort } from "../helpers/network.ts";

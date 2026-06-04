@@ -1,6 +1,6 @@
 import { PackageVersionResolutionError, resolvePackageVersion } from "./package-version.js";
 
-const SERVER_PACKAGE_NAME = "@synapse/server";
+const SERVER_PACKAGE_NAME = "@synapse/unified-daemon";
 
 export class DaemonVersionResolutionError extends PackageVersionResolutionError {}
 

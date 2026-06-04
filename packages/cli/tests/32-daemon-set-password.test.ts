@@ -5,7 +5,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Command } from "commander";
-import { isBearerTokenValid } from "@synapse/server";
+import { isBearerTokenValid } from "@synapse/unified-daemon";
 import {
   runSetPasswordCommand,
   setDaemonPasswordInConfig,
