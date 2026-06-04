@@ -20,8 +20,9 @@ export function LandingHero() {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <div className="relative min-h-full overflow-hidden bg-[#05070b] text-white">
-      <LandingBackdrop />
+    <div className="relative min-h-full overflow-hidden bg-[#080612] text-white">
+      {/* ── Neural Bridge Background ── */}
+      <NeuralBackdrop />
 
       <main className="relative z-10">
         <section
@@ -29,18 +30,25 @@ export function LandingHero() {
           className="mx-auto max-w-[1320px] px-4 pb-16 pt-28 sm:px-6 sm:pt-32 lg:px-8 lg:pb-24 lg:pt-36"
         >
           <div className="mx-auto max-w-[1120px] text-center">
-            <h1 className="font-[family-name:var(--font-serif)] text-[3.65rem] leading-[0.93] tracking-[-0.038em] text-white drop-shadow-[0_10px_34px_rgba(0,0,0,0.32)] sm:text-[4.85rem] lg:text-[6.4rem]">
-              {t.hero.headlineLine1}
-              <br />
-              {t.hero.headlineLine2}
+            {/* ── Gradient Headline: Human → Synapse → AI ── */}
+            <h1 className="font-[family-name:var(--font-serif)] text-[3.65rem] leading-[0.93] tracking-[-0.038em] sm:text-[4.85rem] lg:text-[6.4rem]">
+              <span className="animate-gradient-text">
+                {t.hero.headlineLine1}
+                <br />
+                {t.hero.headlineLine2}
+              </span>
             </h1>
 
-            <p className="mx-auto mt-7 max-w-[820px] text-[15px] leading-7 text-white/84 sm:text-[17px]">
+            <p className="mx-auto mt-7 max-w-[820px] text-[15px] leading-7 text-white/78 sm:text-[17px]">
               {t.hero.subheading}
             </p>
 
+            {/* ── CTAs with glow ring on primary ── */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href={user ? "/" : "/login"} className={heroButtonClassName("solid")}>
+              <Link
+                href={user ? "/" : "/login"}
+                className={heroButtonClassName("solid")}
+              >
                 {user ? t.header.dashboard : t.hero.cta}
               </Link>
               <Link
@@ -64,6 +72,7 @@ export function LandingHero() {
             </div>
           </div>
 
+          {/* ── Works-with logos ── */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
             <span className="text-[15px] text-white/50">
               {t.hero.worksWith}
@@ -92,6 +101,7 @@ export function LandingHero() {
             </div>
           </div>
 
+          {/* ── Product preview with glow frame ── */}
           <div id="preview" className="mt-10 sm:mt-12">
             <ProductImage alt={t.hero.imageAlt} />
           </div>
@@ -101,15 +111,84 @@ export function LandingHero() {
   );
 }
 
-function LandingBackdrop() {
+/* ═══════════════════════════════════════════════════════════════
+   Neural Bridge Backdrop
+   Deep space gradient + animated synapse core + floating particles
+   ═══════════════════════════════════════════════════════════════ */
+function NeuralBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-0">
-      <Image
-        src="/images/landing-bg.jpg"
-        alt=""
-        fill
-        className="object-cover object-center"
+      {/* Base gradient: deep violet-blue space */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 60% at 50% 30%, oklch(0.25 0.08 290 / 35%) 0%, transparent 70%),
+            radial-gradient(ellipse 40% 50% at 20% 80%, oklch(0.30 0.10 80 / 12%) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 50% at 80% 80%, oklch(0.25 0.10 255 / 12%) 0%, transparent 60%),
+            linear-gradient(180deg, #080612 0%, oklch(0.12 0.02 280) 100%)
+          `,
+        }}
       />
+
+      {/* Synapse core — glowing center node */}
+      <div className="absolute left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="size-64 rounded-full animate-glow-ring opacity-50"
+          style={{
+            background: "radial-gradient(circle, oklch(0.55 0.25 298 / 30%) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+
+      {/* Connection lines from synapse core */}
+      <svg
+        className="absolute inset-0 h-full w-full opacity-[0.15]"
+        viewBox="0 0 1200 800"
+        fill="none"
+        preserveAspectRatio="xMidYMid slice"
+      >
+        {/* Human-side connections (gold, left) */}
+        <path d="M600 280 Q400 350 200 500" stroke="oklch(0.72 0.18 88)" strokeWidth="0.5" strokeDasharray="4 8" />
+        <path d="M600 280 Q350 450 150 650" stroke="oklch(0.68 0.18 88 / 60%)" strokeWidth="0.3" strokeDasharray="2 6" />
+        {/* AI-side connections (blue, right) */}
+        <path d="M600 280 Q800 350 1000 500" stroke="oklch(0.62 0.22 255)" strokeWidth="0.5" strokeDasharray="4 8" />
+        <path d="M600 280 Q850 450 1050 650" stroke="oklch(0.58 0.22 255 / 60%)" strokeWidth="0.3" strokeDasharray="2 6" />
+      </svg>
+
+      {/* Floating neural particles */}
+      <NeuralParticles />
+    </div>
+  );
+}
+
+function NeuralParticles() {
+  const particles = [
+    { left: "15%", top: "60%", size: 3, color: "oklch(0.72 0.18 88 / 60%)" },
+    { left: "25%", top: "40%", size: 2, color: "oklch(0.65 0.18 88 / 40%)" },
+    { left: "70%", top: "55%", size: 3, color: "oklch(0.62 0.22 255 / 60%)" },
+    { left: "82%", top: "35%", size: 2, color: "oklch(0.58 0.22 255 / 40%)" },
+    { left: "45%", top: "70%", size: 4, color: "oklch(0.55 0.25 298 / 50%)" },
+    { left: "55%", top: "50%", size: 2, color: "oklch(0.55 0.22 298 / 40%)" },
+    { left: "10%", top: "25%", size: 2, color: "oklch(0.70 0.18 88 / 30%)" },
+    { left: "88%", top: "22%", size: 2, color: "oklch(0.60 0.22 255 / 30%)" },
+  ];
+
+  return (
+    <div className="absolute inset-0" aria-hidden="true">
+      {particles.map((p, i) => (
+        <div
+          key={i}
+          className={`absolute rounded-full animate-float-up animate-float-up-delay-${(i % 4) + 1}`}
+          style={{
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.color,
+          }}
+        />
+      ))}
     </div>
   );
 }
@@ -117,7 +196,7 @@ function LandingBackdrop() {
 function ProductImage({ alt }: { alt: string }) {
   return (
     <div>
-      <div className="relative overflow-hidden border border-white/14">
+      <div className="relative overflow-hidden rounded-lg border border-white/[0.08] shadow-[0_0_80px_oklch(0.55_0.25_298_/_8%)]">
         <Image
           src="/images/landing-hero.png"
           alt={alt}

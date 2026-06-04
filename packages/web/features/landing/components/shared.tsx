@@ -181,9 +181,9 @@ export function headerButtonClassName(
 
 export function heroButtonClassName(tone: "ghost" | "solid") {
   return cn(
-    "inline-flex items-center justify-center gap-2 rounded-[12px] px-5 py-3 text-[14px] font-semibold transition-colors",
+    "inline-flex items-center justify-center gap-2 rounded-[12px] px-5 py-3 text-[14px] font-semibold transition-all duration-300",
     tone === "solid"
-      ? "bg-white text-[#0a0d12] hover:bg-white/92"
-      : "border border-white/18 bg-black/16 text-white backdrop-blur-sm hover:bg-black/24",
+      ? "bg-white text-[#0a0d12] hover:bg-white/92 hover:shadow-[0_0_30px_oklch(0.55_0.25_298_/_25%)]"
+      : "border border-white/18 bg-black/16 text-white backdrop-blur-sm hover:bg-black/24 hover:border-white/25",
   );
 }

@@ -257,4 +257,158 @@
       font-size: 16px !important;
     }
   }
+
+/* ═══════════════════════════════════════════════════════════════
+   Synapse Neural Bridge — Brand Animations
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Core synapse pulse — breathing glow for active agent indicators,
+   live status dots, and the brand highlight ring */
+@keyframes synapse-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 oklch(0.55 0.25 298 / 40%);
+  }
+  50% {
+    box-shadow: 0 0 0 6px oklch(0.55 0.25 298 / 0%);
+  }
+}
+
+.animate-synapse-pulse {
+  animation: synapse-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Agent activity indicator — the dot breathes with Synapse violet */
+@keyframes agent-pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 oklch(0.55 0.25 298 / 60%);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 4px 2px oklch(0.55 0.25 298 / 30%);
+  }
+}
+
+.animate-agent-pulse {
+  animation: agent-pulse 2s ease-in-out infinite;
+}
+
+/* Neural connection — dashed line "data flowing" animation.
+   Used on borders or dividers to show active connections */
+@keyframes neural-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Gradient text — Human → Synapse → AI color flow.
+   Apply to h1, brand text, or feature highlights */
+.animate-gradient-text {
+  background: linear-gradient(
+    135deg,
+    oklch(0.72 0.18 88) 0%,
+    oklch(0.55 0.22 298) 35%,
+    oklch(0.55 0.22 298) 65%,
+    oklch(0.62 0.22 255) 100%
+  );
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: neural-flow 4s ease-in-out infinite;
+}
+
+/* Border beam — animated gradient border for featured cards, CTAs.
+   A conic gradient sweeps around the element, creating a "neural
+   connection" highlight ring that bridges Human (gold) and AI (blue)
+   through the Synapse (violet) midpoint. */
+@keyframes border-beam-rotate {
+  0% { --border-beam-angle: 0deg; }
+  100% { --border-beam-angle: 360deg; }
+}
+
+@property --border-beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Glow ring for featured elements */
+@keyframes glow-ring {
+  0%, 100% {
+    box-shadow:
+      0 0 20px oklch(0.55 0.25 298 / 15%),
+      0 0 60px oklch(0.55 0.25 298 / 5%);
+  }
+  50% {
+    box-shadow:
+      0 0 30px oklch(0.55 0.25 298 / 30%),
+      0 0 80px oklch(0.55 0.25 298 / 10%);
+  }
+}
+
+.animate-glow-ring {
+  animation: glow-ring 3s ease-in-out infinite;
+}
+
+/* Floating particles — subtle upward drift for hero backgrounds.
+   Apply to absolute-positioned decorative elements */
+@keyframes float-up {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120px) translateX(20px);
+    opacity: 0;
+  }
+}
+
+.animate-float-up {
+  animation: float-up 6s ease-in-out infinite;
+}
+
+/* Staggered float delays for particle clusters */
+.animate-float-up-delay-1 { animation-delay: 0s; }
+.animate-float-up-delay-2 { animation-delay: 1.5s; }
+.animate-float-up-delay-3 { animation-delay: 3s; }
+.animate-float-up-delay-4 { animation-delay: 4.5s; }
+
+/* Synapse spin — brand hover rotation, smooth and controlled */
+@keyframes synapse-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-synapse-spin {
+  animation: synapse-spin 12s linear infinite;
+}
+
+/* Page entrance — content fades up gently on mount */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-page-enter {
+  animation: page-enter 0.5s ease-out both;
+}
 }
