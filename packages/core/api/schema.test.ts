@@ -56,7 +56,7 @@ describe("ApiClient schema fallback", () => {
     });
 
     // Forward-compat: when the server adds a new field to an existing
-    // shape, `.loose()` lets it pass through unchanged. Without `.loose()`
+    // shape, `.passthrough()` lets it pass through unchanged. Without `.passthrough()`
     // zod 4 strips it, which would silently break a future TS type that
     // adopts the field — see schemas.ts header comment.
     it("preserves unknown fields the schema didn't list", async () => {
@@ -83,7 +83,7 @@ describe("ApiClient schema fallback", () => {
       // `issues` having the wrong type triggers the fallback. An object
       // with only unexpected keys would *succeed* parsing now (every
       // declared field has a default) and just pass the extras through
-      // via `.loose()`, so we use a wrong-type payload here instead.
+      // via `.passthrough()`, so we use a wrong-type payload here instead.
       stubFetchJson({ issues: "not-an-array", total: 0 });
       const client = new ApiClient("https://api.example.test");
       const res = await client.listIssues();

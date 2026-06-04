@@ -36,12 +36,12 @@ import type { CloudRuntimeNode } from "../runtimes/cloud-runtime";
 //     existing UI code already coerces them.
 //   - Arrays default to `[]` so a missing `reactions` / `attachments` /
 //     `entries` field doesn't take the page down.
-//   - Every object schema ends with `.loose()` so unknown server-side
+//   - Every object schema ends with `.passthrough()` so unknown server-side
 //     fields pass through unchanged. zod 4's `.object()` defaults to STRIP,
 //     which would silently delete fields the schema didn't explicitly list
 //     — fine while the TS type doesn't claim them, but the moment a future
 //     PR adds a TS field without updating the schema, the cast `as T` lies
-//     and the field shows up as `undefined` at runtime. `.loose()` removes
+//     and the field shows up as `undefined` at runtime. `.passthrough()` removes
 //     that synchronisation hazard.
 //
 // These schemas are deliberately not typed as `z.ZodType<TimelineEntry>` /
@@ -65,7 +65,7 @@ const ReactionSchema = z.object({
 // into the fallback `[]`.
 const AttachmentSchema = z.object({
   id: z.string(),
-}).loose();
+}).passthrough();
 
 // Standalone attachment lookup (`GET /api/attachments/{id}`) is the source of
 // truth for click-time download URLs. The two fields the download flow opens
@@ -79,7 +79,7 @@ export const AttachmentResponseSchema = z.object({
   filename: z.string(),
   chat_session_id: z.string().nullable().optional(),
   chat_message_id: z.string().nullable().optional(),
-}).loose();
+}).passthrough();
 
 export const EMPTY_ATTACHMENT: Attachment = {
   id: "",
@@ -98,11 +98,11 @@ export const EMPTY_ATTACHMENT: Attachment = {
   created_at: "",
 };
 
-// All object schemas use `.loose()` so unknown server-side fields pass
+// All object schemas use `.passthrough()` so unknown server-side fields pass
 // through unchanged. zod 4's `.object()` defaults to STRIP, which would
 // silently drop new fields and surface as a "field neither showed up in
 // the UI" mystery the next time the TS type adopted them but the schema
-// wasn't updated in lock-step. `.loose()` removes that synchronisation
+// wasn't updated in lock-step. `.passthrough()` removes that synchronisation
 // hazard — the schema validates the shape it knows about and leaves the
 // rest alone.
 const TimelineEntrySchema = z.object({
@@ -120,7 +120,7 @@ const TimelineEntrySchema = z.object({
   reactions: z.array(ReactionSchema).optional(),
   attachments: z.array(AttachmentSchema).optional(),
   coalesced_count: z.number().optional(),
-}).loose();
+}).passthrough();
 
 // /timeline returns a flat array of TimelineEntry, oldest first. The
 // previously cursor-paginated wrapper was removed (#1929) — at observed data
@@ -141,7 +141,7 @@ export const CommentSchema = z.object({
   attachments: z.array(AttachmentSchema).default([]),
   created_at: z.string(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const CommentsListSchema = z.array(CommentSchema);
 
@@ -173,12 +173,12 @@ export const IssueSchema = z.object({
   labels: z.array(z.unknown()).optional(),
   created_at: z.string(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const ListIssuesResponseSchema = z.object({
   issues: z.array(IssueSchema).default([]),
   total: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const EMPTY_LIST_ISSUES_RESPONSE: ListIssuesResponse = {
   issues: [],
@@ -191,11 +191,11 @@ const IssueAssigneeGroupSchema = z.object({
   assignee_id: z.string().nullable(),
   issues: z.array(IssueSchema).default([]),
   total: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const GroupedIssuesResponseSchema = z.object({
   groups: z.array(IssueAssigneeGroupSchema).default([]),
-}).loose();
+}).passthrough();
 
 export const EMPTY_GROUPED_ISSUES_RESPONSE: GroupedIssuesResponse = {
   groups: [],
@@ -207,13 +207,13 @@ const SubscriberSchema = z.object({
   user_id: z.string(),
   reason: z.string(),
   created_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const SubscribersListSchema = z.array(SubscriberSchema);
 
 export const ChildIssuesResponseSchema = z.object({
   issues: z.array(IssueSchema).default([]),
-}).loose();
+}).passthrough();
 
 export const CloudRuntimeNodeSchema = z.object({
   id: z.string(),
@@ -229,7 +229,7 @@ export const CloudRuntimeNodeSchema = z.object({
   metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.string(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const CloudRuntimeNodeListSchema = z.array(CloudRuntimeNodeSchema);
 
@@ -270,7 +270,7 @@ const DashboardUsageDailySchema = z.object({
   cache_read_tokens: z.number().default(0),
   cache_write_tokens: z.number().default(0),
   task_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const DashboardUsageDailyListSchema = z.array(DashboardUsageDailySchema);
 
@@ -282,7 +282,7 @@ const DashboardUsageByAgentSchema = z.object({
   cache_read_tokens: z.number().default(0),
   cache_write_tokens: z.number().default(0),
   task_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const DashboardUsageByAgentListSchema = z.array(DashboardUsageByAgentSchema);
 
@@ -291,7 +291,7 @@ const DashboardAgentRunTimeSchema = z.object({
   total_seconds: z.number().default(0),
   task_count: z.number().default(0),
   failed_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const DashboardAgentRunTimeListSchema = z.array(DashboardAgentRunTimeSchema);
 
@@ -300,14 +300,14 @@ const DashboardRunTimeDailySchema = z.object({
   total_seconds: z.number().default(0),
   task_count: z.number().default(0),
   failed_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const DashboardRunTimeDailyListSchema = z.array(DashboardRunTimeDailySchema);
 
 // ---------------------------------------------------------------------------
 // Runtime usage schemas — the runtime-detail page's four usage endpoints
 // (`/api/runtimes/:id/usage*`). Same leniency rules as the dashboard
-// schemas above: numbers default to 0, strings to "", `.loose()` passes
+// schemas above: numbers default to 0, strings to "", `.passthrough()` passes
 // unknown fields.
 // ---------------------------------------------------------------------------
 
@@ -320,14 +320,14 @@ const RuntimeUsageSchema = z.object({
   output_tokens: z.number().default(0),
   cache_read_tokens: z.number().default(0),
   cache_write_tokens: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const RuntimeUsageListSchema = z.array(RuntimeUsageSchema);
 
 const RuntimeHourlyActivitySchema = z.object({
   hour: z.number().default(0),
   count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const RuntimeHourlyActivityListSchema = z.array(RuntimeHourlyActivitySchema);
 
@@ -339,7 +339,7 @@ const RuntimeUsageByAgentSchema = z.object({
   cache_read_tokens: z.number().default(0),
   cache_write_tokens: z.number().default(0),
   task_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const RuntimeUsageByAgentListSchema = z.array(RuntimeUsageByAgentSchema);
 
@@ -351,7 +351,7 @@ const RuntimeUsageByHourSchema = z.object({
   cache_read_tokens: z.number().default(0),
   cache_write_tokens: z.number().default(0),
   task_count: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const RuntimeUsageByHourListSchema = z.array(RuntimeUsageByHourSchema);
 
@@ -361,7 +361,7 @@ export const RuntimeUsageByHourListSchema = z.array(RuntimeUsageByHourSchema);
 // reaches these endpoints, and a future server change to the template shape
 // would white-screen older installed builds (#2192 pattern) without these
 // parsers. Lenient by the same rules as IssueSchema above: arrays default to
-// `[]`, optional fields stay optional, `.loose()` lets unknown fields pass
+// `[]`, optional fields stay optional, `.passthrough()` lets unknown fields pass
 // through unchanged.
 // ---------------------------------------------------------------------------
 
@@ -369,7 +369,7 @@ const AgentTemplateSkillRefSchema = z.object({
   source_url: z.string(),
   cached_name: z.string().default(""),
   cached_description: z.string().default(""),
-}).loose();
+}).passthrough();
 
 const AgentTemplateSummarySchemaBase = z.object({
   slug: z.string(),
@@ -382,7 +382,7 @@ const AgentTemplateSummarySchemaBase = z.object({
   // and `.map(...)`, both of which crash on `undefined`. The most common
   // future drift (field renamed / wrapped) lands here.
   skills: z.array(AgentTemplateSkillRefSchema).default([]),
-}).loose();
+}).passthrough();
 
 export const AgentTemplateSummarySchema = AgentTemplateSummarySchemaBase;
 
@@ -392,7 +392,7 @@ export const AgentTemplateSummarySchema = AgentTemplateSummarySchemaBase;
 export const AgentTemplateSummaryListSchema = z.union([
   z.array(AgentTemplateSummarySchemaBase),
   z.object({ templates: z.array(AgentTemplateSummarySchemaBase).default([]) })
-    .loose()
+    .passthrough()
     .transform((v) => v.templates),
 ]);
 
@@ -402,7 +402,7 @@ export const AgentTemplateSchema = AgentTemplateSummarySchemaBase.extend({
   // Detail-only field. Default "" so a malformed detail still renders the
   // header + skill list; the user just sees an empty Instructions block.
   instructions: z.string().default(""),
-}).loose();
+}).passthrough();
 
 // Used as the parse fallback for `GET /api/agent-templates/:slug`. Slug comes
 // from the URL, so we round-trip the requested one back into the fallback
@@ -422,13 +422,13 @@ export const EMPTY_AGENT_TEMPLATE_DETAIL: AgentTemplate = {
 // optional-chains the rest.
 const MinimalAgentSchema = z.object({
   id: z.string(),
-}).loose();
+}).passthrough();
 
 export const CreateAgentFromTemplateResponseSchema = z.object({
   agent: MinimalAgentSchema,
   imported_skill_ids: z.array(z.string()).default([]),
   reused_skill_ids: z.array(z.string()).default([]),
-}).loose();
+}).passthrough();
 
 // Fallback when the success response fails to parse. The agent server-side
 // has likely been created already, so we can't pretend nothing happened —
@@ -448,7 +448,7 @@ const SquadMemberPreviewSchema = z.object({
   member_type: z.string(),
   member_id: z.string(),
   role: z.string().default(""),
-}).loose();
+}).passthrough();
 
 export const SquadSchema = z.object({
   id: z.string(),
@@ -465,7 +465,7 @@ export const SquadSchema = z.object({
   archived_by: z.string().nullable().optional().transform((v) => v ?? null),
   member_count: z.number().default(0),
   member_preview: z.array(SquadMemberPreviewSchema).default([]),
-}).loose();
+}).passthrough();
 
 export const SquadListSchema = z.array(SquadSchema);
 export const EMPTY_SQUAD_LIST: Squad[] = [];
@@ -495,7 +495,7 @@ const SquadActiveIssueBriefSchema = z.object({
   identifier: z.string(),
   title: z.string(),
   issue_status: z.string(),
-}).loose();
+}).passthrough();
 
 const SquadMemberStatusSchema = z.object({
   member_type: z.string(),
@@ -503,11 +503,11 @@ const SquadMemberStatusSchema = z.object({
   status: z.string().nullable().optional().transform((v) => v ?? null),
   active_issues: z.array(SquadActiveIssueBriefSchema).default([]),
   last_active_at: z.string().nullable().optional().transform((v) => v ?? null),
-}).loose();
+}).passthrough();
 
 export const SquadMemberStatusListResponseSchema = z.object({
   members: z.array(SquadMemberStatusSchema).default([]),
-}).loose();
+}).passthrough();
 
 export const EMPTY_SQUAD_MEMBER_STATUS_LIST = { members: [] };
 
@@ -529,7 +529,7 @@ export const EMPTY_SQUAD_MEMBER_STATUS_LIST = { members: [] };
 //   - `issue.status` is intentionally OMITTED: the duplicate toast doesn't
 //     render a StatusIcon (which has no fallback for unknown enum values),
 //     so a future server-side rename of `status` must not knock this branch
-//     out. `.loose()` lets the field pass through unchanged for any other
+//     out. `.passthrough()` lets the field pass through unchanged for any other
 //     consumer.
 // ---------------------------------------------------------------------------
 
@@ -540,8 +540,8 @@ export const DuplicateIssueErrorBodySchema = z.object({
     id: z.string(),
     identifier: z.string(),
     title: z.string(),
-  }).loose(),
-}).loose();
+  }).passthrough(),
+}).passthrough();
 
 export interface DuplicateIssueErrorBody {
   code: "active_duplicate_issue";
@@ -558,7 +558,7 @@ export interface DuplicateIssueErrorBody {
 // (`status`, `signature_status`, `provider`) are kept as `z.string()` so a
 // future server-side value (e.g. a Stripe provider, a new dedupe state)
 // degrades to a generic UI fallback rather than collapsing the list into
-// the empty array. `.loose()` lets unknown fields pass through, matching
+// the empty array. `.passthrough()` lets unknown fields pass through, matching
 // the rule used by every other endpoint here.
 // ---------------------------------------------------------------------------
 
@@ -587,12 +587,12 @@ const WebhookDeliverySchema = z.object({
   selected_headers: z.record(z.string(), z.unknown()).nullable().optional(),
   raw_body: z.string().nullable().optional(),
   response_body: z.string().nullable().optional(),
-}).loose();
+}).passthrough();
 
 export const ListWebhookDeliveriesResponseSchema = z.object({
   deliveries: z.array(WebhookDeliverySchema).default([]),
   total: z.number().default(0),
-}).loose();
+}).passthrough();
 
 export const WebhookDeliveryResponseSchema = WebhookDeliverySchema;
 
@@ -628,7 +628,7 @@ export const EMPTY_WEBHOOK_DELIVERY: WebhookDelivery = {
 // trust this shape — a drift here would knock both surfaces out. Kept
 // lenient by the same rules as IssueSchema: enums stay `z.string()`,
 // nullable fields are unioned with `null`, unknown server fields pass
-// through via `.loose()`. `profile_description` is the field added in
+// through via `.passthrough()`. `profile_description` is the field added in
 // MUL-2406; the server emits `""` when unset (NOT NULL DEFAULT ''), so
 // the schema defaults to `""` too — keeps the type tight without
 // breaking older backends that don't return the column yet.
@@ -647,7 +647,7 @@ export const UserSchema = z.object({
   timezone: z.string().nullable().default(null),
   created_at: z.string().default(""),
   updated_at: z.string().default(""),
-}).loose();
+}).passthrough();
 
 export const EMPTY_USER: User = {
   id: "",
@@ -679,7 +679,7 @@ export const BillingBalanceSchema = z.object({
   balance_micro: z.number(),
   balance_credit: z.number(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const EMPTY_BILLING_BALANCE: BillingBalance = {
   owner_id: "",
@@ -704,14 +704,14 @@ export const BillingTransactionSchema = z.object({
   description: z.string().default(""),
   metadata: z.record(z.string(), z.unknown()).default({}),
   created_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const BillingTransactionsPageSchema = z.object({
   items: z.array(BillingTransactionSchema).default([]),
   total: z.number().default(0),
   page: z.number().default(1),
   page_size: z.number().default(20),
-}).loose();
+}).passthrough();
 
 export const EMPTY_BILLING_TRANSACTIONS_PAGE: BillingTransactionsPage = {
   items: [],
@@ -733,14 +733,14 @@ export const BillingBatchSchema = z.object({
   expires_at: z.string().nullable().optional(),
   created_at: z.string(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const BillingBatchesPageSchema = z.object({
   items: z.array(BillingBatchSchema).default([]),
   total: z.number().default(0),
   page: z.number().default(1),
   page_size: z.number().default(20),
-}).loose();
+}).passthrough();
 
 export const EMPTY_BILLING_BATCHES_PAGE: BillingBatchesPage = {
   items: [],
@@ -764,14 +764,14 @@ export const BillingTopupSchema = z.object({
   purchase_batch_id: z.string().optional(),
   created_at: z.string(),
   updated_at: z.string(),
-}).loose();
+}).passthrough();
 
 export const BillingTopupsPageSchema = z.object({
   items: z.array(BillingTopupSchema).default([]),
   total: z.number().default(0),
   page: z.number().default(1),
   page_size: z.number().default(20),
-}).loose();
+}).passthrough();
 
 export const EMPTY_BILLING_TOPUPS_PAGE: BillingTopupsPage = {
   items: [],
@@ -788,7 +788,7 @@ export const BillingPriceTierSchema = z.object({
   credits: z.number(),
   bonus_credits: z.number().optional(),
   bonus_expires_in: z.string().optional(),
-}).loose();
+}).passthrough();
 
 export const BillingPriceTierListSchema = z.array(BillingPriceTierSchema);
 
@@ -798,7 +798,7 @@ export const CreateBillingCheckoutSessionResponseSchema = z.object({
   order_id: z.string(),
   session_id: z.string(),
   url: z.string(),
-}).loose();
+}).passthrough();
 
 export const EMPTY_CREATE_BILLING_CHECKOUT_SESSION_RESPONSE: CreateBillingCheckoutSessionResponse = {
   order_id: "",
@@ -814,7 +814,7 @@ export const BillingCheckoutSessionStatusSchema = z.object({
   bonus_credits: z.number().default(0),
   currency: z.string().default("usd"),
   tier_id: z.string().default(""),
-}).loose();
+}).passthrough();
 
 export const EMPTY_BILLING_CHECKOUT_SESSION_STATUS: BillingCheckoutSessionStatus = {
   order_id: "",
@@ -828,7 +828,7 @@ export const EMPTY_BILLING_CHECKOUT_SESSION_STATUS: BillingCheckoutSessionStatus
 
 export const CreateBillingPortalSessionResponseSchema = z.object({
   url: z.string(),
-}).loose();
+}).passthrough();
 
 export const EMPTY_CREATE_BILLING_PORTAL_SESSION_RESPONSE: CreateBillingPortalSessionResponse = {
   url: "",

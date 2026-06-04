@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
+import { CheckCircleIcon, InfoIcon, AlertTriangleIcon, XOctagonIcon, Loader2Icon } from "lucide-react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
   // Use `resolvedTheme` (the concrete "light" / "dark" value) instead of
@@ -18,16 +18,16 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       icons={{
         success: (
-          <CircleCheckIcon className="size-4 text-success" />
+          <CheckCircleIcon className="size-4 text-success" />
         ),
         info: (
           <InfoIcon className="size-4 text-info" />
         ),
         warning: (
-          <TriangleAlertIcon className="size-4 text-warning" />
+          <AlertTriangleIcon className="size-4 text-warning" />
         ),
         error: (
-          <OctagonXIcon className="size-4 text-destructive" />
+          <XOctagonIcon className="size-4 text-destructive" />
         ),
         loading: (
           <Loader2Icon className="size-4 animate-spin text-brand" />

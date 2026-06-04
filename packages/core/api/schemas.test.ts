@@ -93,7 +93,7 @@ describe("DuplicateIssueErrorBodySchema", () => {
     expect(DuplicateIssueErrorBodySchema.safeParse(valid).success).toBe(true);
   });
 
-  it("accepts unknown extra fields via .loose()", () => {
+  it("accepts unknown extra fields via .passthrough()", () => {
     const forwardCompat = {
       ...valid,
       hint: "Try a different title",
@@ -263,7 +263,7 @@ describe("dashboard + runtime usage schema drift", () => {
     expect(RuntimeUsageListSchema.safeParse({ rows: [] }).success).toBe(false);
   });
 
-  it("keeps unknown server-side fields via .loose()", () => {
+  it("keeps unknown server-side fields via .passthrough()", () => {
     const parsed = RuntimeUsageListSchema.parse([
       { date: "2026-05-19", region: "us-east" },
     ]);
