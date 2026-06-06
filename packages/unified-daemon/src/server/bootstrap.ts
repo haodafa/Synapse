@@ -470,8 +470,43 @@ export async function createSynapseDaemon(
     res.json({ ok: true });
   });
 
-  app.get("/api/workspaces", (_req, res) => {
-    res.json([]);
+  // ── Dev stub: catch-all for all API routes ──
+  app.all("/api/*", (req, res) => {
+    const path = req.path;
+    const method = req.method;
+    logger.info({ method, path }, "api_stub");
+
+    // Workspaces
+    if (path === "/api/workspaces" && method === "GET") return res.json([]);
+    if (path === "/api/workspaces" && method === "POST") {
+      const slug = `ws-${Date.now()}`;
+      return res.json({ id: slug, slug, name: req.body?.name || "My Workspace", created_at: new Date().toISOString() });
+    }
+    // Projects
+    if (path === "/api/projects" && method === "GET") return res.json([]);
+    if (path === "/api/projects" && method === "POST") return res.json({ id: `prj-${Date.now()}`, name: req.body?.name || "My Project" });
+    // Agents
+    if (path === "/api/agents" && method === "GET") return res.json([]);
+    if (path === "/api/agents" && method === "POST") return res.json({ id: `agent-${Date.now()}`, name: req.body?.name || "Agent" });
+    // Issues
+    if (path === "/api/issues" && method === "GET") return res.json([]);
+    if (path === "/api/issues" && method === "POST") return res.json({ id: `issue-${Date.now()}`, title: req.body?.title || "New Issue" });
+    // Skills
+    if (path === "/api/skills" && method === "GET") return res.json([]);
+    // Runtimes
+    if (path === "/api/cloud-runtime/nodes" && method === "GET") return res.json([]);
+    // Config
+    if (path === "/api/config" && method === "GET") return res.json({ allowSignup: true, googleClientId: "" });
+    // Me
+    if (path === "/api/me" && method === "GET") return res.json({ id: "dev-user-001", email: "dev@synapse.ai", name: "Dev User", onboarded_at: new Date().toISOString() });
+    if (path === "/api/me/onboarding/complete" && method === "POST") return res.json({ ok: true });
+    // Pins
+    if (path === "/api/pins" && method === "GET") return res.json([]);
+    // Members
+    if (path === "/api/me" && method === "PATCH") return res.json({ id: "dev-user-001", email: "dev@synapse.ai", name: req.body?.name || "Dev User" });
+
+    // Fallthrough: return empty JSON for any other API route
+    res.json({});
   });
 
   app.get("/api/status", (_req, res) => {
