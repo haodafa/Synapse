@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { sanitizeNextUrl, useAuthStore } from "@synapse/core/auth";
+import { SynapseIcon } from "@synapse/ui/components/common/synapse-icon";
 import { useConfigStore } from "@synapse/core/config";
 import { workspaceKeys } from "@synapse/core/workspace/queries";
 import {
@@ -186,9 +187,24 @@ function LoginPageContent() {
   }
 
   return (
-    <LoginPage
-      onSuccess={handleSuccess}
-      google={
+    <div className="relative flex min-h-svh items-center justify-center bg-background">
+      {/* Neural Bridge background gradient */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: `
+            radial-gradient(ellipse 60% 50% at 50% 40%, oklch(0.55 0.20 298 / 8%) 0%, transparent 70%),
+            radial-gradient(ellipse 30% 40% at 25% 70%, oklch(0.70 0.16 88 / 5%) 0%, transparent 60%),
+            radial-gradient(ellipse 30% 40% at 75% 70%, oklch(0.60 0.18 255 / 5%) 0%, transparent 60%)
+          `,
+        }}
+      />
+      <LoginPage
+        logo={
+          <SynapseIcon size="lg" bordered noSpin className="text-[oklch(0.50_0.22_298)]" />
+        }
+        onSuccess={handleSuccess}
+        google={
         googleClientId
           ? {
               clientId: googleClientId,
@@ -216,6 +232,7 @@ function LoginPageContent() {
         </span>
       }
     />
+    </div>
   );
 }
 
