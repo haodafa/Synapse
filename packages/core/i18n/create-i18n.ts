@@ -17,6 +17,7 @@ export function createI18n(
     resources,
     interpolation: { escapeValue: false },
     initAsync: false,
+    enableSelector: true,
     react: { useSuspense: false },
   });
   return instance;
