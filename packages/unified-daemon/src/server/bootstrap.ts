@@ -412,6 +412,68 @@ export async function createSynapseDaemon(
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
+  // ── Auth routes (development stub) ──
+  // In production, email codes would be sent via an email service and
+  // verified against a stored token. For local dev, any code works.
+  app.post("/auth/send-code", (req, res) => {
+    const { email } = req.body || {};
+    if (!email) {
+      res.status(400).json({ error: "email is required" });
+      return;
+    }
+    logger.info({ email }, "send_code_requested (dev stub — any 6-digit code works)");
+    res.json({ ok: true });
+  });
+
+  app.post("/auth/verify-code", (req, res) => {
+    const { email, code } = req.body || {};
+    if (!email || !code) {
+      res.status(400).json({ error: "email and code are required" });
+      return;
+    }
+    // Dev stub: accept any 6-digit code
+    if (code.length !== 6) {
+      res.status(400).json({ error: "code must be 6 digits" });
+      return;
+    }
+    const token = `syn_dev_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+    logger.info({ email }, "verify_code_success (dev stub)");
+    res.json({
+      token,
+      user: {
+        id: "dev-user-001",
+        email,
+        name: email.split("@")[0],
+        onboarded_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+      },
+    });
+  });
+
+  app.get("/auth/me", (req, res) => {
+    // Dev stub: return a mock user
+    const token = (req.headers.authorization || "").replace("Bearer ", "");
+    if (!token || !token.startsWith("syn_dev_")) {
+      res.status(401).json({ error: "unauthorized" });
+      return;
+    }
+    res.json({
+      id: "dev-user-001",
+      email: "dev@synapse.ai",
+      name: "Dev User",
+      onboarded_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+    });
+  });
+
+  app.post("/auth/logout", (_req, res) => {
+    res.json({ ok: true });
+  });
+
+  app.get("/api/workspaces", (_req, res) => {
+    res.json([]);
+  });
+
   app.get("/api/status", (_req, res) => {
     res.json({
       status: "server_info",
