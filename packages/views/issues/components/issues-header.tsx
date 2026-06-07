@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
-  ChartGantt,
+  GanttChart,
   Check,
   ChevronDown,
   CircleDot,
@@ -18,7 +18,7 @@ import {
   Tag,
   User,
   UserMinus,
-  UserPen,
+  PenLine,
   Waves,
 } from "lucide-react";
 import { Button } from "@synapse/ui/components/ui/button";
@@ -792,7 +792,7 @@ export function IssueDisplayControls({
             {/* Creator */}
             <DropdownMenuSub>
               <DropdownMenuSubTrigger>
-                <UserPen className="size-3.5" />
+                <PenLine className="size-3.5" />
                 <span className="flex-1">{t(($) => $.filters.section_creator)}</span>
                 {creatorFilters.length > 0 && (
                   <span className="text-xs text-primary font-medium">
@@ -1041,7 +1041,7 @@ export function IssueDisplayControls({
                         ) : viewMode === "swimlane" ? (
                           <Waves className="size-3.5" />
                         ) : viewMode === "gantt" && allowGantt ? (
-                          <ChartGantt className="size-3.5" />
+                          <GanttChart className="size-3.5" />
                         ) : (
                           <List className="size-3.5" />
                         )}
@@ -1086,7 +1086,7 @@ export function IssueDisplayControls({
                 </DropdownMenuRadioItem>
                 {allowGantt && (
                   <DropdownMenuRadioItem value="gantt">
-                    <ChartGantt />
+                    <GanttChart />
                     {t(($) => $.view.gantt)}
                   </DropdownMenuRadioItem>
                 )}

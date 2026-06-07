@@ -11,7 +11,7 @@ import {
 import { Dimensions, Text, View } from "react-native";
 import { FadeIn, FadeOut } from "react-native-reanimated";
 import { StyleSheet, withUnistyles } from "react-native-unistyles";
-import { CircleCheck, CircleDot, CircleX, ExternalLink } from "lucide-react-native";
+import { CheckCircle, CircleDot, CircleX, ExternalLink } from "lucide-react-native";
 import { GitHubIcon } from "@/components/icons/github-icon";
 import type { Theme } from "@/styles/theme";
 import { DiffStat } from "@/components/diff-stat";
@@ -309,7 +309,7 @@ function WorkspaceHoverCardContent({
 
 const ThemedExternalLink = withUnistyles(ExternalLink);
 const ThemedGitHubIcon = withUnistyles(GitHubIcon);
-const ThemedCircleCheck = withUnistyles(CircleCheck);
+const ThemedCheckCircle = withUnistyles(CheckCircle);
 const ThemedCircleDot = withUnistyles(CircleDot);
 const ThemedCircleX = withUnistyles(CircleX);
 
@@ -343,7 +343,7 @@ function ChecksSummaryPill({
   if (kind === "passed") {
     return (
       <View style={styles.checksSummaryPill}>
-        <ThemedCircleCheck size={12} uniProps={successColorMapping} />
+        <ThemedCheckCircle size={12} uniProps={successColorMapping} />
         <Text style={styles.checksStatusTextPassed}>{count}</Text>
       </View>
     );

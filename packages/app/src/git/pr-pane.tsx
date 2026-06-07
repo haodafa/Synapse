@@ -4,7 +4,7 @@ import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import {
   ChevronDown,
   ChevronRight,
-  CircleCheck,
+  CheckCircle,
   CircleDot,
   CircleSlash,
   CircleX,
@@ -74,7 +74,7 @@ export function PrPane({ data }: { data: PrPaneData }) {
   );
 
   const checkSuccessIcon = useMemo(
-    () => <CircleCheck size={12} color={theme.colors.statusSuccess} />,
+    () => <CheckCircle size={12} color={theme.colors.statusSuccess} />,
     [theme.colors.statusSuccess],
   );
   const checkDangerIcon = useMemo(
@@ -259,7 +259,7 @@ function CheckRow({ check }: { check: PrPaneCheck }) {
 
 function CheckStatusIcon({ status }: { status: CheckStatus }) {
   const { theme } = useUnistyles();
-  if (status === "success") return <CircleCheck size={14} color={theme.colors.statusSuccess} />;
+  if (status === "success") return <CheckCircle size={14} color={theme.colors.statusSuccess} />;
   if (status === "failure") return <CircleX size={14} color={theme.colors.statusDanger} />;
   if (status === "pending") return <CircleDot size={14} color={theme.colors.statusWarning} />;
   return <CircleSlash size={14} color={theme.colors.foregroundMuted} />;

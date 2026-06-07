@@ -1,4 +1,4 @@
-import { Cloud, Monitor, Wifi, WifiHigh, WifiOff } from "lucide-react";
+import { Cloud, Monitor, Wifi, WifiOff } from "lucide-react";
 import { Badge } from "@synapse/ui/components/ui/badge";
 import type { RuntimeHealth } from "@synapse/core/runtimes";
 import { ProviderLogo } from "./provider-logo";
@@ -63,7 +63,7 @@ export function HealthDot({
 // hover-card runtime row, runtime list health column).
 //
 //   online        → Wifi (full bars, success)
-//   recently_lost → WifiHigh (fewer bars, warning) — transient hiccup
+//   recently_lost → Wifi (fewer bars, warning) — transient hiccup
 //   offline       → WifiOff (slashed, muted) — long unreachable
 //   about_to_gc   → WifiOff (slashed, destructive) — sweeper coming
 const HEALTH_ICON: Record<
@@ -71,7 +71,7 @@ const HEALTH_ICON: Record<
   { Icon: typeof Wifi; tone: string }
 > = {
   online: { Icon: Wifi, tone: "text-success" },
-  recently_lost: { Icon: WifiHigh, tone: "text-warning" },
+  recently_lost: { Icon: Wifi, tone: "text-warning" },
   offline: { Icon: WifiOff, tone: "text-muted-foreground" },
   about_to_gc: { Icon: WifiOff, tone: "text-destructive" },
 };

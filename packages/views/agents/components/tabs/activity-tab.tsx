@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 import {
   ArrowUpRight,
-  CircleHelp,
+  HelpCircle,
   Hash,
   MessageSquare,
   Workflow,
@@ -407,7 +407,7 @@ function TaskRow({
       ? MessageSquare
       : task.autopilot_run_id
         ? Workflow
-        : CircleHelp;
+        : HelpCircle;
   const sourceLabel = hasIssue
     ? t(($) => $.tab_body.activity.source_issue)
     : task.chat_session_id

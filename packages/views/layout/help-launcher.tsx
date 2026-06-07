@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, BookOpen, CircleHelp, History, MessageCircle } from "lucide-react";
+import { ArrowUpRight, BookOpen, HelpCircle, History, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ export function HelpLauncher() {
         title={t(($) => $.help.trigger)}
         className="inline-flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors cursor-pointer hover:bg-accent hover:text-foreground data-popup-open:bg-accent data-popup-open:text-foreground"
       >
-        <CircleHelp className="size-4" />
+        <HelpCircle className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"

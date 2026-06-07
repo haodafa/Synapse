@@ -13,7 +13,7 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  CircleCheck,
+  CheckCircle,
   MoreHorizontal,
   PanelRight,
   Pin,
@@ -1668,7 +1668,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
                       className="text-muted-foreground"
                       onClick={() => { handleUpdateField({ status: "done" }); onDone?.(); }}
                     >
-                      <CircleCheck />
+                      <CheckCircle />
                     </Button>
                   }
                 />

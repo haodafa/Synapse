@@ -44,7 +44,7 @@ import {
   Check,
   CheckSquare,
   Copy,
-  TriangleAlertIcon,
+  AlertTriangleIcon,
   Scissors,
   MicVocal,
   FileSymlink,
@@ -177,7 +177,7 @@ const markdownStyleMapping = (theme: Theme): Partial<MarkdownWithStableRendererP
 const ThemedMicVocal = withUnistyles(MicVocal);
 const ThemedTodoCheckIcon = withUnistyles(Check);
 const ThemedFileSymlinkIcon = withUnistyles(FileSymlink);
-const ThemedTriangleAlertIcon = withUnistyles(TriangleAlertIcon);
+const ThemedAlertTriangleIcon = withUnistyles(AlertTriangleIcon);
 const ThemedChevronRightIcon = withUnistyles(ChevronRight);
 
 const foregroundColorMapping = (theme: Theme) => ({ color: theme.colors.foreground });
@@ -2478,7 +2478,7 @@ function renderExpandableBadgeIcon({
   if (isError) {
     return (
       <View style={LUCIDE_TOOL_ICON_NUDGE_LEFT}>
-        <ThemedTriangleAlertIcon size={12} opacity={0.8} uniProps={destructiveColorMapping} />
+        <ThemedAlertTriangleIcon size={12} opacity={0.8} uniProps={destructiveColorMapping} />
       </View>
     );
   }

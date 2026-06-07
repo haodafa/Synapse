@@ -10,7 +10,7 @@ import {
   GitPullRequestArrow,
   GitPullRequestClosed,
   GitPullRequestDraft,
-  TriangleAlert,
+  AlertTriangle,
   XCircle,
 } from "lucide-react";
 import {
@@ -266,7 +266,7 @@ function getConflictsBadge(
   const mergeable = pr.mergeable_state ?? null;
   return mergeable === "dirty"
     ? {
-        icon: TriangleAlert,
+        icon: AlertTriangle,
         label: t(($) => $.detail.pull_request_conflicts_dirty),
         className: "text-rose-600 dark:text-rose-400",
       }

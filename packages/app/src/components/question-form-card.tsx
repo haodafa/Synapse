@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { useIsCompactFormFactor } from "@/constants/layout";
-import { Check, CircleHelp, X } from "lucide-react-native";
+import { Check, HelpCircle, X } from "lucide-react-native";
 import type { PendingPermission } from "@/types/shared";
 import type { AgentPermissionResponse } from "@synapse/protocol/agent-types";
 import { isWeb } from "@/constants/platform";
@@ -327,7 +327,7 @@ export function QuestionFormCard({ permission, onRespond, isResponding }: Questi
           <View key={q.question} style={styles.questionBlock}>
             <View style={styles.questionHeader}>
               <Text style={questionTextStyle}>{q.question}</Text>
-              <CircleHelp size={14} color={theme.colors.foregroundMuted} />
+              <HelpCircle size={14} color={theme.colors.foregroundMuted} />
             </View>
             {q.options.length > 0 ? (
               <View style={styles.optionsWrap}>

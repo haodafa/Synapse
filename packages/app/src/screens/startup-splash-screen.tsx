@@ -12,7 +12,7 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import Svg, { Defs, LinearGradient as SvgLinearGradient, Rect, Stop } from "react-native-svg";
 import * as Clipboard from "expo-clipboard";
 import { openExternalUrl } from "@/utils/open-external-url";
-import { BookOpen, Copy, RotateCw, TriangleAlert } from "lucide-react-native";
+import { BookOpen, Copy, RotateCw, AlertTriangle } from "lucide-react-native";
 import { StyleSheet, useUnistyles } from "react-native-unistyles";
 import { SynapseLogo } from "@/components/icons/synapse-logo";
 import { Button } from "@/components/ui/button";
@@ -377,7 +377,7 @@ export function StartupSplashScreen({ bootstrapState }: StartupSplashScreenProps
     [theme.colors.foreground],
   );
   const warningIcon = useMemo(
-    () => <TriangleAlert size={16} color={theme.colors.foreground} />,
+    () => <AlertTriangle size={16} color={theme.colors.foreground} />,
     [theme.colors.foreground],
   );
   const bookIcon = useMemo(
