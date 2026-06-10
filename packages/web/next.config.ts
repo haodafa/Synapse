@@ -27,6 +27,13 @@ const allowedDevOrigins = process.env.CORS_ALLOWED_ORIGINS
 const nextConfig: NextConfig = {
   ...(process.env.STANDALONE === "true" ? { output: "standalone" as const } : {}),
   transpilePackages: ["@synapse/core", "@synapse/ui", "@synapse/views"],
+  webpack: (config, { isServer }) => {
+    // Reduce parallelism to avoid Jest worker crashes on Windows
+    if (!isServer) {
+      config.parallelism = 1;
+    }
+    return config;
+  },
   ...(allowedDevOrigins && allowedDevOrigins.length > 0
     ? { allowedDevOrigins }
     : {}),
