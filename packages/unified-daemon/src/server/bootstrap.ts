@@ -552,7 +552,22 @@ export async function createSynapseDaemon(
     if (path === "/api/me/usage/daily" && method === "GET") return res.json([]);
     if (path === "/api/me/usage/by-agent" && method === "GET") return res.json([]);
 
-    // Fallthrough
+    // Workspace members, squads members, etc.
+    if (path.match(/\/members$/) && method === "GET") return res.json([{ user_id: "dev-user-001", role: "admin", name: "Dev User", email: "dev@synapse.ai" }]);
+    if (path.match(/\/members\/status$/) && method === "GET") return res.json([]);
+    if (path.match(/\/members$/) && method === "POST") return res.json({});
+    if (path.match(/\/members$/) && method === "DELETE") return res.json({});
+
+    // Chat sessions
+    if (path === "/api/chat/sessions" && method === "GET") return res.json([]);
+    if (path === "/api/chat/sessions" && method === "POST") return res.json({ id: stubId("chat"), created_at: new Date().toISOString() });
+
+    // Generic patterns: /api/workspaces/:id/* that aren't covered above
+    if (path.match(/^\/api\/workspaces\/[^/]+\/issues$/) && method === "GET") return res.json([]);
+    if (path.match(/^\/api\/workspaces\/[^/]+\/.*$/) && method === "GET") return res.json([]);
+
+    // Fallthrough: return [] for GET (list endpoints), {} for mutations
+    if (method === "GET") return res.json([]);
     res.json({});
   });
 
