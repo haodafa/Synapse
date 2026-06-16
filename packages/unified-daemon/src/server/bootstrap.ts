@@ -520,7 +520,15 @@ export async function createSynapseDaemon(
     }
 
     // ── Agents ──
-    if (path === "/api/agents" && method === "GET") return res.json(Object.values(stubDB.agents));
+    if (path === "/api/agents" && method === "GET") {
+      // Seed with demo agents if empty
+      if (Object.keys(stubDB.agents).length === 0) {
+        stubDB.agents["ag-claude-main"] = { id: "ag-claude-main", name: "Claude Code (Main)", role: "coding-agent", runtime_id: "rt-cloud-claude", status: "working", last_task: "Refactoring error handling in auth flow", updated_at: "2026-06-16T13:45:00Z" };
+        stubDB.agents["ag-codex-reviewer"] = { id: "ag-codex-reviewer", name: "Codex (PR Reviewer)", role: "code-review", runtime_id: "rt-codex-dev", status: "idle", last_task: "Reviewed PR #43", updated_at: "2026-06-16T11:20:00Z" };
+        stubDB.agents["ag-opencode-helper"] = { id: "ag-opencode-helper", name: "OpenCode (Helper)", role: "autonomous-task", runtime_id: "rt-opencode", status: "connected", last_task: "Available for tasks", updated_at: "2026-06-16T13:30:00Z" };
+      }
+      return res.json(Object.values(stubDB.agents));
+    }
     if (path === "/api/agents" && method === "POST") {
       const id = stubId("agent");
       const agent = { id, name: req.body?.name || "New Agent", status: "idle", created_at: new Date().toISOString() };
@@ -528,15 +536,38 @@ export async function createSynapseDaemon(
       return res.json(agent);
     }
 
-    // Skills, Runtimes, Pins — always empty
-    if (path === "/api/skills" && method === "GET") return res.json([]);
-    if (path === "/api/cloud-runtime/nodes" && method === "GET") return res.json([]);
+    // Skills, Runtimes, Pins — demo data
+    if (path === "/api/skills" && method === "GET") return res.json([
+      { id: "skl-deploy", name: "Deploy to staging", description: "Deploy the current branch to the staging environment and run smoke tests.", trigger: "deploy", updated_at: "2026-06-14T10:00:00Z" },
+      { id: "skl-migrate", name: "Write migration", description: "Generate a database migration script for the specified schema change.", trigger: "migrate", updated_at: "2026-06-13T15:30:00Z" },
+      { id: "skl-review", name: "Review PR", description: "Review the current pull request for correctness, style, and tests.", trigger: "review", updated_at: "2026-06-15T09:15:00Z" },
+      { id: "skl-test", name: "Write tests", description: "Generate unit and integration tests for the specified module.", trigger: "test", updated_at: "2026-06-12T18:00:00Z" },
+    ]);
+    if (path === "/api/cloud-runtime/nodes" && method === "GET") return res.json([
+      { id: "rt-macbook", name: "MacBook Pro", type: "local", provider: "claude-code", status: "connected", os: "macos-arm64", last_active: "2026-06-16T12:30:00Z", tokens_today: 12450 },
+      { id: "rt-cloud-claude", name: "Claude (Cloud)", type: "cloud", provider: "claude-code", status: "working", os: "linux-x64", last_active: "2026-06-16T13:45:00Z", tokens_today: 28730 },
+      { id: "rt-codex-dev", name: "Codex Dev", type: "local", provider: "codex", status: "idle", os: "linux-x64", last_active: "2026-06-16T11:20:00Z", tokens_today: 8120 },
+      { id: "rt-opencode", name: "OpenCode Helper", type: "local", provider: "opencode", status: "connected", os: "macos-arm64", last_active: "2026-06-16T13:30:00Z", tokens_today: 5200 },
+      { id: "rt-openclaw", name: "OpenClaw (Cloud)", type: "cloud", provider: "openclaw", status: "idle", os: "linux-x64", last_active: "2026-06-15T22:00:00Z", tokens_today: 0 },
+    ]);
+    if (path === "/api/agents" && method === "GET") return res.json([
+      { id: "ag-claude-main", name: "Claude Code (Main)", role: "coding-agent", runtime_id: "rt-cloud-claude", status: "working", last_task: "Refactoring error handling in auth flow", updated_at: "2026-06-16T13:45:00Z" },
+      { id: "ag-codex-reviewer", name: "Codex (PR Reviewer)", role: "code-review", runtime_id: "rt-codex-dev", status: "idle", last_task: "Reviewed PR #43", updated_at: "2026-06-16T11:20:00Z" },
+      { id: "ag-opencode-helper", name: "OpenCode (Helper)", role: "autonomous-task", runtime_id: "rt-opencode", status: "connected", last_task: "Available for tasks", updated_at: "2026-06-16T13:30:00Z" },
+    ]);
     if (path === "/api/pins" && method === "GET") return res.json([]);
-    if (path === "/api/agent-templates" && method === "GET") return res.json([]);
+    if (path === "/api/agent-templates" && method === "GET") return res.json([
+      { id: "tpl-coding-agent", name: "Coding Agent", description: "General-purpose software engineering agent", provider: "claude-code" },
+      { id: "tpl-pr-reviewer", name: "PR Reviewer", description: "Code review and quality assurance agent", provider: "codex" },
+    ]);
     if (path === "/api/autopilots" && method === "GET") return res.json([]);
     if (path === "/api/squads" && method === "GET") return res.json([]);
-    if (path === "/api/inbox" && method === "GET") return res.json([]);
-    if (path === "/api/inbox/unread-count" && method === "GET") return res.json({ count: 0 });
+    if (path === "/api/inbox" && method === "GET") return res.json([
+      { id: "inb-1", type: "agent_status", title: "Claude Code completed task", body: "Refactor error handling in auth flow — 12 files changed, 3 new tests", agent_name: "Claude Code (Main)", created_at: "2026-06-16T13:45:00Z", read: false },
+      { id: "inb-2", type: "comment", title: "Codex started code review on PR #43", body: "Reviewing 8 files, 3 reviewers queued", agent_name: "Codex (PR Reviewer)", created_at: "2026-06-16T13:30:00Z", read: false },
+      { id: "inb-3", type: "agent_status", title: "OpenCode ready for task assignment", body: "Connected and idle — queue a task to get started", agent_name: "OpenCode (Helper)", created_at: "2026-06-16T13:20:00Z", read: true },
+    ]);
+    if (path === "/api/inbox/unread-count" && method === "GET") return res.json({ count: 2 });
     if (path === "/api/invitations" && method === "GET") return res.json([]);
     if (path === "/api/notification-preferences" && method === "GET") return res.json({});
 

@@ -43,6 +43,7 @@ import {
   todayIso,
 } from "../../runtimes/utils";
 import { useT } from "../../i18n";
+import { PaseoPanel } from "./paseo-panel";
 import {
   aggregateAgentTokens,
   aggregateDailyCost,
@@ -345,6 +346,7 @@ export function DashboardPage() {
 
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-6xl space-y-5 p-6">
+          <PaseoPanel workspaceId={wsId} />
           <p className="text-xs text-muted-foreground">{t(($) => $.subtitle)}</p>
 
           {isLoading ? (
